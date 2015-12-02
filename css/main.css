@@ -1,0 +1,22 @@
+body {
+	padding: 10px;
+	background-color: #F5F5F5
+}
+
+hr {
+	height: 1px;
+	background-color: #000;
+}
+
+.panel-new-column{
+	border-radius: 10px;
+	border-style: dashed;
+	border-width: thin;
+	width: 160px;
+}
+
+.close-panel-column{
+	padding-bottom:3px;
+	padding-left:3px;
+	padding-right:3px
+}

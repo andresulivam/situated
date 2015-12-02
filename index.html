@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	  <title>Situated</title>
+	  <meta charset="utf-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1">
+	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	  <link rel="stylesheet" href="css/main.css">
+	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	  <script src="js/highcharts.js"></script>
+	  <script src="js/highcharts-3d.js"></script>
+	  <script src="js/modules/exporting.js"></script>
+
+	  <script type="text/javascript">
+		$(function () {
+		    $('#chart').highcharts({
+		        chart: {
+		            type: 'line',
+		            height: '600'
+		        },
+		        title: {
+		            text: 'Monthly Average Temperature'
+		        },
+		        subtitle: {
+		            text: 'Source: WorldClimate.com'
+		        },
+		        xAxis: {
+		            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+		        },
+		        yAxis: {
+		            title: {
+		                text: 'Temperature (°C)'
+		            }
+		        },
+		        plotOptions: {
+		            line: {
+		                dataLabels: {
+		                    enabled: true
+		                },
+		                enableMouseTracking: false
+		            }
+		        },
+		        series: [{
+		            name: 'Tokyo',
+		            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+		        }, {
+		            name: 'London',
+		            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
+		        }]
+		    });
+		});
+	  </script>
+
+	</head>
+	<body>
+	  <div class="row">
+	  	<!-- left column -->
+	  	<div class="col-xs-2">
+	  		<!-- part 1 -->
+	  		<button type="button" class="btn btn-primary btn-block">Novo</button>
+			<!-------------- -->
+			<hr>
+			<!-- part 2 -->
+	  		<div class="form-group">
+			  <select class="form-control" id="sel1">
+			    <option>Coluna de data</option>
+			    <option>2</option>
+			    <option>3</option>
+			    <option>4</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+			  <select class="form-control" id="sel2">
+			    <option>Datas disponíveis</option>
+			    <option>Faixa</option>
+			    <option>Maior que</option>
+			    <option>Menor que</option>
+			    <option>Personalizado</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+			  <select class="form-control" id="sel3">
+			    <option>Contar todos</option>
+			    <option>Contar se</option>
+			  </select>
+			</div>
+			<hr>
+			<!--------------- -->
+
+			<!-- part 3 -->
+			<div class="form-group">
+			  <select class="form-control" id="sel4">
+			    <option>Coluna número</option>
+			    <option>2</option>
+			    <option>3</option>
+			    <option>4</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+			  <select class="form-control" id="sel5">
+			    <option>Valores disponíveis</option>
+			    <option>Faixa</option>
+			    <option>Maior que</option>
+			    <option>Menor que</option>
+			    <option>Personalizado</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+			  <select class="form-control" id="sel6">
+			    <option>Contar todos</option>
+			    <option>Somar</option>
+			    <option>Média</option>
+			    <option>Somar se</option>
+			    <option>Contar se</option>
+			  </select>
+			</div>
+			<hr>
+			<!--------------- -->
+
+			<!-- part 4 -->
+			<div class="form-group">
+			  <select class="form-control" id="sel7">
+			    <option>Coluna texto</option>
+			    <option>2</option>
+			    <option>3</option>
+			    <option>4</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+			  <select class="form-control" id="sel8">
+			    <option>Valores disponíveis</option>
+			    <option>Personalizado</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+				<label for="per">Personalização:</label>
+			  	<input type="text" class="form-control" id="per">
+			</div>
+			<br>
+			<div class="form-group">
+			  <select class="form-control" id="sel9">
+			    <option>Contar todos</option>
+			    <option>Contar se</option>
+			  </select>
+			</div>
+			<br>
+			<div class="form-group">
+				<label for="con">Condições:</label>
+			  	<input type="text" class="form-control" id="con">
+			</div>
+			<!--------- -->
+
+	  	</div>
+	  	<!----------------->
+
+	  	<!-- center column -->
+	  	<div class="col-xs-8">
+	  		<div class="row">
+	  			<div class="col-xs-2">
+	  				<div class="form-group">
+  					  <label for="sel10">Gráfico Padrão:</label>
+					  <select class="form-control" id="sel10">
+					    <option>Coluna número</option>
+					    <option>2</option>
+					    <option>3</option>
+					    <option>4</option>
+					  </select>
+					</div>
+	  			</div>
+	  			<div class="col-xs-10">
+	  				<div class="form-group">
+						<label for="tit">Título:</label>
+					  	<input type="text" class="form-control" id="tit">
+					</div>
+					<div class="form-group">
+						<label for="des">Descrição:</label>
+	  					<textarea class="form-control" rows="5" id="des"></textarea>
+					</div>
+	  			</div>
+	  		</div>
+	  		<div class="row">
+	  			<div class="col-xs-2">
+	  				<div class="form-group" style="width: 120px">	
+	  				<select class="form-control" id="sel11">
+					    <option>Barra</option>
+					    <option>Linha</option>
+					  </select>  
+					  <br>
+					  <div class="panel panel-default">
+					  	<a class="img-rounded pull-right close-panel-column" href=""><img src="img/close.png" alt="Excluir"></a>
+						<div class="panel-body">Coluna</div>
+				      </div>
+					</div>	
+					<div class="panel-new-column">
+				  		<div class="panel-body">Arraste uma coluna</div>
+					</div>
+	  			</div>
+	  			<div class="col-xs-10">
+	  					<div id="chart">
+	  					</div>
+	  			</div>
+	  		</div>
+	  		<br>
+	  		<div class="row">
+	  			<div class="col-xs-10 pull-right">
+	  				<div class="form-group" style="width: 120px">	  
+					  <div class="panel panel-default">
+						<a class="img-rounded pull-right close-panel-column" href=""><img src="img/close.png" alt="Excluir"></a>
+						<div class="panel-body">Coluna</div>
+				      </div>		      
+	  				</div>
+	  				<div class="panel-new-column">
+				  		<div class="panel-body">Arraste uma coluna</div>
+					</div>
+				</div>
+	  		</div>
+
+	  		<div class="row">
+	  			<div class="col-xs-2 pull-right">
+	  				<button type="button" class="btn btn-primary btn-block">Salvar</button>
+	  			</div>
+	  		</div>
+	  	</div>
+	  	<!----------------->
+
+	  	<!-- right column -->
+	  	<div class="col-xs-2">
+	  		<h2 align="center"> Plots </h2>
+	  		<div class="checkbox">
+			  <label><input type="checkbox" value="">Marcar Todos</label>
+			</div>
+			<br>
+	  		<div class="checkbox">
+			  <label><input type="checkbox" value="">Plot 1</label>
+			  <a href=""><img src="img/trash.png" alt="Excluir"></a>
+			 </div>
+			<div class="checkbox">
+			  <label><input type="checkbox" value="">Plot 2</label>
+			  <a href=""><img src="img/trash.png" alt="Excluir"></a>
+			</div>
+			<div class="checkbox">
+			  <label><input type="checkbox" value="">Plot 3</label>
+			  <a href=""><img src="img/trash.png" alt="Excluir"></a>
+			</div>
+			<br>
+			<button type="button" class="btn btn-primary btn-block">Exportar</button>
+			<div class="form-group">
+			  <select class="form-control" id="sel6">
+			    <option>Formato 1</option>
+			    <option>Formato 2</option>
+			    <option>Formato 3</option>
+			  </select>
+			</div>
+	  	</div>
+	  	<!--------------- -->
+	  </div>	
+	</body>
+</html>
