@@ -13,10 +13,19 @@ hr {
 	border-style: dashed;
 	border-width: thin;
 	width: 160px;
+	float: left;
 }
 
 .close-panel-column{
 	padding-bottom:3px;
 	padding-left:3px;
 	padding-right:3px
+}
+.close-panel-column:hover{
+	cursor: pointer;
+}
+
+.panel-columns-x{
+	float: left;
+	margin-right: 15px;
 }
