@@ -18,4 +18,18 @@ $(document).ready(function() {
 		}
 	});
 
+	/** Close/remove panel column */
+	$('.close-panel-column').on('click', function(){
+		var idGroup = 'group-column-';
+		var id = this.id;
+		var atts = id.split("-");
+		
+		idGroup += atts[3];
+		idGroup += '-';
+		idGroup += atts[4];
+		var elem = document.getElementById(idGroup);
+		elem.parentNode.removeChild(elem);
+	});
+
+
 });

@@ -25,7 +25,15 @@ hr {
 	cursor: pointer;
 }
 
+.panel-columns{
+	width: 120px;
+}
+
 .panel-columns-x{
 	float: left;
 	margin-right: 15px;
+}
+
+.a-img-trash-plot:hover{
+	cursor: pointer;
 }
