@@ -31,5 +31,15 @@ $(document).ready(function() {
 		elem.parentNode.removeChild(elem);
 	});
 
+	/** Remove plot */
+	$('.a-img-trash-plot').on('click', function(){
+		var idGroup = 'checkbox-plot-group-';
+		var id = this.id;
+		var atts = id.split("-");
+		
+		idGroup += atts[3];
+		var elem = document.getElementById(idGroup);
+		elem.parentNode.removeChild(elem);
+	});
 
 });
