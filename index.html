@@ -26,35 +26,46 @@
 	  <script type="text/javascript">
 		$(function () {
 		    $('#chart').highcharts({
-		        chart: {
-		            type: 'line',
-		            height: '600'
-		        },
 		        title: {
-		            text: 'Monthly Average Temperature'
+		            text: 'Monthly Average Temperature',
+		            x: -20 //center
 		        },
 		        subtitle: {
-		            text: 'Source: WorldClimate.com'
+		            text: 'Source: WorldClimate.com',
+		            x: -20
 		        },
 		        xAxis: {
-		            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+		            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+		                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 		        },
 		        yAxis: {
 		            title: {
 		                text: 'Temperature (°C)'
-		            }
+		            },
+		            plotLines: [{
+		                value: 0,
+		                width: 1,
+		                color: '#808080'
+		            }]
 		        },
-		        plotOptions: {
-		            line: {
-		                dataLabels: {
-		                    enabled: true
-		                },
-		                enableMouseTracking: false
-		            }
+		        tooltip: {
+		            valueSuffix: '°C'
+		        },
+		        legend: {
+		            layout: 'vertical',
+		            align: 'right',
+		            verticalAlign: 'middle',
+		            borderWidth: 0
 		        },
 		        series: [{
 		            name: 'Tokyo',
-		            data: [7.0, 6.9, 9.5, 14.5, 18.4, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+		            data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6]
+		        }, {
+		            name: 'New York',
+		            data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+		        }, {
+		            name: 'Berlin',
+		            data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
 		        }, {
 		            name: 'London',
 		            data: [3.9, 4.2, 5.7, 8.5, 11.9, 15.2, 17.0, 16.6, 14.2, 10.3, 6.6, 4.8]
@@ -79,102 +90,17 @@
 		  		<button type="button" class="btn btn-primary btn-block">Novo</button>
 				<!-------------- -->
 				<hr>
-				<!-- part 2 -->
-		  		<div class="form-group">
-				  <select class="form-control" id="sel1">
-				    <option>Coluna de data</option>
-				    <option>2</option>
-				    <option>3</option>
-				    <option>4</option>
-				  </select>
+				<div id="group-filters-columns">
+					<div id="date-group-filters-columns">
+						<h3>DATAS</h3>
+					</div>
+					<div id="number-group-filters-columns">
+						<h3>NÚMEROS</h3>
+					</div>
+					<div id="text-group-filters-columns">
+						<h3>TEXTOS</h3>
+					</div>
 				</div>
-				<br>
-				<div class="form-group">
-				  <select class="form-control" id="sel2">
-				    <option>Datas disponíveis</option>
-				    <option>Faixa</option>
-				    <option>Maior que</option>
-				    <option>Menor que</option>
-				    <option>Personalizado</option>
-				  </select>
-				</div>
-				<br>
-				<div class="form-group">
-				  <select class="form-control" id="sel3">
-				    <option>Contar todos</option>
-				    <option>Contar se</option>
-				  </select>
-				</div>
-				<hr>
-				<!--------------- -->
-
-				<!-- part 3 -->
-				<div class="form-group">
-				  <select class="form-control" id="sel4">
-				    <option>Coluna número</option>
-				    <option>2</option>
-				    <option>3</option>
-				    <option>4</option>
-				  </select>
-				</div>
-				<br>
-				<div class="form-group">
-				  <select class="form-control" id="sel5">
-				    <option>Valores disponíveis</option>
-				    <option>Faixa</option>
-				    <option>Maior que</option>
-				    <option>Menor que</option>
-				    <option>Personalizado</option>
-				  </select>
-				</div>
-				<br>
-				<div class="form-group">
-				  <select class="form-control" id="sel6">
-				    <option>Contar todos</option>
-				    <option>Somar</option>
-				    <option>Média</option>
-				    <option>Somar se</option>
-				    <option>Contar se</option>
-				  </select>
-				</div>
-				<hr>
-				<!--------------- -->
-
-				<!-- part 4 -->
-				<div class="form-group">
-				  <select class="form-control" id="sel7">
-				    <option>Coluna texto</option>
-				    <option>2</option>
-				    <option>3</option>
-				    <option>4</option>
-				  </select>
-				</div>
-				<br>
-				<div class="form-group">
-				  <select class="form-control" id="sel8">
-				    <option>Valores disponíveis</option>
-				    <option>Personalizado</option>
-				  </select>
-				</div>
-				<br>
-				<div class="form-group">
-					<label for="per">Personalização:</label>
-				  	<input type="text" class="form-control" id="per">
-				</div>
-				<br>
-				<div class="form-group">
-				  <select class="form-control" id="sel9">
-				    <option>Contar todos</option>
-				    <option>Contar se</option>
-				  </select>
-				</div>
-				<br>
-				<div class="form-group">
-					<label for="con">Condições:</label>
-				  	<input type="text" class="form-control" id="con">
-				</div>
-				<!--------- -->
-
 		  	</div>
 		  	<!----------------->
 
@@ -185,10 +111,10 @@
 		  				<div class="form-group">
 	  					  <label for="sel10">Gráfico Padrão:</label>
 						  <select class="form-control" id="sel10">
-						    <option>Coluna número</option>
-						    <option>2</option>
-						    <option>3</option>
-						    <option>4</option>
+						    <option>Barra</option>
+						    <option>Linha</option>
+						    <option>Pizza</option>
+						    <option>Tabela</option>
 						  </select>
 						</div>
 		  			</div>
