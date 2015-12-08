@@ -774,7 +774,17 @@ $(document).ready(function() {
 			divcolumns = document.getElementById('columns-group-y');
 		}
 
-		var columnid = (divcolumns.children.length+1);
+		var columnid;
+
+		var childrens = divcolumns.children;
+		var childrenslength = childrens.length;
+		if(childrenslength > 0){
+			var lastcolumnid = childrens[childrenslength-1].id;
+			var lastcolumnidnumber = lastcolumnid.split('-')[3];
+			columnid = parseInt(lastcolumnidnumber)+1;
+		} else {
+			columnid = 1;
+		}
 
 		var firstdiv = document.createElement('div');
 		firstdiv.className = 'form-group panel-columns-x panel-columns';
