@@ -63,7 +63,18 @@ $(document).ready(function() {
 
 	$('loadColumnsAttributtes',function() {
 	  loadColumns(null);
+	  setEventsDragAndDrop();
 	});
+
+	function setEventsDragAndDrop(){
+		var dropcolumny = document.getElementById('drop-column-y');
+		dropcolumny.ondrop = drop;
+		dropcolumny.ondragover = allowDrop;
+
+		var dropcolumnx = document.getElementById('drop-column-x');
+		dropcolumnx.ondrop = drop;
+		dropcolumnx.ondragover = allowDrop;
+	}
 
 	/* Generate columns filters by JSON */
 	function loadColumns(jsonColumns){
@@ -105,6 +116,8 @@ $(document).ready(function() {
 
 		// creating new div with the filters 
 		var newdiv = document.createElement('div');
+		newdiv.draggable = true;
+		newdiv.ondragstart = drag;
 
 		// setting the div id 
 		newdiv.id = dategroupfilter_default+datenewidfilter;
@@ -112,7 +125,6 @@ $(document).ready(function() {
 		// label with attribute name
 		var namecolumn = document.createElement('label');
 		namecolumn.innerHTML = 'Coluna: '+datecolumn.name;
-		namecolumn.draggable = true;
 		newdiv.appendChild(namecolumn);
 
 		// creating the select option id
@@ -305,6 +317,8 @@ $(document).ready(function() {
 
 		// creating new div with the filters 
 		var newdiv = document.createElement('div');
+		newdiv.draggable = true;
+		newdiv.ondragstart = drag;
 
 		// setting the div id 
 		newdiv.id = numbergroupfilter_default+numbernewidfilter;
@@ -312,7 +326,6 @@ $(document).ready(function() {
 		// label with attribute name
 		var namecolumn = document.createElement('label');
 		namecolumn.innerHTML = 'Coluna: '+numbercolumn.name;
-		namecolumn.draggable = true;
 		newdiv.appendChild(namecolumn);
 
 		// creating the select option id
@@ -503,6 +516,8 @@ $(document).ready(function() {
 
 		// creating new div with the filters 
 		var newdiv = document.createElement('div');
+		newdiv.draggable = true;
+		newdiv.ondragstart = drag;
 
 		// setting the div id 
 		newdiv.id = textgroupfilter_default+textnewidfilter;
@@ -510,7 +525,6 @@ $(document).ready(function() {
 		// label with attribute name
 		var namecolumn = document.createElement('label');
 		namecolumn.innerHTML = 'Coluna: '+textcolumn.name;
-		namecolumn.draggable = true;
 		newdiv.appendChild(namecolumn);
 
 		// creating the select option id
@@ -712,17 +726,11 @@ $(document).ready(function() {
 	});
 
 	/* Close/remove panel column */
-	$('.close-panel-column').on('click', function(){
-		var idGroup = 'group-column-';
-		var id = this.id;
-		var atts = id.split("-");
-		
-		idGroup += atts[3];
-		idGroup += '-';
-		idGroup += atts[4];
-		var elem = document.getElementById(idGroup);
+	function closeDivColumn(){
+		var divid = this.id.replace("del-", "");
+		var elem = document.getElementById(divid);
 		elem.parentNode.removeChild(elem);
-	});
+	}
 
 	/* Remove plot */
 	$('.a-img-trash-plot').on('click', function(){
@@ -734,6 +742,67 @@ $(document).ready(function() {
 		var elem = document.getElementById(idGroup);
 		elem.parentNode.removeChild(elem);
 	});
+
+	/* ------------- FUNCTIONS DRAG AND DROP -------------------- */
+	function allowDrop(ev) {
+	    ev.preventDefault();
+	}
+
+	function drag(ev) {
+	    ev.dataTransfer.setData("id-div", ev.target.id);
+	}
+
+	function drop(ev) {
+	    ev.preventDefault();
+	    
+	    var column = ev.target.id.split('-')[2];
+	    var iddiv = ev.dataTransfer.getData("id-div");
+	    var type = iddiv.split('-')[2];
+	    
+	    createNewColumnOnChart(column, iddiv, type);
+	}
+	/* -------------------------------------------------------- */
+
+	/* function to create a panel with new column */
+	function createNewColumnOnChart(column, iddiv, type){
+
+		var divcolumns;
+
+		if(column == 'x') {
+			divcolumns = document.getElementById('columns-group-x');
+		} else {
+			divcolumns = document.getElementById('columns-group-y');
+		}
+
+		var columnid = (divcolumns.children.length+1);
+
+		var firstdiv = document.createElement('div');
+		firstdiv.className = 'form-group panel-columns-x panel-columns';
+		firstdiv.id = 'group-column-x-'+columnid;
+
+		var seconddiv = document.createElement('div');
+		seconddiv.className = 'panel panel-default';
+
+		var a = document.createElement('a');
+		a.className = 'img-rounded pull-right close-panel-column';
+		a.id = 'group-column-x-del-'+columnid;
+		a.onclick = closeDivColumn;
+
+		var img = document.createElement('img');
+		img.src = 'img/close.png';
+		img.alt = 'Excluir';
+
+		var thirddiv = document.createElement('div');
+		thirddiv.className = 'panel-body';
+		thirddiv.innerHTML = 'Coluna: '+columnid;
+
+		a.appendChild(img);
+		seconddiv.appendChild(a);
+		seconddiv.appendChild(thirddiv);
+		firstdiv.appendChild(seconddiv);
+
+		divcolumns.appendChild(firstdiv);
+	}
 
 	/* --------------------------------------------------------------------------------------------------------------------- */
 
