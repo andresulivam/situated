@@ -110,18 +110,18 @@
 		  			<div class="col-xs-2">
 		  				<div class="form-group">
 	  					  <label for="sel10">Gráfico Padrão:</label>
-						  <select class="form-control" id="sel10">
-						    <option>Barra</option>
-						    <option>Linha</option>
-						    <option>Pizza</option>
-						    <option>Tabela</option>
+						  <select id="select-default-graphic" class="form-control" id="sel10">
+						    <option value="bar">Barra</option>
+						    <option value="line">Linha</option>
+						    <option value="pizza">Pizza</option>
+						    <option value="table">Tabela</option>
 						  </select>
 						</div>
 		  			</div>
 		  			<div class="col-xs-10">
 		  				<div class="form-group">
-							<label for="tit">Título:</label>
-						  	<input type="text" class="form-control" id="tit">
+							<label for="tit">Título*:</label>
+						  	<input id="title-plot" type="text" class="form-control" id="tit">
 						</div>
 						<div class="form-group">
 							<label for="des">Descrição:</label>
@@ -132,24 +132,13 @@
 		  		<div class="row">
 		  			<div class="col-xs-2">
 		  				<div class="form-group" style="width: 120px">	
-		  				<select class="form-control" id="sel11">
-						    <option>Barra</option>
-						    <option>Linha</option>
+		  				<select id="select-secundary-graphic" class="form-control" id="sel11">
+						    <option value="bar">Barra</option>
+						    <option value="line">Linha</option>
 						  </select>  
 						  <br>
 						  <div id="columns-group-y">
-			  				<!-- <div id="group-column-y-1" class="form-group panel-columns">  
-							  <div class="panel panel-default">
-								<a id="group-column-del-y-1" class="img-rounded pull-right close-panel-column"><img src="img/close.png" alt="Excluir"></a>
-								<div class="panel-body">Coluna</div>
-						      </div>		      
-			  				</div>
-			  				<div id="group-column-y-2" class="form-group panel-columns">  
-							  <div class="panel panel-default">
-								<a id="group-column-del-y-2" class="img-rounded pull-right close-panel-column"><img src="img/close.png" alt="Excluir"></a>
-								<div class="panel-body">Coluna</div>
-						      </div>		      
-			  				</div> -->
+			  				<!-- space with the columns y -->
 		  				</div>
 						</div>	
 						<div id="panel-new-column-y" class="panel-new-column">
@@ -165,18 +154,7 @@
 		  		<div class="row">
 		  			<div class="col-xs-10 pull-right">
 		  				<div id="columns-group-x">
-			  				<!-- <div id="group-column-x-1" class="form-group panel-columns-x panel-columns">  
-							  <div class="panel panel-default">
-								<a id="group-column-del-x-1" class="img-rounded pull-right close-panel-column"><img src="img/close.png" alt="Excluir"></a>
-								<div class="panel-body">Coluna</div>
-						      </div>		      
-			  				</div>
-			  				<div id="group-column-x-2" class="form-group panel-columns-x panel-columns">  
-							  <div class="panel panel-default">
-								<a id="group-column-del-x-2" class="img-rounded pull-right close-panel-column"><img src="img/close.png" alt="Excluir"></a>
-								<div class="panel-body">Coluna</div>
-						      </div>		      
-			  				</div> -->
+			  				<!-- space with the columns x -->
 		  				</div>
 		  				<div id="panel-new-column-x" class="panel-new-column">
 					  		<div id="drop-column-x" class="panel-body">Arraste uma coluna</div>
@@ -186,7 +164,7 @@
 
 		  		<div class="row">
 		  			<div class="col-xs-2 pull-right">
-		  				<button type="button" class="btn btn-primary btn-block">Salvar</button>
+		  				<button id="button-save" type="button" class="btn btn-primary btn-block" disabled=false>Salvar</button>
 		  			</div>
 		  		</div>
 		  	</div>
@@ -195,24 +173,15 @@
 		  	<!-- right column -->
 		  	<div class="col-xs-2">
 		  		<h2 align="center">Plots</h2>
-		  		<div class="checkbox">
-				  <label><input type="checkbox" id="check-all-plots" value="">Marcar Todos</label>
-				</div>
-				<br>
-				<div id="checkbox-plot-group">
-			  		<div id="checkbox-plot-group-1" class="checkbox">
-					  <label><input type="checkbox" value="">Plot 1</label>
-					  <a id="checkbox-plot-del-1" class="a-img-trash-plot"><img src="img/trash.png" alt="Excluir" title="Excluir"></a>
-					 </div>
-					<div id="checkbox-plot-group-2" class="checkbox">
-					  <label><input type="checkbox" value="">Plot 2</label>
-					  <a id="checkbox-plot-del-2" class="a-img-trash-plot"><img src="img/trash.png" alt="Excluir" title="Excluir"></a>
+		  		<div class="plots">
+		  			<div class="checkbox">
+					  <label><input type="checkbox" id="check-all-plots" value="">Marcar Todos</label>
 					</div>
-					<div id="checkbox-plot-group-3" class="checkbox">
-					  <label><input type="checkbox" value="">Plot 3</label>
-					  <a id="checkbox-plot-del-3" class="a-img-trash-plot"><img src="img/trash.png" alt="Excluir" title="Excluir"></a>
-					</div>
-				</div>	
+					<br>
+					<div id="checkbox-plots-group">
+						<!-- space with the checkbox plots to export -->
+					</div>	
+		  		</div>
 				<br>
 				<button type="button" class="btn btn-primary btn-block">Exportar</button>
 				<div class="form-group">

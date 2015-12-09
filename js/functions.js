@@ -59,6 +59,15 @@ $(document).ready(function() {
 	var textconditions_default = 'text-conditions-';
 	/*-----------------*/
 
+	// var currencies = [
+	//     { value: 'soma', data: 'soma' },
+	//     { value: 'subtracao', data: 'subtracao' },
+	//     { value: 'divisao', data: 'divisao' },
+	//     { value: 'multiplicacao', data: 'multiplicacao' },
+	//     { value: 'avg', data: 'avg' },
+	//     { value: 'sum', data: 'sum' }
+	// ];
+
 	/* -------------------------------------------------------------------------------------------------- */
 
 	$('loadColumnsAttributtes',function() {
@@ -174,6 +183,10 @@ $(document).ready(function() {
 		personalise.id = datepersonalise_default+datenewidfilter;
 		personalise.type = 'text';
 		personalise.hidden = true;
+
+		// var datalist = optionsFunction();
+		// personalise.list = datalist;
+		// console.log(datalist);
 
 		// label to personalise filters
 		var labelpersonalise = document.createElement('label');
@@ -675,7 +688,7 @@ $(document).ready(function() {
 			var option1 = {value:"range", text:"Faixa"};
 			var option2 = {value:"biggerthan", text:"Maior que"};
 			var option3 = {value:"lessthan", text:"Menor que"};
-			arrayoptions.push(option0, option1, option2, option3);
+			arrayoptions.push(option1, option2, option3);
 		}
 		var option4 = {value:"personalise", text:"Personalizado"};
 		arrayoptions.push(option4);
@@ -704,22 +717,67 @@ $(document).ready(function() {
 		return arrayoptionscount;
 	}
 
+	// function optionsFunction(){
+
+	// 	var option1 = {value:"sum"};
+	// 	var option2 = {value:"subtraction"};
+	// 	var option3 = {value:"division"};
+	// 	var option4 = {value:"multiplication"};
+	// 	var option5 = {value:"avgcolumn"};
+	// 	var option6 = {value:"sumcolumn"};
+
+	// 	var array = new Array(option1, option2, option3, option4, option5, option6);
+
+	// 	return createDatalist(array);
+	// }
+
+	// function createDatalist(arrayoptions){
+	// 	var datalist = document.createElement('datalist');
+
+	// 	var option;
+
+	// 	for(var i=0; i < arrayoptions.length; i++){
+	// 		option =  document.createElement('option');
+	// 		option.value = arrayoptions[i].value;
+	// 		datalist.appendChild(option);
+	// 	}
+	// 	return datalist;
+	// }
+
 	/* --------------------------------------------------------------------------------------------------------------------- */
 	
 	/* ------------------------------------------ FUNCTIONS TO MANIPULATE SCREEN ------------------------------------------- */
 
+ 	/* Enable button save */
+	$('#title-plot').on('input', function(){
+		var buttonsave = document.getElementById('button-save');
+		if(this.value.length>0){
+			buttonsave.removeAttribute('disabled');
+		} else {
+			buttonsave.setAttribute('disabled', 'disabled');
+		}
+	});
+
+	/* Enable the select different graphic of graphic default */
+	$('#select-default-graphic').on('change', function(){
+		var graphicsecondary = document.getElementById('select-secundary-graphic');
+		if(this.value != 'pizza' && this.value != 'table'){
+			graphicsecondary.removeAttribute('disabled');
+		} else {
+			graphicsecondary.setAttribute('disabled', 'disabled');
+		}
+	});
+
  	/* Check all plots */
 	$('#check-all-plots').on('change', function(){
 		var stateCheckAll = $('#check-all-plots').is(':checked');
-		var plots = $('#checkbox-plot-group');
+		var plots = $('#checkbox-plots-group');
 		var checkboxes = plots.children('div');
-		var divcheckbox;
 		var checkbox;
 
 		if(checkboxes.length > 0){
 			for( var i = 0; i < checkboxes.length; i++){
-			    divcheckbox = checkboxes[i];
-			    checkbox = divcheckbox.children[0].children[0];
+			    checkbox = checkboxes[i].children[0];
 			    checkbox.checked = stateCheckAll;
 			}		
 		}
@@ -733,15 +791,11 @@ $(document).ready(function() {
 	}
 
 	/* Remove plot */
-	$('.a-img-trash-plot').on('click', function(){
-		var idGroup = 'checkbox-plot-group-';
-		var id = this.id;
-		var atts = id.split("-");
-		
-		idGroup += atts[3];
-		var elem = document.getElementById(idGroup);
+	function removePlot(){
+		var divid = this.id.replace("del-", "");
+		var elem = document.getElementById(divid);
 		elem.parentNode.removeChild(elem);
-	});
+	}
 
 	/* ------------- FUNCTIONS DRAG AND DROP -------------------- */
 	function allowDrop(ev) {
@@ -750,6 +804,8 @@ $(document).ready(function() {
 
 	function drag(ev) {
 	    ev.dataTransfer.setData("id-div", ev.target.id);
+	    var namecolumn = ev.target.children[0].innerHTML.split(':')[1];
+	    ev.dataTransfer.setData("name-column", namecolumn);
 	}
 
 	function drop(ev) {
@@ -757,22 +813,18 @@ $(document).ready(function() {
 	    
 	    var column = ev.target.id.split('-')[2];
 	    var iddiv = ev.dataTransfer.getData("id-div");
+	    var namecolumn = ev.dataTransfer.getData("name-column");
 	    var type = iddiv.split('-')[2];
-	    
-	    createNewColumnOnChart(column, iddiv, type);
+	    createNewColumnOnChart(column, iddiv, type, namecolumn);
 	}
 	/* -------------------------------------------------------- */
 
 	/* function to create a panel with new column */
-	function createNewColumnOnChart(column, iddiv, type){
+	function createNewColumnOnChart(column, iddiv, type, namecolumn){
 
 		var divcolumns;
 
-		if(column == 'x') {
-			divcolumns = document.getElementById('columns-group-x');
-		} else {
-			divcolumns = document.getElementById('columns-group-y');
-		}
+		divcolumns = document.getElementById('columns-group-'+column);
 
 		var columnid;
 
@@ -787,15 +839,15 @@ $(document).ready(function() {
 		}
 
 		var firstdiv = document.createElement('div');
-		firstdiv.className = 'form-group panel-columns-x panel-columns';
-		firstdiv.id = 'group-column-x-'+columnid;
+		firstdiv.className = 'form-group panel-columns-'+column+' panel-columns';
+		firstdiv.id = 'group-column-'+column+'-'+columnid;
 
 		var seconddiv = document.createElement('div');
 		seconddiv.className = 'panel panel-default';
 
 		var a = document.createElement('a');
 		a.className = 'img-rounded pull-right close-panel-column';
-		a.id = 'group-column-x-del-'+columnid;
+		a.id = 'group-column-'+column+'-del-'+columnid;
 		a.onclick = closeDivColumn;
 
 		var img = document.createElement('img');
@@ -804,7 +856,7 @@ $(document).ready(function() {
 
 		var thirddiv = document.createElement('div');
 		thirddiv.className = 'panel-body';
-		thirddiv.innerHTML = 'Coluna: '+columnid;
+		thirddiv.innerHTML = namecolumn;
 
 		a.appendChild(img);
 		seconddiv.appendChild(a);
@@ -812,6 +864,45 @@ $(document).ready(function() {
 		firstdiv.appendChild(seconddiv);
 
 		divcolumns.appendChild(firstdiv);
+	}
+
+	/* Save configuration graphic in a new plot */
+	$('#button-save').on('click', function(){
+		generateNewPlot();
+	});	
+
+	/* function to create a new plot */
+	function generateNewPlot(){
+
+		var divplots = document.getElementById('checkbox-plots-group');
+		var titleplot = document.getElementById('title-plot');
+
+		var div = document.createElement('div');
+		div.className = 'checkbox';
+		div.id = 'checkbox-plot-'+titleplot.value;
+
+		var label = document.createElement('label');
+		label.innerHTML = titleplot.value;
+
+		var input = document.createElement('input');
+		input.type = 'checkbox';
+
+		var a = document.createElement('a');
+		a.className = 'a-img-trash-plot';
+		a.id = 'checkbox-plot-del-'+titleplot.value;
+		a.onclick = removePlot;
+
+		var img = document.createElement('img');
+		img.src = 'img/trash.png';
+		img.alt = 'Excluir';
+		img.title = "Excluir";
+
+		div.appendChild(input);
+		div.appendChild(label);
+		a.appendChild(img);
+		div.appendChild(a);
+
+		divplots.appendChild(div);
 	}
 
 	/* --------------------------------------------------------------------------------------------------------------------- */
