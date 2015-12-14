@@ -1,6 +1,8 @@
 $(document).ready(function() {
 
 	/* ---------------------------------- IDS OF ELEMENTS --------------------------------------- */
+
+	var iddatalists = 'datalists-personalised-';
 	
 	/* DATE COLUMNS */
 	var dateidgroupdivscolumnsfilters = 'date-group-filters-columns';
@@ -14,8 +16,8 @@ $(document).ready(function() {
 	var datepickerinitial_default = 'date-picker-initial-';
 	var datepickerfinal_default = 'date-picker-final-';
 
-	var datelabelpersonalise_default = 'date-label-personalise-';
-	var datepersonalise_default = 'date-personalise-';
+	var datelabelpersonalised_default = 'date-label-personalised-';
+	var datepersonalised_default = 'date-personalised-';
 
 	var datecountselect_default = 'date-count-select-';
 
@@ -35,8 +37,8 @@ $(document).ready(function() {
 	var numberinitial_default = 'number-initial-';
 	var numberfinal_default = 'number-final-';
 
-	var numberlabelpersonalise_default = 'number-label-personalise-';
-	var numberpersonalise_default = 'number-personalise-';
+	var numberlabelpersonalised_default = 'number-label-personalised-';
+	var numberpersonalised_default = 'number-personalised-';
 
 	var numbercountselect_default = 'number-count-select-';
 
@@ -50,23 +52,14 @@ $(document).ready(function() {
 	var textgroupfilter_default = 'group-filter-text-';
 	var textselectformtype_default = 'text-select-form-type-';
 
-	var textlabelpersonalise_default = 'text-label-personalise-';
-	var textpersonalise_default = 'text-personalise-';
+	var textlabelpersonalised_default = 'text-label-personalised-';
+	var textpersonalised_default = 'text-personalised-';
 
 	var textcountselect_default = 'text-count-select-';
 
 	var textlabelconditions_default = 'text-label-conditions-';
 	var textconditions_default = 'text-conditions-';
 	/*-----------------*/
-
-	// var currencies = [
-	//     { value: 'soma', data: 'soma' },
-	//     { value: 'subtracao', data: 'subtracao' },
-	//     { value: 'divisao', data: 'divisao' },
-	//     { value: 'multiplicacao', data: 'multiplicacao' },
-	//     { value: 'avg', data: 'avg' },
-	//     { value: 'sum', data: 'sum' }
-	// ];
 
 	/* -------------------------------------------------------------------------------------------------- */
 
@@ -124,16 +117,11 @@ $(document).ready(function() {
 		var datenewidfilter = dateFilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = document.createElement('div');
-		newdiv.draggable = true;
-		newdiv.ondragstart = drag;
-
-		// setting the div id 
-		newdiv.id = dategroupfilter_default+datenewidfilter;
+		var newdiv = createNewDiv(dategroupfilter_default+datenewidfilter, true, drag, null, null);
 
 		// label with attribute name
-		var namecolumn = document.createElement('label');
-		namecolumn.innerHTML = 'Coluna: '+datecolumn.name;
+		var namecolumn = createNewLabel(null, 'Coluna: '+datecolumn.name, false);
+
 		newdiv.appendChild(namecolumn);
 
 		// creating the select option id
@@ -144,58 +132,37 @@ $(document).ready(function() {
 		// creating the select options to dates
 		var select = createSelectWithOptions(idselect, arrayoptions);
 		select.onchange = dateSelectIntervalDateChange;
+
 		newdiv.appendChild(select);
 
 		// creating the date filters to use after the select change
-		var dateinitial = document.createElement('input');
-		dateinitial.id = datepickerinitial_default+datenewidfilter;
-		dateinitial.type = 'date';
-		dateinitial.className = 'date-picker';
-		dateinitial.hidden = true;
+		var dateinitial = createNewInput(datepickerinitial_default+datenewidfilter, 'date', 'date-picker', true, null);
 
 		// label to initial date
-		var labelinitial = document.createElement('label');
-		labelinitial.id = datelabelinitial_default+datenewidfilter;
-		labelinitial.innerHTML = 'Data inicial';
-		labelinitial.hidden = true;
+		var labelinitial = createNewLabel(datelabelinitial_default+datenewidfilter, 'Data inicial', true);
 
 		newdiv.appendChild(labelinitial);
 		newdiv.appendChild(dateinitial);
 
 		// creating the date filters to use after the select change
-		var datefinal = document.createElement('input');
-		datefinal.id = datepickerfinal_default+datenewidfilter;
-		datefinal.type = 'date';
-		datefinal.className = 'date-picker';
-		datefinal.hidden = true;
+		var datefinal = createNewInput(datepickerfinal_default+datenewidfilter, 'date', 'date-picker', true, null);
 
 		// label to final date
-		var labelfinal = document.createElement('label');
-		labelfinal.id = datelabelfinal_default+datenewidfilter;
-		labelfinal.innerHTML = 'Data final';
-		labelfinal.hidden = true;
+		var labelfinal = createNewLabel(datelabelfinal_default+datenewidfilter, 'Data final', true);
 
 		newdiv.appendChild(labelfinal);
 		newdiv.appendChild(datefinal);
 
-		// text field to personalise the filter
-		var personalise = document.createElement('input');
-		personalise.id = datepersonalise_default+datenewidfilter;
-		personalise.type = 'text';
-		personalise.hidden = true;
+		// text field to personalised the filter
+		var idpersonalised = datepersonalised_default+datenewidfilter;
+		var personalised = createNewInput(idpersonalised, 'text', null, true, validateTextPersonalised);
+		createDivWithDatalistsToColumn(idpersonalised);
 
-		// var datalist = optionsFunction();
-		// personalise.list = datalist;
-		// console.log(datalist);
+		// label to personalised filters
+		var labelpersonalised = createNewLabel(datelabelpersonalised_default+datenewidfilter, 'Personalizado', true);
 
-		// label to personalise filters
-		var labelpersonalise = document.createElement('label');
-		labelpersonalise.id = datelabelpersonalise_default+datenewidfilter;
-		labelpersonalise.innerHTML = 'Personalizado';
-		labelpersonalise.hidden = true;
-
-		newdiv.appendChild(labelpersonalise);
-		newdiv.appendChild(personalise);
+		newdiv.appendChild(labelpersonalised);
+		newdiv.appendChild(personalised);
 
 		var arrayoptionscount = optionsCounter('date');
 
@@ -204,17 +171,11 @@ $(document).ready(function() {
 		selectCount.onchange = dateSelectCountChange;
 		newdiv.appendChild(selectCount);
 
-		// text field to personalise the filter
-		var conditions = document.createElement('input');
-		conditions.id = dateconditions_default+datenewidfilter;
-		conditions.type = 'text';
-		conditions.hidden = true;
+		// text field to conditions filter
+		var conditions = createNewInput(dateconditions_default+datenewidfilter, 'text', null, true, null);
 
-		// label to personalise filters
-		var labelconditions = document.createElement('label');
-		labelconditions.id = datelabelconditions_default+datenewidfilter;
-		labelconditions.innerHTML = 'Condição';
-		labelconditions.hidden = true;
+		// label to conditions filters
+		var labelconditions = createNewLabel(datelabelconditions_default+datenewidfilter, 'Condição', true);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -241,14 +202,14 @@ $(document).ready(function() {
 	/* function to configure the date pickers of interval based on selected option by user */
 	function dateConfigureDatePickers(optionSelected, id){
 
-		var dateinitial, datefinal, labelinitial, labelfinal, personalise, labelpersonalise;
+		var dateinitial, datefinal, labelinitial, labelfinal, personalise, labelpersonalised;
 
 		dateinitial = document.getElementById(datepickerinitial_default+id);
 		datefinal = document.getElementById(datepickerfinal_default+id);
 		labelinitial = document.getElementById(datelabelinitial_default+id);
 		labelfinal = document.getElementById(datelabelfinal_default+id);
-		personalise = document.getElementById(datepersonalise_default+id);
-		labelpersonalise = document.getElementById(datelabelpersonalise_default+id);
+		personalised = document.getElementById(datepersonalised_default+id);
+		labelpersonalised = document.getElementById(datelabelpersonalised_default+id);
 
 		switch(optionSelected){
 			case 'range':
@@ -256,40 +217,40 @@ $(document).ready(function() {
 				labelinitial.hidden = false;
 				datefinal.hidden = false;
 				labelfinal.hidden = false;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;
 			case 'biggerthan':
 				dateinitial.hidden = false;
 				labelinitial.hidden = false;
 				datefinal.hidden = true;
 				labelfinal.hidden = true;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;
 			case 'lessthan':
 				datefinal.hidden = false;
 				labelfinal.hidden = false;
 				dateinitial.hidden = true;
 				labelinitial.hidden = true;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;
-			case 'personalise':
+			case 'personalised':
 				dateinitial.hidden = true;
 				datefinal.hidden = true;
 				labelinitial.hidden = true;
 				labelfinal.hidden = true;
-				personalise.hidden = false;
-				labelpersonalise.hidden = false;
+				personalised.hidden = false;
+				labelpersonalised.hidden = false;
 				break;
 			default:
 				dateinitial.hidden = true;
 				datefinal.hidden = true;
 				labelinitial.hidden = true;
 				labelfinal.hidden = true;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;		
 		}
 	}
@@ -329,16 +290,11 @@ $(document).ready(function() {
 		var numbernewidfilter = numberfilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = document.createElement('div');
-		newdiv.draggable = true;
-		newdiv.ondragstart = drag;
-
-		// setting the div id 
-		newdiv.id = numbergroupfilter_default+numbernewidfilter;
+		var newdiv = createNewDiv(numbergroupfilter_default+numbernewidfilter, true, drag, null, null);
 
 		// label with attribute name
-		var namecolumn = document.createElement('label');
-		namecolumn.innerHTML = 'Coluna: '+numbercolumn.name;
+		var namecolumn = createNewLabel(null, 'Coluna: '+numbercolumn.name, false);
+		
 		newdiv.appendChild(namecolumn);
 
 		// creating the select option id
@@ -352,49 +308,33 @@ $(document).ready(function() {
 		newdiv.appendChild(select);
 
 		// creating the number filters to use after the select change
-		var numberinitial = document.createElement('input');
-		numberinitial.id = numberinitial_default+numbernewidfilter;
-		numberinitial.type = 'number';
-		numberinitial.hidden = true;
+		var numberinitial = createNewInput(numberinitial_default+numbernewidfilter, 'number', null, true, null);
 
 		// label to initial number
-		var labelinitial = document.createElement('label');
-		labelinitial.id = numberlabelinitial_default+numbernewidfilter;
-		labelinitial.innerHTML = 'Valor inicial';
-		labelinitial.hidden = true;
+		var labelinitial = createNewLabel(numberlabelinitial_default+numbernewidfilter, 'Valor inicial', true);
 
 		newdiv.appendChild(labelinitial);
 		newdiv.appendChild(numberinitial);
 
 		// creating the number filters to use after the select change
-		var numberfinal = document.createElement('input');
-		numberfinal.id = numberfinal_default+numbernewidfilter;
-		numberfinal.type = 'number';
-		numberfinal.hidden = true;
+		var numberfinal = createNewInput(numberfinal_default+numbernewidfilter, 'number', null, true, null);
 
 		// label to final number
-		var labelfinal = document.createElement('label');
-		labelfinal.id = numberlabelfinal_default+numbernewidfilter;
-		labelfinal.innerHTML = 'Valor final';
-		labelfinal.hidden = true;
+		var labelfinal = createNewLabel(numberlabelfinal_default+numbernewidfilter, 'Valor final', true);
 
 		newdiv.appendChild(labelfinal);
 		newdiv.appendChild(numberfinal);
 
-		// text field to personalise the filter
-		var personalise = document.createElement('input');
-		personalise.id = numberpersonalise_default+numbernewidfilter;
-		personalise.type = 'text';
-		personalise.hidden = true;
+		// text field to personalised filter
+		var idpersonalised = numberpersonalised_default+numbernewidfilter;
+		var personalised = createNewInput(idpersonalised, 'text', null, true, validateTextPersonalised);
+		createDivWithDatalistsToColumn(idpersonalised);
 
 		// label to personalise filters
-		var labelpersonalise = document.createElement('label');
-		labelpersonalise.id = numberlabelpersonalise_default+numbernewidfilter;
-		labelpersonalise.innerHTML = 'Personalizado';
-		labelpersonalise.hidden = true;
+		var labelpersonalised = createNewLabel(numberlabelpersonalised_default+numbernewidfilter, 'Personalizado', true);
 
-		newdiv.appendChild(labelpersonalise);
-		newdiv.appendChild(personalise);
+		newdiv.appendChild(labelpersonalised);
+		newdiv.appendChild(personalised);
 
 		var arrayoptionscount = optionsCounter('number');
 
@@ -403,17 +343,11 @@ $(document).ready(function() {
 		selectcount.onchange = numberSelectCountChange;
 		newdiv.appendChild(selectcount);
 
-		// text field to personalise the filter
-		var conditions = document.createElement('input');
-		conditions.id = numberconditions_default+numbernewidfilter;
-		conditions.type = 'text';
-		conditions.hidden = true;
+		// text field to conditions filter
+		var conditions = createNewInput(numberconditions_default+numbernewidfilter, 'text', null, true, null);
 
-		// label to personalise filters
-		var labelconditions = document.createElement('label');
-		labelconditions.id = numberlabelconditions_default+numbernewidfilter;
-		labelconditions.innerHTML = 'Condição';
-		labelconditions.hidden = true;
+		// label to conditions filters
+		var labelconditions = createNewLabel(numberlabelconditions_default+numbernewidfilter, 'Condição', true);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -446,8 +380,8 @@ $(document).ready(function() {
 		numberfinal = document.getElementById(numberfinal_default+id);
 		labelinitial = document.getElementById(numberlabelinitial_default+id);
 		labelfinal = document.getElementById(numberlabelfinal_default+id);
-		personalise = document.getElementById(numberpersonalise_default+id);
-		labelpersonalise = document.getElementById(numberlabelpersonalise_default+id);
+		personalised = document.getElementById(numberpersonalised_default+id);
+		labelpersonalised = document.getElementById(numberlabelpersonalised_default+id);
 
 		switch(optionSelected){
 			case 'range':
@@ -455,40 +389,40 @@ $(document).ready(function() {
 				labelinitial.hidden = false;
 				numberfinal.hidden = false;
 				labelfinal.hidden = false;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;
 			case 'biggerthan':
 				numberinitial.hidden = false;
 				labelinitial.hidden = false;
 				numberfinal.hidden = true;
 				labelfinal.hidden = true;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;
 			case 'lessthan':
 				numberfinal.hidden = false;
 				labelfinal.hidden = false;
 				numberinitial.hidden = true;
 				labelinitial.hidden = true;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;
-			case 'personalise':
+			case 'personalised':
 				numberinitial.hidden = true;
 				numberfinal.hidden = true;
 				labelinitial.hidden = true;
 				labelfinal.hidden = true;
-				personalise.hidden = false;
-				labelpersonalise.hidden = false;
+				personalised.hidden = false;
+				labelpersonalised.hidden = false;
 				break;
 			default:
 				numberinitial.hidden = true;
 				numberfinal.hidden = true;
 				labelinitial.hidden = true;
 				labelfinal.hidden = true;
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;		
 		}
 	}
@@ -528,16 +462,11 @@ $(document).ready(function() {
 		var textnewidfilter = textfilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = document.createElement('div');
-		newdiv.draggable = true;
-		newdiv.ondragstart = drag;
-
-		// setting the div id 
-		newdiv.id = textgroupfilter_default+textnewidfilter;
+		var newdiv = createNewDiv(textgroupfilter_default+textnewidfilter, true, drag, null, null);
 
 		// label with attribute name
-		var namecolumn = document.createElement('label');
-		namecolumn.innerHTML = 'Coluna: '+textcolumn.name;
+		var namecolumn = createNewLabel(null, 'Coluna: '+textcolumn.name, false);
+
 		newdiv.appendChild(namecolumn);
 
 		// creating the select option id
@@ -551,19 +480,15 @@ $(document).ready(function() {
 		newdiv.appendChild(select);
 
 		// text field to personalise the filter
-		var personalise = document.createElement('input');
-		personalise.id = textpersonalise_default+textnewidfilter;
-		personalise.type = 'text';
-		personalise.hidden = true;
+		var idpersonalised = textpersonalised_default+textnewidfilter;
+		var personalised = createNewInput(idpersonalised, 'text', null, true, validateTextPersonalised);
+		createDivWithDatalistsToColumn(idpersonalised);
 
 		// label to personalise filters
-		var labelpersonalise = document.createElement('label');
-		labelpersonalise.id = textlabelpersonalise_default+textnewidfilter;
-		labelpersonalise.innerHTML = 'Personalizado';
-		labelpersonalise.hidden = true;
+		var labelpersonalised = createNewLabel(textlabelpersonalised_default+textnewidfilter, 'Personalizado', true);
 
-		newdiv.appendChild(labelpersonalise);
-		newdiv.appendChild(personalise);
+		newdiv.appendChild(labelpersonalised);
+		newdiv.appendChild(personalised);
 
 		var arrayoptionscount = optionsCounter('text');
 
@@ -572,17 +497,11 @@ $(document).ready(function() {
 		selectcount.onchange = textSelectCountChange;
 		newdiv.appendChild(selectcount);
 
-		// text field to personalise the filter
-		var conditions = document.createElement('input');
-		conditions.id = textconditions_default+textnewidfilter;
-		conditions.type = 'text';
-		conditions.hidden = true;
+		// text field to conditions filter
+		var conditions = createNewInput(textconditions_default+textnewidfilter, 'text', null, true, null);
 
-		// label to personalise filters
-		var labelconditions = document.createElement('label');
-		labelconditions.id = textlabelconditions_default+textnewidfilter;
-		labelconditions.innerHTML = 'Condição';
-		labelconditions.hidden = true;
+		// label to conditions filters
+		var labelconditions = createNewLabel(textlabelconditions_default+textnewidfilter, 'Condição', true);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -611,17 +530,17 @@ $(document).ready(function() {
 
 		var personalise, labelpersonalise;
 
-		personalise = document.getElementById(textpersonalise_default+id);
-		labelpersonalise = document.getElementById(textlabelpersonalise_default+id);
+		personalised = document.getElementById(textpersonalised_default+id);
+		labelpersonalised = document.getElementById(textlabelpersonalised_default+id);
 
 		switch(optionSelected){
-			case 'personalise':
-				personalise.hidden = false;
-				labelpersonalise.hidden = false;
+			case 'personalised':
+				personalised.hidden = false;
+				labelpersonalised.hidden = false;
 				break;
 			default:
-				personalise.hidden = true;
-				labelpersonalise.hidden = true;
+				personalised.hidden = true;
+				labelpersonalised.hidden = true;
 				break;		
 		}
 	}
@@ -650,6 +569,97 @@ $(document).ready(function() {
 	/* --------------------------------------------------------------------------------------------------------------------- */
 
 	/* -------------------------------- FUNCTIONS USED BY MORE ONE COLUMN TYPE --------------------------------------------- */
+
+	/* --------- CREATING NEW ELEMENTS ------- */
+
+	/* creating new div */
+	function createNewDiv(iddiv, draggable, ondragstart, classname, innerhtml){
+		var newdiv = document.createElement('div');
+		if(iddiv != null){
+			newdiv.id = iddiv;
+		}
+		if(draggable != null){
+			newdiv.draggable = true;
+		}
+		if(ondragstart != null){
+			newdiv.ondragstart = drag;
+		}
+		if(classname != null){
+			newdiv.className = classname;
+		}
+		if(innerhtml != null){
+			newdiv.innerHTML = innerhtml;
+		}
+		return newdiv;
+	}
+
+	/* creating new label */
+	function createNewLabel(id, innerHTML, hidden){
+		var newlabel = document.createElement('label');
+		newlabel.innerHTML = innerHTML;
+		if(id != null){
+			newlabel.id = id;
+		}
+		newlabel.hidden = hidden;
+		return newlabel;
+	}
+
+	/* creating new input */
+	function createNewInput(id, type, classname, hidden, oninput){
+		var newinput = document.createElement('input');
+		if(id != null){
+			newinput.id = id;
+		}
+		if(type != null){
+			newinput.type = type;
+		}
+		if(hidden != null){
+			newinput.hidden = hidden;
+		}
+		if(classname != null){
+			newinput.className = classname;
+		}
+		if(oninput != null){
+			newinput.oninput = oninput;
+		}
+		return newinput;
+	}
+
+	/* creating new a */
+	function createNewA(id, classname, onclick){
+		var newa = document.createElement('a');
+		if(id != null){
+			newa.id = id;
+		}
+		if(classname != null){
+			newa.className = classname;
+		}
+		if(onclick != null){
+			newa.onclick = onclick;
+		}
+		return newa;
+	}
+
+	/* creating new img */
+	function createNewImg(id, src, alt, title){
+		var newimg = document.createElement('img');
+		if(id != null){
+			newimg.id = id;
+		}
+		if(src != null){
+			newimg.src = src;
+		}
+		if(alt != null){
+			newimg.alt = alt;
+		}
+		if(title != null){
+			newimg.title = title;
+		}
+		return newimg;
+	}
+
+
+	/* --------------------------------------- */
 
 	/* Creating the select options  
 		@param type (example: 'select-form-date-type-')
@@ -690,7 +700,7 @@ $(document).ready(function() {
 			var option3 = {value:"lessthan", text:"Menor que"};
 			arrayoptions.push(option1, option2, option3);
 		}
-		var option4 = {value:"personalise", text:"Personalizado"};
+		var option4 = {value:"personalised", text:"Personalizado"};
 		arrayoptions.push(option4);
 	
 		return arrayoptions;
@@ -717,32 +727,16 @@ $(document).ready(function() {
 		return arrayoptionscount;
 	}
 
-	// function optionsFunction(){
+	function createDivWithDatalistsToColumn(idtextfield){
+		var type = idtextfield.split('-')[0];
+		var iddivdatalists = iddatalists+type;
+		var divdatalists = document.getElementById(iddivdatalists);
 
-	// 	var option1 = {value:"sum"};
-	// 	var option2 = {value:"subtraction"};
-	// 	var option3 = {value:"division"};
-	// 	var option4 = {value:"multiplication"};
-	// 	var option5 = {value:"avgcolumn"};
-	// 	var option6 = {value:"sumcolumn"};
+		var idnewdatalist = iddivdatalists+'-'+idtextfield.split('-')[2];
 
-	// 	var array = new Array(option1, option2, option3, option4, option5, option6);
-
-	// 	return createDatalist(array);
-	// }
-
-	// function createDatalist(arrayoptions){
-	// 	var datalist = document.createElement('datalist');
-
-	// 	var option;
-
-	// 	for(var i=0; i < arrayoptions.length; i++){
-	// 		option =  document.createElement('option');
-	// 		option.value = arrayoptions[i].value;
-	// 		datalist.appendChild(option);
-	// 	}
-	// 	return datalist;
-	// }
+		var newdiv = createNewDiv(idnewdatalist, null, null, null, null);
+		divdatalists.appendChild(newdiv);
+	}
 
 	/* --------------------------------------------------------------------------------------------------------------------- */
 	
@@ -838,25 +832,24 @@ $(document).ready(function() {
 			columnid = 1;
 		}
 
-		var firstdiv = document.createElement('div');
-		firstdiv.className = 'form-group panel-columns-'+column+' panel-columns';
-		firstdiv.id = 'group-column-'+column+'-'+columnid;
+		var idfirstdiv = 'group-column-'+column+'-'+columnid;
+		var classnamefirstdiv = 'form-group panel-columns-'+column+' panel-columns';
 
-		var seconddiv = document.createElement('div');
-		seconddiv.className = 'panel panel-default';
+		var firstdiv = createNewDiv(idfirstdiv, null, null, classnamefirstdiv, null);
 
-		var a = document.createElement('a');
-		a.className = 'img-rounded pull-right close-panel-column';
-		a.id = 'group-column-'+column+'-del-'+columnid;
-		a.onclick = closeDivColumn;
+		var classnameseconddiv = 'panel panel-default';
+		var seconddiv = createNewDiv(null, null, null, classnameseconddiv, null);
 
-		var img = document.createElement('img');
-		img.src = 'img/close.png';
-		img.alt = 'Excluir';
+		var aid = 'group-column-'+column+'-del-'+columnid;
+		var classnamea = 'img-rounded pull-right close-panel-column';
+		var a = createNewA(aid, classnamea, closeDivColumn);
 
-		var thirddiv = document.createElement('div');
-		thirddiv.className = 'panel-body';
-		thirddiv.innerHTML = namecolumn;
+		var imgsrc = 'img/close.png';
+		var imgalt = 'Excluir';
+		var img = createNewImg(null, imgsrc, imgalt, null);
+
+		var classnamethirddiv = 'panel-body';
+		var thirddiv = createNewDiv(null, null, null, classnamethirddiv, namecolumn);
 
 		a.appendChild(img);
 		seconddiv.appendChild(a);
@@ -877,25 +870,22 @@ $(document).ready(function() {
 		var divplots = document.getElementById('checkbox-plots-group');
 		var titleplot = document.getElementById('title-plot');
 
-		var div = document.createElement('div');
-		div.className = 'checkbox';
-		div.id = 'checkbox-plot-'+titleplot.value;
+		var divid = 'checkbox-plot-'+titleplot.value;
+		var divclassname = 'checkbox';
+		var div = createNewDiv(divid, null, null, divclassname, null);
 
-		var label = document.createElement('label');
-		label.innerHTML = titleplot.value;
+		var label = createNewLabel(null, titleplot.value, null);
 
-		var input = document.createElement('input');
-		input.type = 'checkbox';
+		var input = createNewInput(null, 'checkbox', null, null, null);
 
-		var a = document.createElement('a');
-		a.className = 'a-img-trash-plot';
-		a.id = 'checkbox-plot-del-'+titleplot.value;
-		a.onclick = removePlot;
+		var aid = 'checkbox-plot-del-'+titleplot.value;
+		var classnamea = 'a-img-trash-plot';
+		var a = createNewA(aid, classnamea, removePlot);
 
-		var img = document.createElement('img');
-		img.src = 'img/trash.png';
-		img.alt = 'Excluir';
-		img.title = "Excluir";
+		var imgsrc = 'img/trash.png';
+		var imgalt = 'Excluir';
+		var imgtitle = 'Excluir';
+		var img = createNewImg(null, imgsrc, imgalt, imgtitle)
 
 		div.appendChild(input);
 		div.appendChild(label);
@@ -903,6 +893,144 @@ $(document).ready(function() {
 		div.appendChild(a);
 
 		divplots.appendChild(div);
+	}
+
+	function arrayDataListFunctions(text){
+		// generating the options to functions
+		var option0 = {value:text+"sum("};
+		var option1 = {value:text+"avg("};
+
+		// creating array with the options
+		var arrayoptions = new Array(option0, option1);
+
+		return arrayoptions;
+	}
+
+	function arrayDataListFunctionsAndColumns(text){
+		// creating array with the options
+		var arrayoptions = $.merge(arrayDataListFunctions(text),arrayDataListColumns(text));
+		return arrayoptions;
+	}
+
+	function arrayDataListSimbols(text, parenteses){
+		// generating the options to functions
+		var arrayoptions = new Array();
+
+		if(!parenteses) {
+			var option0 = {value:text+")"};
+			arrayoptions.push(option0);
+		}
+
+		var option1 = {value:text+"+"};
+		var option2 = {value:text+"-"};
+		var option3 = {value:text+"*"};
+		var option4 = {value:text+"/"};
+		arrayoptions.push(option1, option2, option3, option4);
+
+		return arrayoptions;
+	}
+
+	function arrayDataListColumns(text){
+		// generating the columns options 
+		var option0 = {value:text+"salario"};
+		var option1 = {value:text+"idade"};
+		var option2 = {value:text+"peso"};
+		var option3 = {value:text+"altura"};
+
+		// creating array with the options
+		var arrayoptions = new Array(option0, option1, option2, option3);
+
+		return arrayoptions;
+	}
+
+	function validateTextPersonalised(){
+		var value = this.value;
+		var idtextfield = this.id;
+		var arrayoptions;
+		var datalist;
+		var typedatalists = idtextfield.split('-')[0];
+		var iddatalists = idtextfield.split('-')[2];
+
+		var iddatalistspersonalised = 'datalists-personalised-'+typedatalists+'-'+iddatalists;
+		var datalistspersonalised = document.getElementById(iddatalistspersonalised);
+	
+		while (datalistspersonalised.firstChild) {
+		    datalistspersonalised.removeChild(datalistspersonalised.firstChild);
+		}
+		if(value.length > 0){
+			if(value[0] == 's' || value[0] == 'a'){
+				if(validateInitialPersonalised(value)){
+					arrayoptions = arrayDataListFunctions('');
+					datalist = createDataList(arrayoptions);
+				} else if(validateFunctionPersonalised(value)){
+					arrayoptions = arrayDataListColumns(value);
+					datalist = createDataList(arrayoptions);
+				} else if(validateSignalPersonalised(value)){
+					arrayoptions = arrayDataListFunctionsAndColumns(value);
+					datalist = createDataList(arrayoptions);
+				} else {
+					var parenteses = value[value.length-1] == ')';
+					arrayoptions = arrayDataListSimbols(value,parenteses);
+					datalist = createDataList(arrayoptions);
+				}
+			} else {
+				this.value = '';
+				arrayoptions = arrayDataListFunctions('');
+				datalist = createDataList(arrayoptions);
+			}
+		} else {
+			arrayoptions = arrayDataListFunctions('');
+			datalist = createDataList(arrayoptions);
+		}
+		datalist.id = 'datalistoptions-'+typedatalists+'-'+iddatalists;;
+		datalistspersonalised.appendChild(datalist);
+		this.setAttribute('list', datalist.id);		
+	}
+
+	/* validating the text of personalised on the initials inputs */
+	function validateInitialPersonalised(text){
+		if(text == 's' || text == 'su' || text == 'sum' || text == 'a' || text == 'av' || text == 'avg'){
+			return true;
+		}
+		return false;
+	}
+
+	/* validating the text of personalised if is 'sum(' or 'avg('  */
+	function validateFunctionPersonalised(text){
+		if(text.length > 4){
+			text = text.substring((text.length-4), (text.length));
+		} 
+		if(text == 'sum(' || text == 'avg('){
+			return true;
+		} else {
+			return false;
+		}		
+		return false;
+	}
+
+	/* validating the text of personalised if is a signal */
+	function validateSignalPersonalised(text){
+		if(text.length > 0){
+			var lastword = text[text.length-1];
+			if(lastword == '+' || lastword == '-' || lastword == '/' || lastword == '*'){
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	/* create new element datalist based on arrayoptions */
+	function createDataList(arrayoptions){
+		var datalist = document.createElement('datalist');
+		var option;
+		for(var i=0; i < arrayoptions.length; i++){
+			option =  document.createElement('option');
+			option.value = arrayoptions[i].value;
+			datalist.appendChild(option);
+		}
+		return datalist;
 	}
 
 	/* --------------------------------------------------------------------------------------------------------------------- */
