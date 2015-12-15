@@ -37,3 +37,8 @@ hr {
 .a-img-trash-plot:hover{
 	cursor: pointer;
 }
+
+.input-personalised:focus {
+    color: #ff0000;
+    text-decoration: underline;
+}

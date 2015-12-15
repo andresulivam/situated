@@ -450,7 +450,7 @@ $(document).ready(function() {
 	}
 	/* --------------------------------------------------------------------------------------------------------------------- */
 
-	/* -------------------------------- GENERATA COLUMN FILTER TYPE TEXT -------------------------------- */
+	/* -------------------------------- GENERATE COLUMN FILTER TYPE TEXT -------------------------------- */
 	function createNewFiltersText(textcolumn){
 		// getting the group with the columns filters already on div
 		var grouptextfilters = document.getElementById(textidgroupdivscolumnsfilters);
@@ -594,9 +594,11 @@ $(document).ready(function() {
 	}
 
 	/* creating new label */
-	function createNewLabel(id, innerHTML, hidden){
+	function createNewLabel(id, innerhtml, hidden){
 		var newlabel = document.createElement('label');
-		newlabel.innerHTML = innerHTML;
+		if(innerhtml != null){
+			newlabel.innerHTML = innerhtml;
+		}
 		if(id != null){
 			newlabel.id = id;
 		}
@@ -727,6 +729,7 @@ $(document).ready(function() {
 		return arrayoptionscount;
 	}
 
+	/* Creating the new div to datalists to a new column created */
 	function createDivWithDatalistsToColumn(idtextfield){
 		var type = idtextfield.split('-')[0];
 		var iddivdatalists = iddatalists+type;
@@ -754,13 +757,17 @@ $(document).ready(function() {
 
 	/* Enable the select different graphic of graphic default */
 	$('#select-default-graphic').on('change', function(){
+		enableButtonSecondaryGraphic(this);
+	});
+
+	function enableButtonSecondaryGraphic(selectdefaultgraphic){
 		var graphicsecondary = document.getElementById('select-secundary-graphic');
-		if(this.value != 'pizza' && this.value != 'table'){
+		if(selectdefaultgraphic.value != 'pizza' && selectdefaultgraphic.value != 'table'){
 			graphicsecondary.removeAttribute('disabled');
 		} else {
 			graphicsecondary.setAttribute('disabled', 'disabled');
 		}
-	});
+	}
 
  	/* Check all plots */
 	$('#check-all-plots').on('change', function(){
@@ -792,11 +799,13 @@ $(document).ready(function() {
 	}
 
 	/* ------------- FUNCTIONS DRAG AND DROP -------------------- */
+
 	function allowDrop(ev) {
 	    ev.preventDefault();
 	}
 
 	function drag(ev) {
+		// setting data in event to capture on drop event
 	    ev.dataTransfer.setData("id-div", ev.target.id);
 	    var namecolumn = ev.target.children[0].innerHTML.split(':')[1];
 	    ev.dataTransfer.setData("name-column", namecolumn);
@@ -804,7 +813,7 @@ $(document).ready(function() {
 
 	function drop(ev) {
 	    ev.preventDefault();
-	    
+	    // getting the data setted on the drag event
 	    var column = ev.target.id.split('-')[2];
 	    var iddiv = ev.dataTransfer.getData("id-div");
 	    var namecolumn = ev.dataTransfer.getData("name-column");
@@ -895,6 +904,7 @@ $(document).ready(function() {
 		divplots.appendChild(div);
 	}
 
+	/* Array datalist with functions */
 	function arrayDataListFunctions(text){
 		// generating the options to functions
 		var option0 = {value:text+"sum("};
@@ -906,12 +916,14 @@ $(document).ready(function() {
 		return arrayoptions;
 	}
 
+	/* Array datalist with functions and name of columns */
 	function arrayDataListFunctionsAndColumns(text){
 		// creating array with the options
 		var arrayoptions = $.merge(arrayDataListFunctions(text),arrayDataListColumns(text));
 		return arrayoptions;
 	}
 
+	/* Array datalist with the simbols */
 	function arrayDataListSimbols(text, parenteses){
 		// generating the options to functions
 		var arrayoptions = new Array();
@@ -930,6 +942,7 @@ $(document).ready(function() {
 		return arrayoptions;
 	}
 
+	/* Array datalist with name of columns */
 	function arrayDataListColumns(text){
 		// generating the columns options 
 		var option0 = {value:text+"salario"};
@@ -943,6 +956,7 @@ $(document).ready(function() {
 		return arrayoptions;
 	}
 
+	/* validating the text inputted on the personalised field */
 	function validateTextPersonalised(){
 		var value = this.value;
 		var idtextfield = this.id;
@@ -951,71 +965,114 @@ $(document).ready(function() {
 		var typedatalists = idtextfield.split('-')[0];
 		var iddatalists = idtextfield.split('-')[2];
 
+		// getting the div based on column
 		var iddatalistspersonalised = 'datalists-personalised-'+typedatalists+'-'+iddatalists;
 		var datalistspersonalised = document.getElementById(iddatalistspersonalised);
 	
+		// removing all the datalists to create a new valid datalist
 		while (datalistspersonalised.firstChild) {
 		    datalistspersonalised.removeChild(datalistspersonalised.firstChild);
 		}
 		if(value.length > 0){
-			if(value[0] == 's' || value[0] == 'a'){
-				if(validateInitialPersonalised(value)){
+			// checking the first value inputted
+			if(value[0] == 's' || value[0] == 'a'){ 
+				if(validateInitialPersonalised(value, this)){
+					// validating the initial word 
 					arrayoptions = arrayDataListFunctions('');
 					datalist = createDataList(arrayoptions);
-				} else if(validateFunctionPersonalised(value)){
+				} else if(validateFunctionPersonalised(value, this)){
+					// after initial word with the formula, insert the name of columns
 					arrayoptions = arrayDataListColumns(value);
 					datalist = createDataList(arrayoptions);
-				} else if(validateSignalPersonalised(value)){
+				} else if(validateSignalPersonalised(value, this)){
+					// after the columns, insert the signal or close the formula
 					arrayoptions = arrayDataListFunctionsAndColumns(value);
 					datalist = createDataList(arrayoptions);
+				} else if(validadeColumnSelected(value, this)){
+					// in another cases
+					var parenteses = value[value.length-1] == ')';
+					arrayoptions = arrayDataListSimbols(value,parenteses);
+					datalist = createDataList(arrayoptions);
 				} else {
+					// in another cases
 					var parenteses = value[value.length-1] == ')';
 					arrayoptions = arrayDataListSimbols(value,parenteses);
 					datalist = createDataList(arrayoptions);
 				}
 			} else {
+				// case the first value inputted is not 's' or 'a'
 				this.value = '';
 				arrayoptions = arrayDataListFunctions('');
 				datalist = createDataList(arrayoptions);
 			}
 		} else {
+			// if value is length
 			arrayoptions = arrayDataListFunctions('');
 			datalist = createDataList(arrayoptions);
 		}
+		// creating the id of the datalists to personalised field
 		datalist.id = 'datalistoptions-'+typedatalists+'-'+iddatalists;;
 		datalistspersonalised.appendChild(datalist);
 		this.setAttribute('list', datalist.id);		
 	}
 
 	/* validating the text of personalised on the initials inputs */
-	function validateInitialPersonalised(text){
+	function validateInitialPersonalised(text, textfield){
 		if(text == 's' || text == 'su' || text == 'sum' || text == 'a' || text == 'av' || text == 'avg'){
+			setClassNameToADatalist(textfield, null);
 			return true;
 		}
+		setClassNameToADatalist(textfield, 'input-personalised');
 		return false;
 	}
 
 	/* validating the text of personalised if is 'sum(' or 'avg('  */
-	function validateFunctionPersonalised(text){
+	function validateFunctionPersonalised(text, textfield){
 		if(text.length > 4){
 			text = text.substring((text.length-4), (text.length));
 		} 
 		if(text == 'sum(' || text == 'avg('){
+			setClassNameToADatalist(textfield, null);
 			return true;
-		} else {
-			return false;
-		}		
+		} 	
+		setClassNameToADatalist(textfield, 'input-personalised');	
 		return false;
 	}
 
 	/* validating the text of personalised if is a signal */
-	function validateSignalPersonalised(text){
+	function validateSignalPersonalised(text, textfield){
 		if(text.length > 0){
 			var lastword = text[text.length-1];
 			if(lastword == '+' || lastword == '-' || lastword == '/' || lastword == '*'){
+				setClassNameToADatalist(textfield, null);
 				return true;
-			} else {
-				return false;
+			} 
+		}
+		setClassNameToADatalist(textfield, 'input-personalised');
+		return false;
+	}
+
+	/* validating if the text insered is a name of an column */
+	function validadeColumnSelected(text, textfield){
+		if(text.length>0){
+			var values = text.split('(');
+			var value = values[values.length-1];
+			if(isAColumnInsered(value)){
+				setClassNameToADatalist(textfield, null);
+				return true;
+			}
+		}
+		setClassNameToADatalist(textfield, 'input-personalised');
+		return false;
+	}
+
+	function isAColumnInsered(value){
+		var arraycolums = arrayDataListColumns('');
+		var namecolumn = '';
+		for(var i=0; i < arraycolums.length; i++){
+			namecolumn = arraycolums[i].value;
+			if(value == namecolumn || value == namecolumn+')'){
+				return true;
 			}
 		}
 		return false;
@@ -1031,6 +1088,12 @@ $(document).ready(function() {
 			datalist.appendChild(option);
 		}
 		return datalist;
+	}
+
+	function setClassNameToADatalist(datalist, classname){
+		if(datalist != null){
+			datalist.className = classname;
+		}
 	}
 
 	/* --------------------------------------------------------------------------------------------------------------------- */
