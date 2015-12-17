@@ -1,5 +1,12 @@
 $(document).ready(function() {
 
+	
+	// test save plots
+	var arrayjsonplots = new Array();
+
+	// ids temp plots
+	var idplot = 0;
+
 	/* ---------------------------------- IDS OF ELEMENTS --------------------------------------- */
 
 	var iddatalists = 'datalists-personalised-';
@@ -64,24 +71,33 @@ $(document).ready(function() {
 	/* -------------------------------------------------------------------------------------------------- */
 
 	$('loadColumnsAttributtes',function() {
+	  setBarGraphic();
 	  loadColumns(null);
 	  setEventsDragAndDrop();
 	});
 
 	function setEventsDragAndDrop(){
 		var dropcolumny = document.getElementById('drop-column-y');
-		dropcolumny.ondrop = drop;
+		dropcolumny.ondrop = dropColumn;
 		dropcolumny.ondragover = allowDrop;
 
 		var dropcolumnx = document.getElementById('drop-column-x');
-		dropcolumnx.ondrop = drop;
+		dropcolumnx.ondrop = dropColumn;
 		dropcolumnx.ondragover = allowDrop;
+
+		var chart = document.getElementById('chart');
+		chart.ondrop = dropPlot;
+		chart.ondragover = allowDrop;
 	}
 
 	/* Generate columns filters by JSON */
 	function loadColumns(jsonColumns){
+		
+		// removing columns to add new without repeat
+		clearAllColumnsFilters();
+
 		// only to test
-		jsonColumns = jQuery.parseJSON('{"columns":[{"name":"Data Nascimento", "type":"date"},{"name":"Idade", "type":"number"},{"name":"Nome", "type":"text"}]}');
+		jsonColumns = jQuery.parseJSON('{"columns":[{"name":"Data Nascimento", "type":"date"},{"name":"Idade", "type":"number"},{"name":"Nome", "type":"text"}, {"name":"Data compra", "type":"date"},{"name":"Valor", "type":"number"},{"name":"Endereço", "type":"text"}]}');
 		
 		// all columns/attributes
 		var columns = jsonColumns.columns;
@@ -117,10 +133,10 @@ $(document).ready(function() {
 		var datenewidfilter = dateFilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = createNewDiv(dategroupfilter_default+datenewidfilter, true, drag, null, null);
+		var newdiv = createNewDiv(dategroupfilter_default+datenewidfilter, true, dragColumn, null, null);
 
 		// label with attribute name
-		var namecolumn = createNewLabel(null, 'Coluna: '+datecolumn.name, false);
+		var namecolumn = createNewLabel(null, 'Coluna: '+datecolumn.name, false, false, null);
 
 		newdiv.appendChild(namecolumn);
 
@@ -139,7 +155,7 @@ $(document).ready(function() {
 		var dateinitial = createNewInput(datepickerinitial_default+datenewidfilter, 'date', 'date-picker', true, null);
 
 		// label to initial date
-		var labelinitial = createNewLabel(datelabelinitial_default+datenewidfilter, 'Data inicial', true);
+		var labelinitial = createNewLabel(datelabelinitial_default+datenewidfilter, 'Data inicial', true, false, null);
 
 		newdiv.appendChild(labelinitial);
 		newdiv.appendChild(dateinitial);
@@ -148,7 +164,7 @@ $(document).ready(function() {
 		var datefinal = createNewInput(datepickerfinal_default+datenewidfilter, 'date', 'date-picker', true, null);
 
 		// label to final date
-		var labelfinal = createNewLabel(datelabelfinal_default+datenewidfilter, 'Data final', true);
+		var labelfinal = createNewLabel(datelabelfinal_default+datenewidfilter, 'Data final', true, false, null);
 
 		newdiv.appendChild(labelfinal);
 		newdiv.appendChild(datefinal);
@@ -159,7 +175,7 @@ $(document).ready(function() {
 		createDivWithDatalistsToColumn(idpersonalised);
 
 		// label to personalised filters
-		var labelpersonalised = createNewLabel(datelabelpersonalised_default+datenewidfilter, 'Personalizado', true);
+		var labelpersonalised = createNewLabel(datelabelpersonalised_default+datenewidfilter, 'Personalizado', true, false, null);
 
 		newdiv.appendChild(labelpersonalised);
 		newdiv.appendChild(personalised);
@@ -175,7 +191,7 @@ $(document).ready(function() {
 		var conditions = createNewInput(dateconditions_default+datenewidfilter, 'text', null, true, null);
 
 		// label to conditions filters
-		var labelconditions = createNewLabel(datelabelconditions_default+datenewidfilter, 'Condição', true);
+		var labelconditions = createNewLabel(datelabelconditions_default+datenewidfilter, 'Condição', true, false, null);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -290,10 +306,10 @@ $(document).ready(function() {
 		var numbernewidfilter = numberfilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = createNewDiv(numbergroupfilter_default+numbernewidfilter, true, drag, null, null);
+		var newdiv = createNewDiv(numbergroupfilter_default+numbernewidfilter, true, dragColumn, null, null);
 
 		// label with attribute name
-		var namecolumn = createNewLabel(null, 'Coluna: '+numbercolumn.name, false);
+		var namecolumn = createNewLabel(null, 'Coluna: '+numbercolumn.name, false, false, null);
 		
 		newdiv.appendChild(namecolumn);
 
@@ -311,7 +327,7 @@ $(document).ready(function() {
 		var numberinitial = createNewInput(numberinitial_default+numbernewidfilter, 'number', null, true, null);
 
 		// label to initial number
-		var labelinitial = createNewLabel(numberlabelinitial_default+numbernewidfilter, 'Valor inicial', true);
+		var labelinitial = createNewLabel(numberlabelinitial_default+numbernewidfilter, 'Valor inicial', true, false, null);
 
 		newdiv.appendChild(labelinitial);
 		newdiv.appendChild(numberinitial);
@@ -320,7 +336,7 @@ $(document).ready(function() {
 		var numberfinal = createNewInput(numberfinal_default+numbernewidfilter, 'number', null, true, null);
 
 		// label to final number
-		var labelfinal = createNewLabel(numberlabelfinal_default+numbernewidfilter, 'Valor final', true);
+		var labelfinal = createNewLabel(numberlabelfinal_default+numbernewidfilter, 'Valor final', true, false, null);
 
 		newdiv.appendChild(labelfinal);
 		newdiv.appendChild(numberfinal);
@@ -331,7 +347,7 @@ $(document).ready(function() {
 		createDivWithDatalistsToColumn(idpersonalised);
 
 		// label to personalise filters
-		var labelpersonalised = createNewLabel(numberlabelpersonalised_default+numbernewidfilter, 'Personalizado', true);
+		var labelpersonalised = createNewLabel(numberlabelpersonalised_default+numbernewidfilter, 'Personalizado', true, false, null);
 
 		newdiv.appendChild(labelpersonalised);
 		newdiv.appendChild(personalised);
@@ -347,7 +363,7 @@ $(document).ready(function() {
 		var conditions = createNewInput(numberconditions_default+numbernewidfilter, 'text', null, true, null);
 
 		// label to conditions filters
-		var labelconditions = createNewLabel(numberlabelconditions_default+numbernewidfilter, 'Condição', true);
+		var labelconditions = createNewLabel(numberlabelconditions_default+numbernewidfilter, 'Condição', true, false, null);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -462,10 +478,10 @@ $(document).ready(function() {
 		var textnewidfilter = textfilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = createNewDiv(textgroupfilter_default+textnewidfilter, true, drag, null, null);
+		var newdiv = createNewDiv(textgroupfilter_default+textnewidfilter, true, dragColumn, null, null);
 
 		// label with attribute name
-		var namecolumn = createNewLabel(null, 'Coluna: '+textcolumn.name, false);
+		var namecolumn = createNewLabel(null, 'Coluna: '+textcolumn.name, false, false, null);
 
 		newdiv.appendChild(namecolumn);
 
@@ -485,7 +501,7 @@ $(document).ready(function() {
 		createDivWithDatalistsToColumn(idpersonalised);
 
 		// label to personalise filters
-		var labelpersonalised = createNewLabel(textlabelpersonalised_default+textnewidfilter, 'Personalizado', true);
+		var labelpersonalised = createNewLabel(textlabelpersonalised_default+textnewidfilter, 'Personalizado', true, false, null);
 
 		newdiv.appendChild(labelpersonalised);
 		newdiv.appendChild(personalised);
@@ -501,7 +517,7 @@ $(document).ready(function() {
 		var conditions = createNewInput(textconditions_default+textnewidfilter, 'text', null, true, null);
 
 		// label to conditions filters
-		var labelconditions = createNewLabel(textlabelconditions_default+textnewidfilter, 'Condição', true);
+		var labelconditions = createNewLabel(textlabelconditions_default+textnewidfilter, 'Condição', true, false, null);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -582,7 +598,7 @@ $(document).ready(function() {
 			newdiv.draggable = true;
 		}
 		if(ondragstart != null){
-			newdiv.ondragstart = drag;
+			newdiv.ondragstart = ondragstart;
 		}
 		if(classname != null){
 			newdiv.className = classname;
@@ -594,7 +610,7 @@ $(document).ready(function() {
 	}
 
 	/* creating new label */
-	function createNewLabel(id, innerhtml, hidden){
+	function createNewLabel(id, innerhtml, hidden, draggable, ondragstart){
 		var newlabel = document.createElement('label');
 		if(innerhtml != null){
 			newlabel.innerHTML = innerhtml;
@@ -602,7 +618,15 @@ $(document).ready(function() {
 		if(id != null){
 			newlabel.id = id;
 		}
-		newlabel.hidden = hidden;
+		if(draggable != null){
+			newlabel.draggable = draggable;
+		}
+		if(ondragstart != null){
+			newlabel.ondragstart = ondragstart;
+		}
+		if(hidden != null){
+			newlabel.hidden = hidden;
+		}
 		return newlabel;
 	}
 
@@ -745,6 +769,46 @@ $(document).ready(function() {
 	
 	/* ------------------------------------------ FUNCTIONS TO MANIPULATE SCREEN ------------------------------------------- */
 
+	function clearAllColumnsFilters(){
+		var groupdatefilters = document.getElementById(dateidgroupdivscolumnsfilters);
+		while (groupdatefilters.firstChild) {
+		    groupdatefilters.removeChild(groupdatefilters.firstChild);
+		}
+		var groupnumberfilters = document.getElementById(numberidgroupdivscolumnsfilters);
+		while (groupnumberfilters.firstChild) {
+		    groupnumberfilters.removeChild(groupnumberfilters.firstChild);
+		}
+		var grouptextfilters = document.getElementById(textidgroupdivscolumnsfilters);
+		while (grouptextfilters.firstChild) {
+		    grouptextfilters.removeChild(grouptextfilters.firstChild);
+		}
+	}
+
+	function clearTitleAndDescriptionPlot(){
+		var titleplot = document.getElementById('title-plot');
+		titleplot.value = '';
+		var descriptionplot = document.getElementById('description-plot');
+		descriptionplot.value = '';
+	}
+
+	function clearColumns(eixo){
+		var columns = document.getElementById('columns-group-'+eixo);
+		while (columns.firstChild) {
+		    columns.removeChild(columns.firstChild);
+		}
+	}
+
+	/* Enable button save */
+	$('#generate-new').on('click', function(){
+		clearAllColumnsFilters();
+		clearTitleAndDescriptionPlot();
+		clearColumns('x');
+		clearColumns('y');
+		loadColumns(null);
+		var idplot = document.getElementById('id-plot');
+		idplot.textContent = '';
+	});
+
  	/* Enable button save */
 	$('#title-plot').on('input', function(){
 		var buttonsave = document.getElementById('button-save');
@@ -839,30 +903,80 @@ $(document).ready(function() {
 
 	/* ------------- FUNCTIONS DRAG AND DROP -------------------- */
 
+	/* allowing drop in elements */
 	function allowDrop(ev) {
 	    ev.preventDefault();
 	}
 
-	function drag(ev) {
+	/* drag column with filters */
+	function dragColumn(ev) {
 		// setting data in event to capture on drop event
 	    ev.dataTransfer.setData("id-div", ev.target.id);
 	    var namecolumn = ev.target.children[0].innerHTML.split(':')[1];
 	    ev.dataTransfer.setData("name-column", namecolumn);
 	}
 
-	function drop(ev) {
+	/* drop column with filters */
+	function dropColumn(ev) {
 	    ev.preventDefault();
 	    // getting the data setted on the drag event
 	    var column = ev.target.id.split('-')[2];
 	    var iddiv = ev.dataTransfer.getData("id-div");
 	    var namecolumn = ev.dataTransfer.getData("name-column");
 	    var type = iddiv.split('-')[2];
-	    createNewColumnOnChart(column, iddiv, type, namecolumn);
+	    generateNewColumnOnGraphic(column, null, type, namecolumn);
+	}
+
+	/* drag plot to open graphic */
+	function dragPlot(ev){
+		var title = ev.target.textContent;
+		ev.dataTransfer.setData("title-plot", title);
+	}
+
+	/* drop plot to open graphic */
+	function dropPlot(ev){
+		ev.preventDefault();
+		var title = ev.dataTransfer.getData("title-plot");
+		updateGraphicWithPlotDropped(title);
 	}
 	/* -------------------------------------------------------- */
 
+	function updateGraphicWithPlotDropped(titleplot){
+		clearColumns('x');
+		clearColumns('y');
+		var jsonplot;
+		for(var i = 0; i < arrayjsonplots.length; i++){
+			jsonplot = jQuery.parseJSON(arrayjsonplots[i]);
+			if(jsonplot.title == titleplot){
+				generateColumnsByDroppedPlot(jsonplot);
+				var titleplot = document.getElementById('title-plot');
+				titleplot.value = jsonplot.title;
+				var descriptionplot = document.getElementById('description-plot');
+				descriptionplot.value = jsonplot.description;
+				var graphicdefault = document.getElementById('select-default-graphic');
+				graphicdefault.value = jsonplot.graphicdefault;
+				var graphicsecondary = document.getElementById('select-secundary-graphic');
+				graphicsecondary.value = jsonplot.graphicsecondary;
+				changeGraphicDefault(graphicdefault);
+				var plotid = document.getElementById('id-plot');
+				plotid.textContent = jsonplot.id;
+			}
+		}
+	}
+
+	function generateColumnsByDroppedPlot(jsonplot){
+		var columnsx = jsonplot.columnsx;
+		var columnsy = jsonplot.columnsy;
+		for(var i = 0; i < columnsx.length; i++){
+			generateNewColumnOnGraphic('x', columnsx[i].id, null, columnsx[i].name);
+		}
+		for(var i = 0; i < columnsy.length; i++){
+			generateNewColumnOnGraphic('y', columnsy[i].id, null, columnsy[i].name);
+		}
+	}
+
 	/* function to create a panel with new column */
-	function createNewColumnOnChart(column, iddiv, type, namecolumn){
+	function generateNewColumnOnGraphic(column, iddiv, type, namecolumn){
 
 		var divcolumns;
 
@@ -870,15 +984,20 @@ $(document).ready(function() {
 
 		var columnid;
 
-		var childrens = divcolumns.children;
-		var childrenslength = childrens.length;
-		if(childrenslength > 0){
-			var lastcolumnid = childrens[childrenslength-1].id;
-			var lastcolumnidnumber = lastcolumnid.split('-')[3];
-			columnid = parseInt(lastcolumnidnumber)+1;
+		if(iddiv == null || iddiv == ''){
+			var childrens = divcolumns.children;
+			var childrenslength = childrens.length;
+			if(childrenslength > 0){
+				var lastcolumnid = childrens[childrenslength-1].id;
+				var lastcolumnidnumber = lastcolumnid.split('-')[3];
+				columnid = parseInt(lastcolumnidnumber)+1;
+			} else {
+				columnid = 1;
+			}
 		} else {
-			columnid = 1;
+			columnid = iddiv;
 		}
+
 
 		var idfirstdiv = 'group-column-'+column+'-'+columnid;
 		var classnamefirstdiv = 'form-group panel-columns-'+column+' panel-columns';
@@ -909,38 +1028,105 @@ $(document).ready(function() {
 
 	/* Save configuration graphic in a new plot */
 	$('#button-save').on('click', function(){
-		generateNewPlot();
+		var titleplot = document.getElementById('title-plot');
+		var descriptionplot = document.getElementById('description-plot');
+		var graphicdefault = document.getElementById('select-default-graphic');
+		var graphicsecondary = document.getElementById('select-secundary-graphic');
+
+		var olderplotid = document.getElementById('id-plot');
+		if(olderplotid.textContent == null || olderplotid.textContent == ''){
+			idplot = idplot+1;
+			olderplotid.textContent = idplot;
+		} else {
+			idplot = olderplotid.textContent;
+		}
+
+		generateJsonWithColumnsGraphic(idplot, titleplot.value, descriptionplot.value, graphicdefault.value, graphicsecondary.value);	
+		generateNewPlot(idplot, titleplot.value);
 	});	
 
+	/* when save a new plot, generate a json with the columns */
+	function generateJsonWithColumnsGraphic(idplot, titleplot, descriptionplot, graphicdefault, graphicsecondary){
+		var columnsx = document.getElementById('columns-group-x');
+		var columnsy = document.getElementById('columns-group-y');
+		var newplot = new Object();
+		newplot.id = idplot;
+		newplot.title = titleplot;
+		newplot.description = descriptionplot;
+		newplot.graphicdefault = graphicdefault;
+		newplot.graphicsecondary = graphicsecondary;
+
+		var columnsarrayx = generateArrayColumns(columnsx);
+		var columnsarrayy = generateArrayColumns(columnsy);
+
+		newplot.columnsx = columnsarrayx;
+		newplot.columnsy = columnsarrayy;
+
+		removingOlderPlot(idplot, arrayjsonplots);
+		arrayjsonplots.push(JSON.stringify(newplot));
+	}
+
+	function removingOlderPlot(idplot, arrayjsonplots){
+		for(var i = 0; i < arrayjsonplots.length; i++){
+			var json = jQuery.parseJSON(arrayjsonplots[i]);
+			if(json.id == idplot){
+				arrayjsonplots.splice(i,1);
+				break;
+			}
+		}
+	}
+
+	/* generate array columns of div */
+	function generateArrayColumns(columnsdiv){
+		var columnsarray = new Array();
+
+		var columns = columnsdiv.children;
+		var column;
+		for(var i = 0; i < columns.length; i++){
+			column = new Object();
+			column.id = columns[i].id;
+			var namecolumn = columns[i].children[0].children[1].innerHTML;
+			column.name = namecolumn;
+			columnsarray.push(column);
+		}
+		return columnsarray;
+	}
+
 	/* function to create a new plot */
-	function generateNewPlot(){
+	function generateNewPlot(idplot, titleplot){
 
 		var divplots = document.getElementById('checkbox-plots-group');
-		var titleplot = document.getElementById('title-plot');
 
-		var divid = 'checkbox-plot-'+titleplot.value;
-		var divclassname = 'checkbox';
-		var div = createNewDiv(divid, null, null, divclassname, null);
+		var olderdiv = document.getElementById('checkbox-plot-'+idplot);
 
-		var label = createNewLabel(null, titleplot.value, null);
+		if(olderdiv != null){
+			var label = olderdiv.children[1];
+			label.textContent = titleplot;
+		} else {
+			var divid = 'checkbox-plot-'+idplot;
+			var divclassname = 'checkbox';
+			var div = createNewDiv(divid, null, null, divclassname, null);
 
-		var input = createNewInput(null, 'checkbox', null, null, null);
+			var label = createNewLabel(null, titleplot, null, true, dragPlot);
 
-		var aid = 'checkbox-plot-del-'+titleplot.value;
-		var classnamea = 'a-img-trash-plot';
-		var a = createNewA(aid, classnamea, removePlot);
+			var input = createNewInput(null, 'checkbox', null, null, null);
 
-		var imgsrc = 'img/trash.png';
-		var imgalt = 'Excluir';
-		var imgtitle = 'Excluir';
-		var img = createNewImg(null, imgsrc, imgalt, imgtitle)
+			var aid = 'checkbox-plot-del-'+idplot;
+			var classnamea = 'a-img-trash-plot';
+			var a = createNewA(aid, classnamea, removePlot);
 
-		div.appendChild(input);
-		div.appendChild(label);
-		a.appendChild(img);
-		div.appendChild(a);
+			var imgsrc = 'img/trash.png';
+			var imgalt = 'Excluir';
+			var imgtitle = 'Excluir';
+			var img = createNewImg(null, imgsrc, imgalt, imgtitle)
 
-		divplots.appendChild(div);
+			div.appendChild(input);
+			div.appendChild(label);
+			a.appendChild(img);
+			div.appendChild(a);
+
+			divplots.appendChild(div);
+		}
 	}
 
 	/* Array datalist with functions */
