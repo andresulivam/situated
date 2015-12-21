@@ -1,6 +1,5 @@
 $(document).ready(function() {
 
-	
 	// test save plots
 	var arrayjsonplots = new Array();
 
@@ -70,21 +69,181 @@ $(document).ready(function() {
 
 	/* -------------------------------------------------------------------------------------------------- */
 
-	$('loadColumnsAttributtes',function() {
-	  setBarGraphic();
-	  loadColumns(null);
-	  setEventsDragAndDrop();
+	$('onload',function(completejson) {
+		// JUST FOR TEST
+		var completejson = loadjsontest();
+
+		// filling the select with the columns options
+		fillSelectColumnsWithJson(completejson);
+
+		// initializing the graphic with a bar graphic
+		setBarGraphic();
+
+		// setting event to drag and drop
+		setEventsDragAndDrop();
 	});
 
+	/* JUST FOR TEST */
+	function loadjsontest() {
+	    var client = " { "
+			  +"\"status\": 200,"
+			  +"\"message\": ["
+			   +" {"
+			     +" \"index\": 1232,"
+			     +" \"parent\": null,"
+			     +" \"name\": \"DIRETORIA OPERACIONAL S11D\","
+			     +" \"post\": \"Diretor\","
+			     +" \"funct\": \"DIRETOR GERAL S11D\","
+			     +" \"sim\": 3,"
+			     +" \"org_template\": \"headTemplate\","
+			     +" \"type\": 0,"
+			     +" \"zone\": \"DI\","
+			     +" \"shift\": \"ADM\","
+			     +" \"struct\": \"1AQH\","
+			     +" \"std_as\": \"AS\","
+			     +" \"std_as_time\": \"Dir\","
+			     +" \"std_ms\": \"AS\","
+			     +" \"std_ms_time\": \"ADM\","
+			     +" \"std_bs\": \"AS\","
+			     +" \"std_bs_time\": \"ADM\","
+			     +" \"tranning_time\": -320,"
+			     +" \"necessity_date\": \"01/10/2014\","
+			     +" \"parent_name\": \"Sem Superior\","
+			     +" \"workgroup_name\": \"DIRETORIA OPERACIONAL S11D\","
+			     +" \"spv\": null,"
+			     +" \"gg\": \"DIRETORIA DE OPERAÇÃO FERROSOS SERRA SUL\","
+			     +" \"ga\": \"Diretor\","
+			     +" \"sp\": \"Gabinete\" },"
+			     +" {"
+			     +" \"index\": 1233,"
+			     +" \"parent\": null,"
+			     +" \"name\": \"DIRETORIA OPERACIONAL S11D\","
+			     +" \"post\": \"Diretor\","
+			     +" \"funct\": \"DIRETOR GERAL S11D\","
+			     +" \"sim\": 3,"
+			     +" \"org_template\": \"headTemplate\","
+			     +" \"type\": 0,"
+			     +" \"zone\": \"DI\","
+			     +" \"shift\": \"ADM\","
+			     +" \"struct\": \"1AQH\","
+			     +" \"std_as\": \"AS\","
+			     +" \"std_as_time\": \"Dir\","
+			     +" \"std_ms\": \"AS\","
+			     +" \"std_ms_time\": \"ADM\","
+			     +" \"std_bs\": \"AS\","
+			     +" \"std_bs_time\": \"ADM\","
+			     +" \"tranning_time\": -320,"
+			     +" \"necessity_date\": \"01/10/2014\","
+			     +" \"parent_name\": \"Sem Superior\","
+			     +" \"workgroup_name\": \"DIRETORIA OPERACIONAL S11D\","
+			     +" \"spv\": null,"
+			     +" \"gg\": \"DIRETORIA DE OPERAÇÃO FERROSOS SERRA SUL\","
+			     +" \"ga\": \"Diretor\","
+			     +" \"sp\": \"Gabinete\" },"
+			     +" {"
+			     +" \"index\": 1234,"
+			     +" \"parent\": 1232,"
+			     +" \"name\": \"DIRETORIA OPERACIONAL S11D\","
+			     +" \"post\": \"Diretor\","
+			     +" \"funct\": \"DIRETOR GERAL S11D\","
+			     +" \"sim\": 3,"
+			     +" \"org_template\": \"headTemplate\","
+			     +" \"type\": 0,"
+			     +" \"zone\": \"DI\","
+			     +" \"shift\": \"ADM\","
+			     +" \"struct\": \"1AQH\","
+			     +" \"std_as\": \"AS\","
+			     +" \"std_as_time\": \"Dir\","
+			     +" \"std_ms\": \"AS\","
+			     +" \"std_ms_time\": \"ADM\","
+			     +" \"std_bs\": \"AS\","
+			     +" \"std_bs_time\": \"ADM\","
+			     +" \"tranning_time\": -320,"
+			     +" \"necessity_date\": \"01/10/2014\","
+			     +" \"parent_name\": \"Sem Superior\","
+			     +" \"workgroup_name\": \"DIRETORIA OPERACIONAL S11D\","
+			     +" \"spv\": null,"
+			     +" \"gg\": \"DIRETORIA DE OPERAÇÃO FERROSOS SERRA SUL\","
+			     +" \"ga\": \"Diretor\","
+			     +" \"sp\": \"Gabinete\" }"
+			   +"]"
+			+"}"; 
+			return jQuery.parseJSON(client);
+	}
+
+	/* Filling the columns options based on json */ 
+	function fillSelectColumnsWithJson(jsoncolumns){
+		if(jsoncolumns != null){
+			// getting the field message
+			var messages = jsoncolumns.message;
+			if(messages.length > 0){
+				// getting the all properties of message on position 0
+				var columns = Object.keys(messages[0]);
+				var arrayoptions = new Array();
+				var option;
+				var validcolumn;
+				// loop to all properties/columns
+				for(var i = 0; i < columns.length; i++){
+					// checking the value of column
+					validcolumn = validatingTheColumnFieldHasValue(messages, columns[i], 0);
+					if(validcolumn.valid){
+						option = createOptionToSelectColumns(columns[i], validcolumn.type);
+						arrayoptions.push(option);
+					}
+				}
+				var select = document.getElementById('select-column');
+				for(var i = 0; i < arrayoptions.length; i++){
+					// adding the all properties/columns on the select
+					select.appendChild(arrayoptions[i]);
+				}
+			}
+		}
+	}
+
+	/* Recursive function to find value of column for test if is a valid column */
+	function validatingTheColumnFieldHasValue(jsonmessages, column, position){
+		var result = new Object();
+		if(position < jsonmessages.length){
+			var valuetype;
+			// getting the message in a position
+			var message = jsonmessages[position];
+			// getting the value of a column 
+			var valuecolumn = message[column];
+			if(valuecolumn != null){
+				if($.isNumeric(valuecolumn)){
+					valuetype = 'number-type';
+				} else {
+					var parsedDate = Date.parse(valuecolumn);
+					if (isNaN(valuecolumn) && !isNaN(parsedDate)) {
+					    valuetype = 'date-type';
+					} else {
+						valuetype = 'text-type';
+					}
+				}
+				result.type = valuetype;
+				result.valid = true;
+				return result;
+			} else {
+				// recursive to a next message
+				var valid = validatingTheColumnFieldHasValue(jsonmessages, column, position+1);
+				result = valid;
+			}
+		}
+		return result;
+	}
+
+	/* Creating the new option column to select */
+	function createOptionToSelectColumns(column, type){
+		if(column != null){
+			var option =  document.createElement('option');
+			option.value = column;
+			option.text = column;
+			option.className = type;
+			return option;			
+		}
+	}
+
 	function setEventsDragAndDrop(){
-		var dropcolumny = document.getElementById('drop-column-y');
-		dropcolumny.ondrop = dropColumn;
-		dropcolumny.ondragover = allowDrop;
-
-		var dropcolumnx = document.getElementById('drop-column-x');
-		dropcolumnx.ondrop = dropColumn;
-		dropcolumnx.ondragover = allowDrop;
-
 		var chart = document.getElementById('chart');
 		chart.ondrop = dropPlot;
 		chart.ondragover = allowDrop;
@@ -95,31 +254,62 @@ $(document).ready(function() {
 		
 		// removing columns to add new without repeat
 		clearAllColumnsFilters();
-
-		// only to test
-		jsonColumns = jQuery.parseJSON('{"columns":[{"name":"Data Nascimento", "type":"date"},{"name":"Idade", "type":"number"},{"name":"Nome", "type":"text"}, {"name":"Data compra", "type":"date"},{"name":"Valor", "type":"number"},{"name":"Endereço", "type":"text"}]}');
-		
+	
 		// all columns/attributes
-		var columns = jsonColumns.columns;
-		// loop with the all columns/attributes that need to create a filter
-		for(var i = 0; i < columns.length; i++){
-			switch(columns[i].type){
-				case 'date':
-					createNewFiltersDate(columns[i]);
-					break;
-				case 'number':
-					createNewFiltersNumber(columns[i]);
-					break;
-				case 'text':
-					createNewFiltersText(columns[i]);
-					break;
-				default:
-					break;		
-			}
-		}
+		// var columns = jsonColumns.columns;
+		// // loop with the all columns/attributes that need to create a filter
+		// for(var i = 0; i < columns.length; i++){
+		// 	switch(columns[i].type){
+		// 		case 'date':
+		// 			createNewFiltersDate(columns[i]);
+		// 			break;
+		// 		case 'number':
+		// 			createNewFiltersNumber(columns[i]);
+		// 			break;
+		// 		case 'text':
+		// 			createNewFiltersText(columns[i]);
+		// 			break;
+		// 		default:
+		// 			break;		
+		// 	}
+		// }
 	}
 
 	/* -------------------------------------------------------------------------------------------------- */
+
+
+	function createNewColumnFilter(column){
+
+		var typecolumn = column.type;
+
+		var groupfilters;
+		if(type == 'date'){
+			groupfilters = document.getElementById(dateidgroupdivscolumnsfilters);
+		} else if(type == 'number'){
+			groupfilters = document.getElementById(numberidgroupdivscolumnsfilters);
+		} else if(type == 'text'){
+			groupfilters = document.getElementById(textidgroupdivscolumnsfilters);
+		}
+
+		// getting all filters already on div
+		var filters = groupfilters.children;
+		// setting the new id to new filter
+		var newidfilter = filters.length + 1;
+
+		var newdivid;
+		if(type == 'date'){
+			newdivid = dategroupfilter_default+newidfilter;
+		} else if(type == 'number'){
+			newdivid = numbergroupfilter_default+newidfilter;
+		} else if(type == 'text'){
+			newdivid = textgroupfilter_default+newidfilter;
+		}
+
+		// creating new div with the filters
+		var newdiv = createNewDiv(newdivid, null, null, null, null);
+
+
+	}
 	
 	/* -------------------------------- GENERATA COLUMN FILTER TYPE DATE -------------------------------- */
 	function createNewFiltersDate(datecolumn){
@@ -132,11 +322,13 @@ $(document).ready(function() {
 		// setting the new id to new date filter
 		var datenewidfilter = dateFilters.length + 1;
 
-		// creating new div with the filters 
-		var newdiv = createNewDiv(dategroupfilter_default+datenewidfilter, true, dragColumn, null, null);
+		// creating new div with the filters
+		var newdivid = dategroupfilter_default+datenewidfilter;
+		var newdiv = createNewDiv(newdivid, null, null, null, null);
 
 		// label with attribute name
-		var namecolumn = createNewLabel(null, 'Coluna: '+datecolumn.name, false, false, null);
+		var namecolumntext = 'Coluna: '+datecolumn.name;
+		var namecolumn = createNewLabel(null, namecolumntext, false, false, null);
 
 		newdiv.appendChild(namecolumn);
 
@@ -152,46 +344,53 @@ $(document).ready(function() {
 		newdiv.appendChild(select);
 
 		// creating the date filters to use after the select change
-		var dateinitial = createNewInput(datepickerinitial_default+datenewidfilter, 'date', 'date-picker', true, null);
+		var dateinitialid = datepickerinitial_default+datenewidfilter;
+		var dateinitial = createNewInput(dateinitialid, 'date', 'date-picker', true, null);
 
 		// label to initial date
-		var labelinitial = createNewLabel(datelabelinitial_default+datenewidfilter, 'Data inicial', true, false, null);
+		var labelinitialid = datelabelinitial_default+datenewidfilter;
+		var labelinitial = createNewLabel(labelinitialid, 'Data inicial', true, false, null);
 
 		newdiv.appendChild(labelinitial);
 		newdiv.appendChild(dateinitial);
 
 		// creating the date filters to use after the select change
-		var datefinal = createNewInput(datepickerfinal_default+datenewidfilter, 'date', 'date-picker', true, null);
+		var datefinalid = datepickerfinal_default+datenewidfilter;
+		var datefinal = createNewInput(datefinalid, 'date', 'date-picker', true, null);
 
 		// label to final date
-		var labelfinal = createNewLabel(datelabelfinal_default+datenewidfilter, 'Data final', true, false, null);
+		var labelfinalid = datelabelfinal_default+datenewidfilter;
+		var labelfinal = createNewLabel(labelfinalid, 'Data final', true, false, null);
 
 		newdiv.appendChild(labelfinal);
 		newdiv.appendChild(datefinal);
 
 		// text field to personalised the filter
-		var idpersonalised = datepersonalised_default+datenewidfilter;
-		var personalised = createNewInput(idpersonalised, 'text', null, true, validateTextPersonalised);
-		createDivWithDatalistsToColumn(idpersonalised);
+		// var personalisedid = datepersonalised_default+datenewidfilter;
+		// var personalised = createNewInput(personalisedid, 'text', null, true, validateTextPersonalised);
+		// createDivWithDatalistsToColumn(personalisedid);
 
-		// label to personalised filters
-		var labelpersonalised = createNewLabel(datelabelpersonalised_default+datenewidfilter, 'Personalizado', true, false, null);
+		// // label to personalised filters
+		// var labelpersonalised = createNewLabel(datelabelpersonalised_default+datenewidfilter, 'Personalizado', true, false, null);
 
-		newdiv.appendChild(labelpersonalised);
-		newdiv.appendChild(personalised);
+		// newdiv.appendChild(labelpersonalised);
+		// newdiv.appendChild(personalised);
 
 		var arrayoptionscount = optionsCounter('date');
 
 		// creating the select options to counter
-		var selectCount = createSelectWithOptions(datecountselect_default+datenewidfilter, arrayoptionscount);
-		selectCount.onchange = dateSelectCountChange;
-		newdiv.appendChild(selectCount);
+		var selectcountid = datecountselect_default+datenewidfilter;
+		var selectcount = createSelectWithOptions(selectcountid, arrayoptionscount);
+		selectcount.onchange = dateSelectCountChange;
+		newdiv.appendChild(selectcount);
 
 		// text field to conditions filter
-		var conditions = createNewInput(dateconditions_default+datenewidfilter, 'text', null, true, null);
+		var conditionsid = dateconditions_default+datenewidfilter;
+		var conditions = createNewInput(conditionsid, 'text', null, true, null);
 
 		// label to conditions filters
-		var labelconditions = createNewLabel(datelabelconditions_default+datenewidfilter, 'Condição', true, false, null);
+		var labelconditionsid = datelabelconditions_default+datenewidfilter;
+		var labelconditions = createNewLabel(labelconditionsid, 'Condição', true, false, null);
 
 		newdiv.appendChild(labelconditions);
 		newdiv.appendChild(conditions);
@@ -306,10 +505,12 @@ $(document).ready(function() {
 		var numbernewidfilter = numberfilters.length + 1;
 
 		// creating new div with the filters 
-		var newdiv = createNewDiv(numbergroupfilter_default+numbernewidfilter, true, dragColumn, null, null);
+		var newdivid = numbergroupfilter_default+numbernewidfilter;
+		var newdiv = createNewDiv(newdivid, null, null, null, null);
 
 		// label with attribute name
-		var namecolumn = createNewLabel(null, 'Coluna: '+numbercolumn.name, false, false, null);
+		var namecolumntext = 'Coluna: '+numbercolumn.name;
+		var namecolumn = createNewLabel(null, namecolumntext, false, false, null);
 		
 		newdiv.appendChild(namecolumn);
 
@@ -595,7 +796,7 @@ $(document).ready(function() {
 			newdiv.id = iddiv;
 		}
 		if(draggable != null){
-			newdiv.draggable = true;
+			newdiv.draggable = draggable;
 		}
 		if(ondragstart != null){
 			newdiv.ondragstart = ondragstart;
@@ -769,18 +970,25 @@ $(document).ready(function() {
 	
 	/* ------------------------------------------ FUNCTIONS TO MANIPULATE SCREEN ------------------------------------------- */
 
+	/* function to remove all columns filters */
 	function clearAllColumnsFilters(){
 		var groupdatefilters = document.getElementById(dateidgroupdivscolumnsfilters);
-		while (groupdatefilters.firstChild) {
-		    groupdatefilters.removeChild(groupdatefilters.firstChild);
+		if(groupdatefilters != null){
+			while (groupdatefilters.firstChild) {
+			    groupdatefilters.removeChild(groupdatefilters.firstChild);
+			}
 		}
 		var groupnumberfilters = document.getElementById(numberidgroupdivscolumnsfilters);
-		while (groupnumberfilters.firstChild) {
-		    groupnumberfilters.removeChild(groupnumberfilters.firstChild);
+		if(groupnumberfilters != null){
+			while (groupnumberfilters.firstChild) {
+			    groupnumberfilters.removeChild(groupnumberfilters.firstChild);
+			}
 		}
 		var grouptextfilters = document.getElementById(textidgroupdivscolumnsfilters);
-		while (grouptextfilters.firstChild) {
-		    grouptextfilters.removeChild(grouptextfilters.firstChild);
+		if(grouptextfilters != null){
+			while (grouptextfilters.firstChild) {
+			    grouptextfilters.removeChild(grouptextfilters.firstChild);
+			}
 		}
 	}
 
@@ -1064,6 +1272,7 @@ $(document).ready(function() {
 
 		removingOlderPlot(idplot, arrayjsonplots);
 		arrayjsonplots.push(JSON.stringify(newplot));
+		console.log(JSON.stringify(newplot));
 	}
 
 	function removingOlderPlot(idplot, arrayjsonplots){

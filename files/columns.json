@@ -1,7 +1,0 @@
-{
-	"columns":[
-	    {"name":"Data Nascimento", "type":"date"},
-	    {"name":"Idade", "type":"number"},
-	    {"name":"Nome", "type":"text"}
-	]
-}

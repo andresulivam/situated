@@ -15,14 +15,23 @@
 	  <!-- ------------ >
 
 	  <!-- HIGHCHARTS -->
-	  <script src="js/highcharts.js"></script>
-	  <script src="js/highcharts-3d.js"></script>
-	  <script src="js/modules/exporting.js"></script>
+	  <script src="highcharts/highcharts.js"></script>
+	  <script src="highcharts/highcharts-3d.js"></script>
+	  <script src="highcharts/modules/exporting.js"></script>
 	  <!-- -------------->
 
 	  <link rel="stylesheet" href="css/main.css">
 	  <script src="js/functions.js"></script>
 
+	  <!-- LANGUAGE -->
+	  <script src="js/PT-BR.js"></script>
+	  
+	  <script>  
+	  	/* function to use language based on translate file */
+		function show(x){
+	  		document.write(x);
+	  	}
+	  </script>
 	</head>
 	<body>
 
@@ -35,11 +44,11 @@
 		<div class="row">
 			<!-- plot id -->
 			<input id="id-plot" hidden></input>
-			
+
 		  	<!-- left column -->
 		  	<div class="col-xs-2">
 		  		<!-- part 1 -->
-		  		<button id="generate-new" type="button" class="btn btn-primary btn-block">Novo</button>
+		  		<button id="generate-new" type="button" class="btn btn-primary btn-block"><script>show(NEW)</script></button>
 				<!-------------- -->
 				<hr>
 				<div id="datalists-personalised">
@@ -47,18 +56,20 @@
 					<div id="datalists-personalised-number"></div>
 					<div id="datalists-personalised-text"></div>
 				</div>
-				<div id="group-filters-columns">
-					
-					<div id="date-group-filters-columns">
-						<h3>DATAS</h3>
-					</div>
-					<div id="number-group-filters-columns">
-						<h3>NÚMEROS</h3>
-					</div>
-					<div id="text-group-filters-columns">
-						<h3>TEXTOS</h3>
-					</div>
+				<div class="form-group">
+					  <label for="select-column"><script>show(COLUMNS)</script></label>
+					  <select id="select-column" class="form-control">
+
+					  </select>
 				</div>
+				<div class="form-group">
+					  <label for="select-default-graphic"><script>show(AXIS)</script></label>
+					  <select id="select-default-graphic" class="form-control">
+					    <option value="axis-x"><script>show(AXIS_X)</script></option>
+					    <option value="axis-y"><script>show(AXIS_Y)</script></option>
+					  </select>
+				</div>
+				<button id="add-column" type="button" class="btn btn-primary btn-block"><script>show(ADD)</script></button>
 		  	</div>
 		  	<!----------------->
 
@@ -67,22 +78,22 @@
 		  		<div class="row">
 		  			<div class="col-xs-2">
 		  				<div class="form-group">
-	  					  <label for="sel10">Gráfico Padrão:</label>
-						  <select id="select-default-graphic" class="form-control" id="sel10">
-						    <option value="bar">Barra</option>
-						    <option value="line">Linha</option>
-						    <option value="pizza">Pizza</option>
-						    <option value="table">Tabela</option>
+	  					  <label for="select-default-graphic"><script>show(DEFAULT_GRAPHIC)</script></label>
+						  <select id="select-default-graphic" class="form-control">
+						    <option value="bar"><script>show(BAR)</script></option>
+						    <option value="line"><script>show(LINE)</script></option>
+						    <option value="pizza"><script>show(PIE)</script></option>
+						    <option value="table"><script>show(TABLE)</script></option>
 						  </select>
 						</div>
 		  			</div>
 		  			<div class="col-xs-10">
 		  				<div class="form-group">
-							<label for="tit">Título*:</label>
+							<label for="tit"><script>show(TITLE)</script></label>
 						  	<input id="title-plot" type="text" class="form-control" id="tit">
 						</div>
 						<div class="form-group">
-							<label for="des">Descrição:</label>
+							<label for="des"><script>show(DESCRIPTION)</script></label>
 		  					<textarea class="form-control" rows="5" id="description-plot"></textarea>
 						</div>
 		  			</div>
@@ -90,22 +101,13 @@
 		  		<div class="row">
 		  			<div class="col-xs-2">
 		  				<div class="form-group" style="width: 120px">	
-		  				<select id="select-secundary-graphic" class="form-control" id="sel11">
-						    <option value="bar">Barra</option>
-						    <option value="line">Linha</option>
-						  </select>  
-						  <br>
-						  <div id="columns-group-y">
-			  				<!-- space with the columns y -->
-		  				</div>
+							<div id="columns-group-y">
+				  				<!-- space with the columns y -->
+			  				</div>
 						</div>	
-						<div id="panel-new-column-y" class="panel-new-column">
-					  		<div id="drop-column-y" class="panel-body">Arraste uma coluna</div>
-						</div>
 		  			</div>
 		  			<div class="col-xs-10">
-		  					<div id="chart">
-		  					</div>
+	  					<div id="chart"></div>
 		  			</div>
 		  		</div>
 		  		<br>
@@ -114,15 +116,11 @@
 		  				<div id="columns-group-x">
 			  				<!-- space with the columns x -->
 		  				</div>
-		  				<div id="panel-new-column-x" class="panel-new-column">
-					  		<div id="drop-column-x" class="panel-body">Arraste uma coluna</div>
-						</div>
 					</div>
 		  		</div>
-
 		  		<div class="row">
 		  			<div class="col-xs-2 pull-right">
-		  				<button id="button-save" type="button" class="btn btn-primary btn-block" disabled=false>Salvar</button>
+		  				<button id="button-save" type="button" class="btn btn-primary btn-block" disabled=false><script>show(SAVE)</script></button>
 		  			</div>
 		  		</div>
 		  	</div>
@@ -130,10 +128,10 @@
 
 		  	<!-- right column -->
 		  	<div class="col-xs-2">
-		  		<h2 align="center">Plots</h2>
+		  		<h2 align="center"><script>show(PLOTS)</script></h2>
 		  		<div class="plots">
 		  			<div class="checkbox">
-					  <label><input type="checkbox" id="check-all-plots" value="">Marcar Todos</label>
+					  <label><input type="checkbox" id="check-all-plots" value=""><script>show(CHECK_ALL)</script></label>
 					</div>
 					<br>
 					<div id="checkbox-plots-group">
@@ -141,12 +139,10 @@
 					</div>	
 		  		</div>
 				<br>
-				<button type="button" class="btn btn-primary btn-block">Exportar</button>
+				<button type="button" class="btn btn-primary btn-block"><script>show(EXPORT)</script></button>
 				<div class="form-group">
 				  <select class="form-control" id="sel6">
 				    <option>Formato 1</option>
-				    <option>Formato 2</option>
-				    <option>Formato 3</option>
 				  </select>
 				</div>
 		  	</div>
