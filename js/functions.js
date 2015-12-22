@@ -75,10 +75,8 @@ $(document).ready(function() {
 
 		// filling the select with the columns options
 		fillSelectColumnsWithJson(completejson);
-
 		// initializing the graphic with a bar graphic
 		setBarGraphic();
-
 		// setting event to drag and drop
 		setEventsDragAndDrop();
 	});
@@ -168,24 +166,24 @@ $(document).ready(function() {
 			     +" \"sp\": \"Gabinete\" }"
 			   +"]"
 			+"}"; 
-			return jQuery.parseJSON(client);
+		return jQuery.parseJSON(client);
 	}
 
 	/* Filling the columns options based on json */ 
 	function fillSelectColumnsWithJson(jsoncolumns){
 		if(jsoncolumns != null){
 			// getting the field message
-			var messages = jsoncolumns.message;
-			if(messages.length > 0){
+			var data = jsoncolumns.message;
+			if(data.length > 0){
 				// getting the all properties of message on position 0
-				var columns = Object.keys(messages[0]);
+				var columns = Object.keys(data[0]);
 				var arrayoptions = new Array();
 				var option;
 				var validcolumn;
 				// loop to all properties/columns
 				for(var i = 0; i < columns.length; i++){
 					// checking the value of column
-					validcolumn = validatingTheColumnFieldHasValue(messages, columns[i], 0);
+					validcolumn = validatingTheColumnFieldHasValue(data, columns[i], 0);
 					if(validcolumn.valid){
 						option = createOptionToSelectColumns(columns[i], validcolumn.type);
 						arrayoptions.push(option);
@@ -201,12 +199,14 @@ $(document).ready(function() {
 	}
 
 	/* Recursive function to find value of column for test if is a valid column */
-	function validatingTheColumnFieldHasValue(jsonmessages, column, position){
+	function validatingTheColumnFieldHasValue(data, column, position){
 		var result = new Object();
-		if(position < jsonmessages.length){
+		result.type = null;
+		result.valid = false;
+		if(position < data.length){
 			var valuetype;
 			// getting the message in a position
-			var message = jsonmessages[position];
+			var message = data[position];
 			// getting the value of a column 
 			var valuecolumn = message[column];
 			if(valuecolumn != null){
@@ -222,10 +222,9 @@ $(document).ready(function() {
 				}
 				result.type = valuetype;
 				result.valid = true;
-				return result;
 			} else {
 				// recursive to a next message
-				var valid = validatingTheColumnFieldHasValue(jsonmessages, column, position+1);
+				var valid = validatingTheColumnFieldHasValue(data, column, position+1);
 				result = valid;
 			}
 		}
@@ -248,65 +247,10 @@ $(document).ready(function() {
 		chart.ondrop = dropPlot;
 		chart.ondragover = allowDrop;
 	}
-
-	/* Generate columns filters by JSON */
-	function loadColumns(jsonColumns){
-		
-		// removing columns to add new without repeat
-		clearAllColumnsFilters();
-	
-		// all columns/attributes
-		// var columns = jsonColumns.columns;
-		// // loop with the all columns/attributes that need to create a filter
-		// for(var i = 0; i < columns.length; i++){
-		// 	switch(columns[i].type){
-		// 		case 'date':
-		// 			createNewFiltersDate(columns[i]);
-		// 			break;
-		// 		case 'number':
-		// 			createNewFiltersNumber(columns[i]);
-		// 			break;
-		// 		case 'text':
-		// 			createNewFiltersText(columns[i]);
-		// 			break;
-		// 		default:
-		// 			break;		
-		// 	}
-		// }
-	}
-
 	/* -------------------------------------------------------------------------------------------------- */
 
 
 	function createNewColumnFilter(column){
-
-		var typecolumn = column.type;
-
-		var groupfilters;
-		if(type == 'date'){
-			groupfilters = document.getElementById(dateidgroupdivscolumnsfilters);
-		} else if(type == 'number'){
-			groupfilters = document.getElementById(numberidgroupdivscolumnsfilters);
-		} else if(type == 'text'){
-			groupfilters = document.getElementById(textidgroupdivscolumnsfilters);
-		}
-
-		// getting all filters already on div
-		var filters = groupfilters.children;
-		// setting the new id to new filter
-		var newidfilter = filters.length + 1;
-
-		var newdivid;
-		if(type == 'date'){
-			newdivid = dategroupfilter_default+newidfilter;
-		} else if(type == 'number'){
-			newdivid = numbergroupfilter_default+newidfilter;
-		} else if(type == 'text'){
-			newdivid = textgroupfilter_default+newidfilter;
-		}
-
-		// creating new div with the filters
-		var newdiv = createNewDiv(newdivid, null, null, null, null);
 
 
 	}
@@ -969,29 +913,6 @@ $(document).ready(function() {
 	/* --------------------------------------------------------------------------------------------------------------------- */
 	
 	/* ------------------------------------------ FUNCTIONS TO MANIPULATE SCREEN ------------------------------------------- */
-
-	/* function to remove all columns filters */
-	function clearAllColumnsFilters(){
-		var groupdatefilters = document.getElementById(dateidgroupdivscolumnsfilters);
-		if(groupdatefilters != null){
-			while (groupdatefilters.firstChild) {
-			    groupdatefilters.removeChild(groupdatefilters.firstChild);
-			}
-		}
-		var groupnumberfilters = document.getElementById(numberidgroupdivscolumnsfilters);
-		if(groupnumberfilters != null){
-			while (groupnumberfilters.firstChild) {
-			    groupnumberfilters.removeChild(groupnumberfilters.firstChild);
-			}
-		}
-		var grouptextfilters = document.getElementById(textidgroupdivscolumnsfilters);
-		if(grouptextfilters != null){
-			while (grouptextfilters.firstChild) {
-			    grouptextfilters.removeChild(grouptextfilters.firstChild);
-			}
-		}
-	}
-
 	function clearTitleAndDescriptionPlot(){
 		var titleplot = document.getElementById('title-plot');
 		titleplot.value = '';
@@ -1032,32 +953,6 @@ $(document).ready(function() {
 		enableButtonSecondaryGraphic(this);
 		changeGraphicDefault(this);
 	});
-
-	/* Enable the select different graphic of graphic default */
-	$('#select-secundary-graphic').on('change', function(){
-		var graphic = this.value;
-
-		switch(graphic){
-			case 'bar':
-				setBarGraphic();
-			break;
-			case 'line':
-				setLineGraphic();
-			break;
-			default:
-			break;
-		}
-	});
-
-	function enableButtonSecondaryGraphic(selectdefaultgraphic){
-		var graphicsecondary = document.getElementById('select-secundary-graphic');
-		if(selectdefaultgraphic.value != 'pizza' && selectdefaultgraphic.value != 'table'){
-			graphicsecondary.removeAttribute('disabled');
-			graphicsecondary.value = selectdefaultgraphic.value;
-		} else {
-			graphicsecondary.setAttribute('disabled', 'disabled');
-		}
-	}
 
 	function changeGraphicDefault(selectdefaultgraphic){
 		var graphic = selectdefaultgraphic.value;
@@ -1116,25 +1011,6 @@ $(document).ready(function() {
 	    ev.preventDefault();
 	}
 
-	/* drag column with filters */
-	function dragColumn(ev) {
-		// setting data in event to capture on drop event
-	    ev.dataTransfer.setData("id-div", ev.target.id);
-	    var namecolumn = ev.target.children[0].innerHTML.split(':')[1];
-	    ev.dataTransfer.setData("name-column", namecolumn);
-	}
-
-	/* drop column with filters */
-	function dropColumn(ev) {
-	    ev.preventDefault();
-	    // getting the data setted on the drag event
-	    var column = ev.target.id.split('-')[2];
-	    var iddiv = ev.dataTransfer.getData("id-div");
-	    var namecolumn = ev.dataTransfer.getData("name-column");
-	    var type = iddiv.split('-')[2];
-	    generateNewColumnOnGraphic(column, null, type, namecolumn);
-	}
-
 	/* drag plot to open graphic */
 	function dragPlot(ev){
 		var title = ev.target.textContent;
@@ -1181,57 +1057,6 @@ $(document).ready(function() {
 		for(var i = 0; i < columnsy.length; i++){
 			generateNewColumnOnGraphic('y', columnsy[i].id, null, columnsy[i].name);
 		}
-	}
-
-	/* function to create a panel with new column */
-	function generateNewColumnOnGraphic(column, iddiv, type, namecolumn){
-
-		var divcolumns;
-
-		divcolumns = document.getElementById('columns-group-'+column);
-
-		var columnid;
-
-		if(iddiv == null || iddiv == ''){
-			var childrens = divcolumns.children;
-			var childrenslength = childrens.length;
-			if(childrenslength > 0){
-				var lastcolumnid = childrens[childrenslength-1].id;
-				var lastcolumnidnumber = lastcolumnid.split('-')[3];
-				columnid = parseInt(lastcolumnidnumber)+1;
-			} else {
-				columnid = 1;
-			}
-		} else {
-			columnid = iddiv;
-		}
-
-
-		var idfirstdiv = 'group-column-'+column+'-'+columnid;
-		var classnamefirstdiv = 'form-group panel-columns-'+column+' panel-columns';
-
-		var firstdiv = createNewDiv(idfirstdiv, null, null, classnamefirstdiv, null);
-
-		var classnameseconddiv = 'panel panel-default';
-		var seconddiv = createNewDiv(null, null, null, classnameseconddiv, null);
-
-		var aid = 'group-column-'+column+'-del-'+columnid;
-		var classnamea = 'img-rounded pull-right close-panel-column';
-		var a = createNewA(aid, classnamea, closeDivColumn);
-
-		var imgsrc = 'img/close.png';
-		var imgalt = 'Excluir';
-		var img = createNewImg(null, imgsrc, imgalt, null);
-
-		var classnamethirddiv = 'panel-body';
-		var thirddiv = createNewDiv(null, null, null, classnamethirddiv, namecolumn);
-
-		a.appendChild(img);
-		seconddiv.appendChild(a);
-		seconddiv.appendChild(thirddiv);
-		firstdiv.appendChild(seconddiv);
-
-		divcolumns.appendChild(firstdiv);
 	}
 
 	/* Save configuration graphic in a new plot */
@@ -1357,24 +1182,6 @@ $(document).ready(function() {
 		return arrayoptions;
 	}
 
-	/* Array datalist with the simbols */
-	function arrayDataListSimbols(text, parenteses){
-		// generating the options to functions
-		var arrayoptions = new Array();
-
-		if(!parenteses) {
-			var option0 = {value:text+")"};
-			arrayoptions.push(option0);
-		}
-
-		var option1 = {value:text+"+"};
-		var option2 = {value:text+"-"};
-		var option3 = {value:text+"*"};
-		var option4 = {value:text+"/"};
-		arrayoptions.push(option1, option2, option3, option4);
-
-		return arrayoptions;
-	}
 
 	/* Array datalist with name of columns */
 	function arrayDataListColumns(text){
@@ -1470,19 +1277,6 @@ $(document).ready(function() {
 			return true;
 		} 	
 		setClassNameToADatalist(textfield, 'input-personalised');	
-		return false;
-	}
-
-	/* validating the text of personalised if is a signal */
-	function validateSignalPersonalised(text, textfield){
-		if(text.length > 0){
-			var lastword = text[text.length-1];
-			if(lastword == '+' || lastword == '-' || lastword == '/' || lastword == '*'){
-				setClassNameToADatalist(textfield, null);
-				return true;
-			} 
-		}
-		setClassNameToADatalist(textfield, 'input-personalised');
 		return false;
 	}
 

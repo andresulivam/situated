@@ -8,37 +8,38 @@ hr {
 	background-color: #000;
 }
 
-.panel-new-column{
-	border-radius: 10px;
-	border-style: dashed;
-	border-width: thin;
-	width: 160px;
-	float: left;
-}
-
-.close-panel-column{
-	padding-bottom:3px;
-	padding-left:3px;
-	padding-right:3px
-}
-.close-panel-column:hover{
-	cursor: pointer;
-}
-
-.panel-columns{
-	width: 120px;
-}
-
-.panel-columns-x{
-	float: left;
-	margin-right: 15px;
-}
-
 .a-img-trash-plot:hover{
 	cursor: pointer;
 }
 
-.input-personalised:focus {
-    color: #ff0000;
-    text-decoration: underline;
+/* GROUP WITH THE COLUMNS FILTERS OF Y*/
+.columns-group-y {
+	width: 185px;
 }
+
+/* COLUMNS FILTERS Y */
+.filter-column-y {
+	margin-bottom: 7px;
+	padding: 4px;
+}
+
+/* NAME COLUMN OF COLUMNS FILTERS */
+.column-filter-name {
+	padding-bottom: 10px;
+}
+
+/* LABELS COLUMNS FILTERS */
+.label-columns-filters {
+	padding-top: 7px;
+}
+
+/* REFRESH COLUMNS FILTERS */
+.refresh-columns-filters {
+	padding-top: 7px;
+}
+
+.remove-column:hover{
+	cursor: pointer;
+}
+
+

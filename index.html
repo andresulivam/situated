@@ -21,10 +21,13 @@
 	  <!-- -------------->
 
 	  <link rel="stylesheet" href="css/main.css">
-	  <script src="js/functions.js"></script>
+	  <script src="js/plugin-functions.js"></script>
 
 	  <!-- LANGUAGE -->
 	  <script src="js/PT-BR.js"></script>
+
+	  <!-- CONSTS -->
+	  <script src="js/consts.js"></script>
 	  
 	  <script>  
 	  	/* function to use language based on translate file */
@@ -51,25 +54,32 @@
 		  		<button id="generate-new" type="button" class="btn btn-primary btn-block"><script>show(NEW)</script></button>
 				<!-------------- -->
 				<hr>
-				<div id="datalists-personalised">
-					<div id="datalists-personalised-date"></div>
-					<div id="datalists-personalised-number"></div>
-					<div id="datalists-personalised-text"></div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-xs-3">
+							<label for="select-column"><script>show(COLUMNS)</script></label>
+						</div>
+						<div class="col-xs-8">
+							<select id="select-column" class="form-control"></select>
+						</div>
+					</div>
 				</div>
 				<div class="form-group">
-					  <label for="select-column"><script>show(COLUMNS)</script></label>
-					  <select id="select-column" class="form-control">
-
-					  </select>
-				</div>
-				<div class="form-group">
-					  <label for="select-default-graphic"><script>show(AXIS)</script></label>
-					  <select id="select-default-graphic" class="form-control">
-					    <option value="axis-x"><script>show(AXIS_X)</script></option>
-					    <option value="axis-y"><script>show(AXIS_Y)</script></option>
-					  </select>
+					<div class="row">
+						<div class="col-xs-3">
+					  		<label for="select-axis"><script>show(AXIS)</script></label>
+						</div>
+						<div class="col-xs-8">
+ 							<select id="select-axis" class="form-control">
+							    <option value="axis-x"><script>show(AXIS_X)</script></option>
+							    <option value="axis-y"><script>show(AXIS_Y)</script></option>
+							</select>						
+						</div>
+					</div>
+					 
 				</div>
 				<button id="add-column" type="button" class="btn btn-primary btn-block"><script>show(ADD)</script></button>
+				<hr>
 		  	</div>
 		  	<!----------------->
 
@@ -100,9 +110,9 @@
 		  		</div>
 		  		<div class="row">
 		  			<div class="col-xs-2">
-		  				<div class="form-group" style="width: 120px">	
-							<div id="columns-group-y">
-				  				<!-- space with the columns y -->
+		  				<div class="form-group">	
+							<div id="columns-group-y" class="columns-group-y">
+				  				<!-- space with the columns y -->		      				
 			  				</div>
 						</div>	
 		  			</div>
