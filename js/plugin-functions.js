@@ -118,11 +118,11 @@ $(document).ready(function() {
 		if(ondragstart != null){
 			newlabel.ondragstart = ondragstart;
 		}
-		if(hidden != null){
-			newlabel.hidden = hidden;
-		}
 		if(classname != null){
 			newlabel.className = classname;
+		}
+		if(hidden != null){
+			newlabel.hidden = hidden;
 		}
 		return newlabel;
 	}
@@ -136,14 +136,14 @@ $(document).ready(function() {
 		if(type != null){
 			newinput.type = type;
 		}
-		if(hidden != null){
-			newinput.hidden = hidden;
-		}
 		if(classname != null){
 			newinput.className = classname;
 		}
 		if(oninput != null){
 			newinput.oninput = oninput;
+		}
+		if(hidden != null){
+			newinput.hidden = true;
 		}
 		return newinput;
 	}
@@ -266,6 +266,11 @@ $(document).ready(function() {
 		generateNewColumnWithFilters(column, axis);
 	});
 
+	/* When change the filter of interval */
+	function filterColumnChange(){
+		configureScreenBySelectFilter(this);
+	}
+
 	/* --------------------------------------------------------------------------------------------------------- */
 
 	/* -------------------------------------------- FUNCTIONS -------------------------------------------------- */
@@ -286,7 +291,7 @@ $(document).ready(function() {
 			var lastchildren = groupaxisy.children[groupaxisy.children.length-1];
 			if(lastchildren != null){
 				var idlastchildren = lastchildren.id;
-				newid = parseInt(idlastchildren.split('-')[2]) + 1;
+				newid = parseInt(idlastchildren.split('-')[3]) + 1;
 			} else {
 				newid = 1;
 			}
@@ -347,7 +352,7 @@ $(document).ready(function() {
 
 		if(typecolumn == CONST_NUMBER || typecolumn == CONST_DATE){
 			// row with filter (range, less or big)
-			var rowfilter = createRowFilter(iddivpanel);
+			var rowfilter = createRowFilter(iddivpanel, filterColumnChange);
 
 			// initial filter
 			var rowrangeinitial = createRowRange(iddivpanel, typecolumn, INITIAL, true);
@@ -418,7 +423,7 @@ $(document).ready(function() {
 	}
 
 	/* Creating the row with filter */
-	function createRowFilter(iddivpanel){
+	function createRowFilter(iddivpanel, functionfiltercolumnchange){
 
 		// principal row
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null);
@@ -433,7 +438,9 @@ $(document).ready(function() {
 
 		var idselect = CONST_SELECT_FILTER+'-'+iddivpanel;
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
-
+		if(functionfiltercolumnchange != null){
+			select.onchange = functionfiltercolumnchange;
+		}
 		var optionselect = createNewOption(CONST_SELECT, SELECT, null);
 		var optionrange = createNewOption(CONST_RANGE, RANGE, null);
 		var optionbiggerthan = createNewOption(CONST_BIGGER_THAN, BIGGER_THAN, null);
@@ -455,19 +462,29 @@ $(document).ready(function() {
 	/* Creating the row with filter */
 	function createRowRange(iddivpanel, inputtype, type, hidden){	
 
+		var current;
+		var currentlabel;
+		if(type ==  INITIAL){
+			current = CONST_INITIAL;
+			currentlabel = CONST_INITIAL_LABEL;
+		} else if(type == FINAL){
+			current = CONST_FINAL;
+			currentlabel = CONST_FINAL_LABEL;
+		}
 		// principal row
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null);
 
 		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null);
 
-		var label = createNewLabel(null, type, hidden, null, null, CONST_LABEL_COLUMNS_FILTERS);
+		var labelid = currentlabel+'-'+iddivpanel;
+		var label = createNewLabel(labelid, type, hidden, null, null, CONST_LABEL_COLUMNS_FILTERS);
 
 		divcolxs4.appendChild(label);
 
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null);
 
-		var idinput = CONST_INITIAL+'-'+iddivpanel; 
-		var inputrange = createNewInput(idinput, inputtype, null, true, null);
+		var idinput = current+'-'+iddivpanel; 
+		var inputrange = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, true, null);
 		
 		divcolxs8.appendChild(inputrange);
 
@@ -534,6 +551,49 @@ $(document).ready(function() {
 		return divrow;
 	}
 
+	/* Configuring screen by user select filter (range, less or big) */
+	function configureScreenBySelectFilter(select){	
+		var selectid = select.id;
+		var id = selectid.replace(CONST_SELECT_FILTER, "");
+		var idinitial = CONST_INITIAL+id;
+		var idfinal = CONST_FINAL+id;
+		var labelinitial = CONST_INITIAL_LABEL+id;
+		var labelfinal = CONST_FINAL_LABEL+id;
+
+		var initialinput = document.getElementById(idinitial);
+		var finalinput = document.getElementById(idfinal);
+		var initiallabel = document.getElementById(labelinitial);
+		var finallabel = document.getElementById(labelfinal);
+
+		var value = select.value;
+
+		switch(value){
+			case CONST_RANGE:
+				initialinput.hidden = false;
+				initiallabel.hidden = false;
+				finalinput.hidden = false;
+				finallabel.hidden = false;
+				break;
+			case CONST_BIGGER_THAN:
+				initialinput.hidden = false;
+				initiallabel.hidden = false;
+				finalinput.hidden = true;
+				finallabel.hidden = true;
+				break;
+			case CONST_LESS_THAN:
+				initialinput.hidden = true;
+				initiallabel.hidden = true;
+				finalinput.hidden = false;
+				finallabel.hidden = false;	
+				break;
+			default:
+				initialinput.hidden = true;
+				finalinput.hidden = true;
+				initiallabel.hidden = true;
+				finallabel.hidden = true;
+				break;		
+		}
+	}
 	/* --------------------------------------------------------------------------------------------------------- */
 
 	/* change graphic to a bar graphic */

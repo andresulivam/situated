@@ -38,6 +38,7 @@ var CONST_DATE = 'date';
 /* ------------ F -------------- */
 var CONST_FILTER_COLUMN_Y = 'filter-column-y';
 var CONST_FINAL = 'final';
+var CONST_FINAL_LABEL = 'final-label';
 var CONST_FORM_CONTROL = 'form-control';
 /* ----------------------------- */
 
@@ -48,10 +49,12 @@ var CONST_FORM_CONTROL = 'form-control';
 /* ------------ I -------------- */
 var CONST_IMG_CLOSE = 'img/close.png';
 var CONST_INITIAL = 'initial';
+var CONST_INITIAL_LABEL = 'initial-label';
 /* ----------------------------- */
 
 /* ------------ L -------------- */
 var CONST_LABEL_COLUMNS_FILTERS = 'label-columns-filters';
+var CONST_INITIAL_LABEL = 'initial-label';
 var CONST_LESS_THAN = 'lessthan';
 var CONST_LINE = 'line';
 /* ----------------------------- */
