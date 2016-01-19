@@ -87,6 +87,11 @@ $(document).ready(function() {
 		configureScreenBySelectFilter(this);
 	}
 
+	/* Mudando a condicao */
+	function conditionChange(){
+		configureScreenByCondition(this);
+	}
+
 	/* Removendo coluna */
 	$('body').on('click', 'a.remove-column', function() {
 	    removeDivWithColumn(this.id);
@@ -179,14 +184,20 @@ $(document).ready(function() {
 			divfiltercolumn.appendChild(rowrangefinal);
 		} else if(typecolumn == CONST_TEXT && axis == CONST_X){
 			// Div com o filtro para texto: (Igual, contem, diferente)
-			var rowfilter = createRowFilterText(iddivpanel, typecolumn, null, null);
+			var rowfilter = createRowFilterText(iddivpanel, typecolumn, null);
 			divfiltercolumn.appendChild(rowfilter);
 		}
 		divpanelcollapse.appendChild(divfiltercolumn);
 		if(axis == CONST_Y){
 			// Div com o filtro de condicao
-			var rowcondition = createRowCondition(iddivpanel, typecolumn);
+			var rowcondition = createRowCondition(iddivpanel, typecolumn, conditionChange);
+			var inputconditioncountif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_COUNT_IF, true);
 			divpanelcollapse.appendChild(rowcondition);
+			divpanelcollapse.appendChild(inputconditioncountif);
+			if(typecolumn == CONST_NUMBER){
+				var inputconditionsumif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_SUM_IF, true);
+				divpanelcollapse.appendChild(inputconditionsumif);
+			}
 		}
 		// Div com o botao de pesquisar (refazer pesquisa)
 		var rowresearch = createRowResearch(iddivpanel);
@@ -309,7 +320,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o filtro de condicao */
-	function createRowCondition(iddivpanel, typecolumn){
+	function createRowCondition(iddivpanel, typecolumn, functionconditionchange){
 
 		// Div que contera o combobox com os filtros de condicao
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
@@ -320,10 +331,10 @@ $(document).ready(function() {
 		var idselect = CONST_CONDITION+'-'+iddivpanel;
 		// Combobox com os filtros de condicao disponiveis
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
-		var optionselect = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null);
-		var optionrange = createNewOption(CONST_COUNT_IF, COUNT_IF, null);	
-		select.appendChild(optionselect);
-		select.appendChild(optionrange);
+		var optioncountall = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null);
+		var optioncountif = createNewOption(CONST_COUNT_IF, COUNT_IF, null);	
+		select.appendChild(optioncountall);
+		select.appendChild(optioncountif);
 		if(typecolumn == CONST_NUMBER){
 			// Para o caso de numero, acrescentar outras opcoes de condicao
 			var optionsum = createNewOption(CONST_SUM, SUM, null);
@@ -332,6 +343,9 @@ $(document).ready(function() {
 			select.appendChild(optionsum);
 			select.appendChild(optionsumif);
 			select.appendChild(optionaverage);
+		}
+		if(functionconditionchange != null){
+			select.onchange = functionconditionchange;
 		}
 		divcolxs8.appendChild(select);
 		divrow.appendChild(divcolxs4);
@@ -354,7 +368,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o filtro de texto (Igual, contem, diferente) */
-	function createRowFilterText(iddivpanel, inputtype, type, hidden){	
+	function createRowFilterText(iddivpanel, inputtype, hidden){	
 
 		// Div que contera o filtro de texto
 		var divid = CONST_FILTER_TEXT+'-'+iddivpanel;
@@ -367,6 +381,31 @@ $(document).ready(function() {
 		// Input para filtrar o texto
 		var inputrange = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);	
 		divcolxs8.appendChild(inputrange);
+		divrow.appendChild(divcolxs4);
+		divrow.appendChild(divcolxs8);
+		return divrow;
+	}
+
+	/* Criando o filtro de texto (Igual, contem, diferente) */
+	function createRowConditionInputText(iddivpanel, inputtype, type, hidden){	
+
+		var current;
+		if(type == CONST_COUNT_IF){
+			current = CONST_CONDITION_COUNT_IF_INPUT;
+		} else if(type == CONST_SUM_IF){
+			current = CONST_CONDITION_SUM_IF_INPUT;
+		}
+		// Div que contera a condicao
+		var divid = type+'-'+iddivpanel;
+		var divrow = createNewDiv(divid, null, null, CONST_ROW, null, null, hidden);
+		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, false);
+		var label = createNewLabel(null, null, false, null, null, CONST_LABEL_COLUMNS_CONDITION_FILTERS);
+		divcolxs4.appendChild(label);
+		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, false);
+		var idinput = current+'-'+iddivpanel; 
+		// Input para a condicao
+		var inputcondition = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);	
+		divcolxs8.appendChild(inputcondition);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
 		return divrow;
@@ -411,6 +450,57 @@ $(document).ready(function() {
 				finallabel.hidden = true;
 				break;		
 		}
+	}
+
+	/* Configurando a tela apos o usuario mudar a condicao */
+	function configureScreenByCondition(select){	
+		var selectid = select.id;
+		var id = selectid.replace(CONST_CONDITION, "");
+
+		var value = select.value;
+
+		// Recuperando qual coluna foi alterada a condicao
+		var labelconditioncountif = CONST_COUNT_IF+id;
+		var labelconditionsumif = CONST_SUM_IF+id;
+		var conditionlabelcountif = document.getElementById(labelconditioncountif);
+		var conditionlabelsumif = document.getElementById(labelconditionsumif);
+
+		// Apagando os valores inseridos anteriormente
+		var condition_count_if_id = selectid.replace(CONST_CONDITION, CONST_CONDITION_COUNT_IF_INPUT);
+		var condition_sum_if_id = selectid.replace(CONST_CONDITION, CONST_CONDITION_SUM_IF_INPUT);
+		var condition_value_count_if = document.getElementById(condition_count_if_id);
+		var condition_value_sum_if = document.getElementById(condition_sum_if_id);
+
+		if(condition_value_count_if != null){
+			condition_value_count_if.value = '';
+		}
+		if(condition_value_sum_if){
+			condition_value_sum_if.value = '';
+		}
+
+		switch(value){
+			case CONST_COUNT_IF:
+				conditionlabelcountif.hidden = false;
+				if(conditionlabelsumif != null){
+					conditionlabelsumif.hidden = true;
+				}
+				break;
+			case CONST_SUM_IF:
+				conditionlabelsumif.hidden = false;
+				if(conditionlabelcountif != null){
+					conditionlabelcountif.hidden = true;
+				}
+				break;
+			default:
+				if(conditionlabelcountif != null){
+					conditionlabelcountif.hidden = true;
+				}
+				if(conditionlabelsumif != null){
+					conditionlabelsumif.hidden = true;
+				}
+				break;		
+		}
+
 	}
 
 	/* Recuperando todos os valores disponiveis para a coluna baseado no json */
@@ -485,11 +575,7 @@ $(document).ready(function() {
 	function researchColumn(buttonid){
 		var axis = buttonid.split('-')[3];
 		var column_type = getTypeColumn(buttonid);
-		if(axis == CONST_X){
-			refreshValuesAxisX(buttonid, column_type, axis);
-		} else if(axis == CONST_Y){
-
-		}
+		refreshValuesAxisX(buttonid, column_type, axis);
 	}
 
 	function refreshValuesAxisX(buttonid, column_type, axis){
@@ -546,6 +632,7 @@ $(document).ready(function() {
 			}
 		}
 		if(valid){
+			if(axis == CONST_X)
 			var values = getValuesFromFilter(column_name, range_initial, range_final, null, null, null, column_type, filter_value, axis);
 			updateSelectWithNewValues(buttonid, values, column_type);
 		}

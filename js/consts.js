@@ -22,7 +22,7 @@ var CONST_COLLAPSE = 'collapse';
 var CONST_COLUMN = 'column';
 var CONST_COLUMNS_GROUP_Y = 'columns-group-y';
 var CONST_COLUMNS_GROUP_X = 'columns-group-x';
-var CONST_CONDITION = 'condition-';
+var CONST_CONDITION = 'condition';
 var CONST_COUNT_ALL = 'count-all';
 var CONST_COUNT_IF = 'count-if';
 /* ----------------------------- */
@@ -42,6 +42,8 @@ var CONST_FORM_CONTROL = 'form-control';
 var CONST_FINAL_INPUT = 'final-input';
 var CONST_FILTER_TEXT = 'filter-text';
 var CONST_FILTER_TEXT_INPUT = 'filter-text-input';
+var CONST_CONDITION_COUNT_IF_INPUT = 'condition-count-if-input';
+var CONST_CONDITION_SUM_IF_INPUT = 'condition-sum-if-input';
 /* ----------------------------- */
 
 /* ------------ G -------------- */
@@ -59,6 +61,7 @@ var CONST_LABEL_COLUMNS_FILTERS = 'label-columns-filters';
 var CONST_LESS_THAN = 'lessthan';
 var CONST_LINE = 'line';
 var CONST_LABEL_COLUMNS_TEXT_FILTERS = 'label-columns-text-filters';
+var CONST_LABEL_COLUMNS_CONDITION_FILTERS = 'label-columns-condition-filters';
 /* ----------------------------- */
 
 /* ------------ M -------------- */
