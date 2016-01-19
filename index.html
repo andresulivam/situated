@@ -1,40 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	  <title>Situated</title>
-	  <meta charset="utf-8">
-	  <meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Situated</title>
+	  	<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	  <!-- JQUERY -->
-	  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-      <!------------>
+	 	<!-- JQUERY -->
+	  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	    <!------------>
 
-	  <!-- BOOTSTRAP -->
-	  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-	  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-	  <!-- ------------ >
+	  	<!-- BOOTSTRAP -->
+	  	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+	 	<!-- ------------ >
 
-	  <!-- HIGHCHARTS -->
-	  <script src="highcharts/highcharts.js"></script>
-	  <script src="highcharts/highcharts-3d.js"></script>
-	  <script src="highcharts/modules/exporting.js"></script>
-	  <!-- -------------->
+		<!-- HIGHCHARTS -->
+		<script src="highcharts/highcharts.js"></script>
+		<script src="highcharts/highcharts-3d.js"></script>
+		<script src="highcharts/modules/exporting.js"></script>
+		<!-- -------------->
 
-	  <link rel="stylesheet" href="css/main.css">
-	  <script src="js/plugin-functions.js"></script>
+		<link rel="stylesheet" href="css/main.css">
+		<script src="js/plugin-functions.js"></script>
 
-	  <!-- LANGUAGE -->
-	  <script src="js/PT-BR.js"></script>
+		<!-- LANGUAGE -->
+		<script src="js/PT-BR.js"></script>
 
-	  <!-- CONSTS -->
-	  <script src="js/consts.js"></script>
-	  
-	  <script>  
-	  	/* function to use language based on translate file */
-		function show(x){
-	  		document.write(x);
-	  	}
-	  </script>
+		<!-- CONSTS -->
+		<script src="js/consts.js"></script>
+
+		<!-- CREATE ELEMENTS -->
+		<script src="js/create-elements-html.js"></script>
+
+		<!-- GRAPHIC FUNCTIONS -->
+		<script src="js/graphic-functions.js"></script>
+
+		<!-- FILTER FUNCTIONS -->
+		<script src="js/filter-columns-functions.js"></script>
+
+	  	<script>  
+		  	/* function to use language based on translate file */
+			function show(x){
+		  		document.write(x);
+		  	}
+	  	</script>
 	</head>
 	<body>
 
@@ -71,12 +80,11 @@
 						</div>
 						<div class="col-xs-8">
  							<select id="select-axis" class="form-control">
+ 								<option value="axis-y"><script>show(AXIS_Y)</script></option>
 							    <option value="axis-x"><script>show(AXIS_X)</script></option>
-							    <option value="axis-y"><script>show(AXIS_Y)</script></option>
 							</select>						
 						</div>
-					</div>
-					 
+					</div>	 
 				</div>
 				<button id="add-column" type="button" class="btn btn-primary btn-block"><script>show(ADD)</script></button>
 				<hr>
