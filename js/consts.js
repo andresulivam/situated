@@ -3,7 +3,6 @@
 /* ------------ A -------------- */
 var CONST_AVERAGE = 'average';
 var CONST_AXIS_Y = 'axis-y';
-var CONST_AXIS_X = 'axis-x';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -39,7 +38,6 @@ var CONST_DATE = 'date';
 /* ------------ F -------------- */
 var CONST_FILTER_COLUMN_Y = 'filter-column-y';
 var CONST_FINAL = 'final';
-var CONST_FINAL_LABEL = 'final-label';
 var CONST_FORM_CONTROL = 'form-control';
 var CONST_FINAL_INPUT = 'final-input';
 var CONST_FILTER_TEXT = 'filter-text';
@@ -53,7 +51,6 @@ var CONST_FILTER_TEXT_INPUT = 'filter-text-input';
 /* ------------ I -------------- */
 var CONST_IMG_CLOSE = 'img/close.png';
 var CONST_INITIAL = 'initial';
-var CONST_INITIAL_LABEL = 'initial-label';
 var CONST_INITIAL_INPUT = 'initial-input';
 /* ----------------------------- */
 
