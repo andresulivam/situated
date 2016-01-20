@@ -31,8 +31,8 @@ function getValuesFromFilter(column_name, range_initial, range_final, condition,
 			}
 			// Filtrando pela condicao
 			if(valid_value){
-				if(condition != null && condition != CONST_COUNT_ALL){
-
+				if(condition != null){
+					valid_value = filterByCondition(condition, fieldsJson[i]);
 				}
 			}
 			// Filtrando pelo filtro de texto
@@ -105,8 +105,90 @@ function filterByRange(range, value, range_type, column_type){
 }
 
 /* Filtrando pela condicao enviada por parametro */
-function filterByCondition(condition, value_condition, value){
+function filterByCondition(condition, jsoncolumns){
+	if(condition != null && condition.length >0){
+		var split_condition = condition.split(' ');
+		var column = split_condition[0].replace(':','');
+		var signal = split_condition[1];
+		var split_value = condition.split('[');
+		var value_condition = split_value[1].replace(']','');
+		var value_json = jsoncolumns[column];
+		var column_type = getTypeColumnByName(column);
 
+		if(column_type == CONST_NUMBER_TYPE){
+			return validatingByNumber(value_condition, value_json, signal);
+		} else if(column_type == CONST_TEXT_TYPE){
+			return validatingByText(value_condition, value_json, signal);
+		} else if(column_type == CONST_DATE_TYPE){
+			return validatingByDate(value_condition, value_json, signal);
+		}
+	}
+	return true;
+}
+
+function getTypeColumnByName(column_name){
+	var select_columns = document.getElementById(CONST_SELECT_COLUMN);
+	var options_columns = select_columns.options;
+	for(var i = 0; i < options_columns.length; i++){
+		if(column_name == options_columns[i].value){
+			return options_columns[i].className;
+		}
+	}
+}
+
+function validatingByNumber(value_condition, value_json, signal){
+	value_condition = parseInt(value_condition);
+	value_json = parseInt(value_json);
+	if(signal == '>'){
+		return (value_json > value_condition);
+	} else if(signal == '<'){
+		return (value_json < value_condition);
+	} else if(signal == '>='){
+		return (value_json >= value_condition);
+	} else if(signal == '<='){
+		return (value_json <= value_condition);
+	} else if(signal == '<>'){
+		return (value_json != value_condition);
+	} else if(signal == '=='){
+		return (value_json == value_condition);
+	}
+	return false;
+}
+
+function validatingByText(value_condition, value_json, signal){
+	value_condition = value_condition.toLowerCase();
+	value_json = value_json.toLowerCase();
+	if(signal == '='){
+		return (value_json.indexOf(value_condition) > -1);
+	} else if(signal == '=='){
+		return (value_condition == value_json);
+	} else if(signal == '<>'){
+		return (value_condition != value_json);
+	}
+	return false;
+}
+
+function validatingByDate(value_condition, value_json, signal){
+	var date_condition_split = value_condition.split('/');
+	var date_value_json_split = value_json.split('/');
+
+	var date_condition = new Date(date_condition_split[2],date_condition_split[1],date_condition_split[0]);
+	var date_value_json = new Date(date_value_json_split[2],date_value_json_split[1],date_value_json_split[0]);
+
+	if(signal == '>'){
+		return (date_value_json > date_condition);
+	} else if(signal == '<'){
+		return (date_value_json < date_condition);
+	} else if(signal == '>='){
+		return (date_value_json >= date_condition);
+	} else if(signal == '<='){
+		return (date_value_json <= date_condition);
+	} else if(signal == '<>'){
+		return (value_condition != value_json);
+	} else if(signal == '=='){
+		return (value_condition == value_json);
+	}
+	return false;
 }
 
 /* Filtrando pelo texto inserido pelo usuario */
@@ -118,17 +200,11 @@ function filterByText(filter, value){
 		value = value.toLowerCase();
 		filter = filter.toLowerCase();
 		if(operation == '='){
-			if(value.indexOf(filter) > -1){
-				return true;
-			}
+			return (value.indexOf(filter) > -1);
 		} else if(operation == '=='){
-			if(value == filter){
-				return true;
-			}
+			return (value == filter);			
 		} else if(operation == '<>'){
-			if(value != filter){
-				return true;
-			}
+			return(value != filter);
 		}
 		return false;
 	}

@@ -17,6 +17,7 @@ var CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH = 'btn btn-primary pull-right rese
 var CONST_COL_XS_3 = 'col-xs-3';
 var CONST_COL_XS_4 = 'col-xs-4';
 var CONST_COL_XS_8 = 'col-xs-8';
+var CONST_COL_XS_12 = 'col-xs-12';
 var CONST_COL_XS_12_PULL_RIGHT = 'col-xs-12 pull-right';
 var CONST_COLLAPSE = 'collapse';
 var CONST_COLUMN = 'column';
@@ -29,6 +30,9 @@ var CONST_COUNT_IF = 'count-if';
 
 /* ------------ D -------------- */
 var CONST_DATE = 'date';
+var CONST_DATE_TYPE = 'date-type';
+var CONST_DATALISTS = 'datalists';
+var CONST_DATALIST_COLUMNS = 'datalist-columns';
 /* ----------------------------- */
 
 /* ------------ E -------------- */
@@ -62,6 +66,7 @@ var CONST_LESS_THAN = 'lessthan';
 var CONST_LINE = 'line';
 var CONST_LABEL_COLUMNS_TEXT_FILTERS = 'label-columns-text-filters';
 var CONST_LABEL_COLUMNS_CONDITION_FILTERS = 'label-columns-condition-filters';
+var CONST_LIST = 'list';
 /* ----------------------------- */
 
 /* ------------ M -------------- */
@@ -70,6 +75,7 @@ var CONST_LABEL_COLUMNS_CONDITION_FILTERS = 'label-columns-condition-filters';
 
 /* ------------ N -------------- */
 var CONST_NUMBER = 'number';
+var CONST_NUMBER_TYPE = 'number-type';
 var CONST_NO_DATA = 'no-data';
 /* ----------------------------- */
 
@@ -106,6 +112,7 @@ var CONST_SUM_IF = 'sum-if';
 
 /* ------------ T -------------- */
 var CONST_TEXT = 'text';
+var CONST_TEXT_TYPE = 'text-type';
 /* ----------------------------- */
 
 /* ------------ X -------------- */

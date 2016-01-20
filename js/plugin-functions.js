@@ -34,7 +34,25 @@ $(document).ready(function() {
 					select.appendChild(arrayoptions[i]);
 				}
 			}
+			var select_columns = document.getElementById(CONST_SELECT_COLUMN);
+			var options_columns = select_columns.options;
+
+			var array_options_datalist = arrayDataListColumns(':', options_columns);
+			var data_list = createNewDataList(array_options_datalist, CONST_DATALIST_COLUMNS);
+
+			var datalists = document.getElementById(CONST_DATALISTS);
+			datalists.appendChild(data_list);
 		}
+	}
+
+	function arrayDataListColumns(text, options_columns){
+		var arrayOptions = new Array();
+		var option;
+		for(var i = 0; i < options_columns.length; i++){
+			option = {value: text+options_columns[i].value}
+			arrayOptions.push(option);
+		}
+		return arrayOptions;
 	}
 
 	/* Funcao recursiva para procurar valor na coluna para testar se e coluna válida */
@@ -51,13 +69,13 @@ $(document).ready(function() {
 			if(valuecolumn != null){
 				// Testando o tipo de valor
 				if($.isNumeric(valuecolumn)){
-					valuetype = 'number-type';
+					valuetype = CONST_NUMBER_TYPE;
 				} else {
 					var parsedDate = Date.parse(valuecolumn);
 					if (isNaN(valuecolumn) && !isNaN(parsedDate)) {
-					    valuetype = 'date-type';
+					    valuetype = CONST_DATE_TYPE;
 					} else {
-						valuetype = 'text-type';
+						valuetype = CONST_TEXT_TYPE;
 					}
 				}
 				result.type = valuetype;
@@ -398,16 +416,13 @@ $(document).ready(function() {
 		// Div que contera a condicao
 		var divid = type+'-'+iddivpanel;
 		var divrow = createNewDiv(divid, null, null, CONST_ROW, null, null, hidden);
-		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, false);
-		var label = createNewLabel(null, null, false, null, null, CONST_LABEL_COLUMNS_CONDITION_FILTERS);
-		divcolxs4.appendChild(label);
-		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, false);
+		var divcolxs12 = createNewDiv(null, null, null, CONST_COL_XS_12, null, null, false);
 		var idinput = current+'-'+iddivpanel; 
 		// Input para a condicao
-		var inputcondition = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);	
-		divcolxs8.appendChild(inputcondition);
-		divrow.appendChild(divcolxs4);
-		divrow.appendChild(divcolxs8);
+		var inputcondition = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);
+		inputcondition.setAttribute(CONST_LIST, CONST_DATALIST_COLUMNS);
+		divcolxs12.appendChild(inputcondition);
+		divrow.appendChild(divcolxs12);
 		return divrow;
 	}
 
@@ -575,14 +590,15 @@ $(document).ready(function() {
 	function researchColumn(buttonid){
 		var axis = buttonid.split('-')[3];
 		var column_type = getTypeColumn(buttonid);
-		refreshValuesAxisX(buttonid, column_type, axis);
+		refreshValuesColumn(buttonid, column_type, axis);
 	}
 
-	function refreshValuesAxisX(buttonid, column_type, axis){
+	function refreshValuesColumn(buttonid, column_type, axis){
 		var valid = true;
 		var range_initial;
 		var range_final;
 		var filter_value;
+		var condition_value;
 
 		var column_name = buttonid.split('-')[2];
 		
@@ -631,9 +647,21 @@ $(document).ready(function() {
 				}		
 			}
 		}
+		if(valid && axis == CONST_Y){
+			var condition_id = buttonid.replace(CONST_RESEARCH,CONST_CONDITION);
+			var condition_selected = document.getElementById(condition_id).value;
+			if(condition_selected == CONST_COUNT_IF || condition_selected == CONST_SUM_IF){
+				var id_input;
+				if(condition_selected == CONST_COUNT_IF){
+					id_input = buttonid.replace(CONST_RESEARCH,CONST_CONDITION_COUNT_IF_INPUT);
+				} else if(condition_selected == CONST_SUM_IF){
+					id_input = buttonid.replace(CONST_RESEARCH,CONST_CONDITION_SUM_IF_INPUT);
+				}
+				condition_value = document.getElementById(id_input).value; 
+			}
+		}
 		if(valid){
-			if(axis == CONST_X)
-			var values = getValuesFromFilter(column_name, range_initial, range_final, null, null, null, column_type, filter_value, axis);
+			var values = getValuesFromFilter(column_name, range_initial, range_final, condition_value, null, null, column_type, filter_value, axis);
 			updateSelectWithNewValues(buttonid, values, column_type);
 		}
 	}

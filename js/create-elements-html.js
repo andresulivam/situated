@@ -179,4 +179,19 @@
 		}
 		return button;			
 	}
+
+	/* Criando novo Datalist */
+	function createNewDataList(arrayoptions, id){
+		var datalist = document.createElement('datalist');
+		var option;
+		for(var i=0; i < arrayoptions.length; i++){
+			option =  document.createElement('option');
+			option.value = arrayoptions[i].value;
+			datalist.appendChild(option);
+		}
+		if(id != null){
+			datalist.id = id;
+		}
+		return datalist;
+	}
 /* --------------------------------------------------------------------------------------------------------- */
