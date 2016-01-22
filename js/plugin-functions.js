@@ -800,7 +800,7 @@ $(document).ready(function() {
 			var object_temp = serie_temp[2];
 			var count = parseInt(object_total.count) + parseInt(object_temp.count);
 			object_total.count = count;
-			if(column_type_y == CONST_NUMBER){
+			if(column_type_y == CONST_NUMBER_TYPE){
 				object_total.sum = parseInt(object_total.sum) + parseInt(object_temp.sum);
 				object_total.average = parseInt(object_total.average) + parseInt(object_temp.average);
 			}

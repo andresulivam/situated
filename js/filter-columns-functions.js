@@ -80,7 +80,7 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 			}
 			if(valid_value){
 				count = count+1;
-				if(column_type_y == CONST_NUMBER){
+				if(column_type_y == CONST_NUMBER_TYPE){
 					sum = sum + parseInt(value);
 				}	
 			}
@@ -88,9 +88,14 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 		}
 		values.push(column_value_x);
 		values.push(column_value_y);
-		if(column_type_y == CONST_NUMBER){
-			average = sum/count;
-		}		
+		if(column_type_y == CONST_NUMBER_TYPE){
+			if($.isNumeric(sum) && $.isNumeric(count) && count > 0){
+				average = sum/count;
+			} else {
+				average = 0;
+			}
+		}
+		console.log(average);		
 		var object = new Object();
 		object.sum = sum;
 		object.count = count;
