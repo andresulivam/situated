@@ -3,6 +3,7 @@
 /* ------------ A -------------- */
 var CONST_AVERAGE = 'average';
 var CONST_AXIS_Y = 'axis-y';
+var CONST_ALL_VALUES = 'all-values';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -11,6 +12,8 @@ var CONST_BIGGER_THAN = 'biggerthan';
 var CONST_BUTTON = 'button';
 var CONST_BTN_BTN_PRIMARY_PULL_RIGHT = 'btn btn-primary pull-right';
 var CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH = 'btn btn-primary pull-right research';
+var CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER = 'btn btn-primary pull-left filter';
+
 /* ----------------------------- */
 
 /* ------------ C -------------- */
@@ -24,8 +27,12 @@ var CONST_COLUMN = 'column';
 var CONST_COLUMNS_GROUP_Y = 'columns-group-y';
 var CONST_COLUMNS_GROUP_X = 'columns-group-x';
 var CONST_CONDITION = 'condition';
+var CONST_COUNT = 'count';
 var CONST_COUNT_ALL = 'count-all';
 var CONST_COUNT_IF = 'count-if';
+var CONST_CHART = 'chart';
+var CONST_CONDITION_COUNT_IF_INPUT = 'condition-count-if-input';
+var CONST_CONDITION_SUM_IF_INPUT = 'condition-sum-if-input';
 /* ----------------------------- */
 
 /* ------------ D -------------- */
@@ -45,9 +52,8 @@ var CONST_FINAL = 'final';
 var CONST_FORM_CONTROL = 'form-control';
 var CONST_FINAL_INPUT = 'final-input';
 var CONST_FILTER_TEXT = 'filter-text';
+var CONST_FILTER = 'filter';
 var CONST_FILTER_TEXT_INPUT = 'filter-text-input';
-var CONST_CONDITION_COUNT_IF_INPUT = 'condition-count-if-input';
-var CONST_CONDITION_SUM_IF_INPUT = 'condition-sum-if-input';
 /* ----------------------------- */
 
 /* ------------ G -------------- */
@@ -82,6 +88,7 @@ var CONST_NO_DATA = 'no-data';
 /* ------------ P -------------- */
 var CONST_PANEL = 'panel';
 var CONST_PANEL_COLLAPSE_COLLAPSE = 'panel-collapse collapse';
+var CONST_PANEL_COLLAPSE_COLLAPSE_IN = 'panel-collapse collapse in';
 var CONST_PANEL_HEADING = 'panel-heading';
 var CONST_PANEL_PANEL_DEFAULT = 'panel panel-default';
 var CONST_PANEL_TITLE = 'panel-title';
@@ -108,15 +115,18 @@ var CONST_SELECT_COLUMN = 'select-column';
 var CONST_SELECT_VALUE = 'select-value';
 var CONST_SUM = 'sum';
 var CONST_SUM_IF = 'sum-if';
+var CONST_SPLINE = 'spline';
 /* ----------------------------- */
 
 /* ------------ T -------------- */
 var CONST_TEXT = 'text';
 var CONST_TEXT_TYPE = 'text-type';
+var CONST_TYPE = 'type';
 /* ----------------------------- */
 
 /* ------------ X -------------- */
 var CONST_X = 'x';
+var CONST_X_1 = 'x-1';
 /* ----------------------------- */
 
 /* ------------ Y -------------- */

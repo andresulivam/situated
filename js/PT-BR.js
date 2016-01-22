@@ -6,6 +6,7 @@ var AVERAGE = 'Média';
 var AXIS = 'Eixo';
 var AXIS_X = 'Eixo X';
 var AXIS_Y = 'Eixo Y';
+var ALL_VALUES = 'Todos valores';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -51,7 +52,9 @@ var LINE = 'Linha';
 /* ----------------------------- */
 
 /* ------------ M -------------- */
-
+var MESSAGE_NOT_COLUMN_ON_AXIS_X = 'Não existe coluna no eixo X';
+var MESSAGE_INVALID_FILTERS = 'Filtro invalido';
+var MESSAGE_NOT_VALUES_ON_AXIS_X = 'Não existe valores no eixo X';
 /* ----------------------------- */
 
 /* ------------ N -------------- */
@@ -80,6 +83,7 @@ var SUM_IF = 'Somar se';
 /* ------------ T -------------- */
 var TABLE = 'Tabela';
 var TITLE = 'Título:';
+var TO_FILTER = 'Filtrar';
 /* ----------------------------- */
 
 /* ------------ V -------------- */

@@ -1,5 +1,5 @@
 
-function getValuesFromFilter(column_name, range_initial, range_final, condition, x_column, x_value, column_type, filter_text, axis){
+function getValuesFromFilter(column_name, range_initial, range_final, column_type, filter_value){
 
 	var values = new Array();
 
@@ -8,15 +8,9 @@ function getValuesFromFilter(column_name, range_initial, range_final, condition,
 		var fieldsJson = complete_json.message;
 		var valid_value = true;
 		var value;
+		var values_temp = new Array();
 		for(var i = 0; i < fieldsJson.length; i++){
 			value = fieldsJson[i][column_name];
-			// Filtrando pelo valor de X
-			if(x_column != null){
-				var y_value_column_x = fieldsJson[i][x_column];
-				if(x_value != y_value_column_x){
-					valid_value = false;
-				}
-			}
 			// Filtrando pelo range inicial
 			if(valid_value) {
 				if(range_initial != null){
@@ -29,33 +23,79 @@ function getValuesFromFilter(column_name, range_initial, range_final, condition,
 					valid_value = filterByRange(range_final, value, CONST_FINAL, column_type);
 				}
 			}
-			// Filtrando pela condicao
-			if(valid_value){
-				if(condition != null){
-					valid_value = filterByCondition(condition, fieldsJson[i]);
-				}
-			}
 			// Filtrando pelo filtro de texto
 			if(valid_value){
-				if(filter_text != null){
-					valid_value = filterByText(filter_text, value);
-				}
-			}
-			// Caso seja coluna do eixo X, nao repetir o valor
-			if(valid_value){
-				if(axis == CONST_X){
-					valid_value = !check_already_exist(value, values)
+				if(filter_value != null){
+					valid_value = filterByText(filter_value, value);
 				}
 			}
 			if(valid_value){
-				values.push(value);
+				valid_value = !check_already_exist(value, values)	
+			}
+			if(valid_value){
+				values.push(value);	
 			}
 			valid_value = true;
 		}
 		// Ordenando valores
-		if(x_column == null){
-			values = sortArray(values);
+		values = sortArray(values);	 
+	}
+	return values;
+}
+
+function getValuesToSeries(column_name, column_name_x, column_value_y, column_value_x, condition_selected, condition_value){
+
+	var values = new Array();
+
+	var complete_json = JSON_TEST;
+	
+	if(complete_json != null) {
+		var column_type_y = getColumnTypeByName(column_name);
+		var fieldsJson = complete_json.message;
+		var valid_value = true;
+		var sum = 0;
+		var count = 0;
+		var average = 0;
+		var value;
+		for(var i = 0; i < fieldsJson.length; i++){
+			value = fieldsJson[i][column_name];			
+			if(value != column_value_y){
+				valid_value = false;
+			}
+			// Filtrando pelo valor de X
+			if(valid_value){
+				if(column_name_x != null){
+					var y_value_column_x = String(fieldsJson[i][column_name_x]).toLowerCase();
+					column_value_x = String(column_value_x).toLowerCase();
+					if(column_value_x != y_value_column_x){
+						valid_value = false;
+					}
+				}
+			}
+			// filtrando pela condicao
+			if(valid_value){
+				if(condition_value != null){
+					valid_value = filterByCondition(condition_value, fieldsJson[i]);
+				}
+			}
+			if(valid_value){
+				count = count+1;
+				if(column_type_y == CONST_NUMBER){
+					sum = sum + parseInt(value);
+				}	
+			}
+			valid_value = true;
 		}
+		values.push(column_value_x);
+		values.push(column_value_y);
+		if(column_type_y == CONST_NUMBER){
+			average = sum/count;
+		}		
+		var object = new Object();
+		object.sum = sum;
+		object.count = count;
+		object.average = average;
+		values.push(object);	
 	}
 	return values;
 }
@@ -74,6 +114,8 @@ function check_already_exist(value, array_options){
 function filterByRange(range, value, range_type, column_type){
 	
 	if(column_type == CONST_NUMBER){
+		value = parseInt(value);
+		range = parseInt(range);
 		if(range_type == CONST_INITIAL){
 			if(value >= range) {
 				return true;
@@ -94,7 +136,7 @@ function filterByRange(range, value, range_type, column_type){
 				if(date_b >= date_a){
 				    return true;
 				}
-			}else if(range_type >= CONST_FINAL){
+			}else if(range_type == CONST_FINAL){
 				if(date_b <= date_a){
 				    return true;
 				}
@@ -113,7 +155,7 @@ function filterByCondition(condition, jsoncolumns){
 		var split_value = condition.split('[');
 		var value_condition = split_value[1].replace(']','');
 		var value_json = jsoncolumns[column];
-		var column_type = getTypeColumnByName(column);
+		var column_type = getColumnTypeByName(column);
 
 		if(column_type == CONST_NUMBER_TYPE){
 			return validatingByNumber(value_condition, value_json, signal);
@@ -126,7 +168,8 @@ function filterByCondition(condition, jsoncolumns){
 	return true;
 }
 
-function getTypeColumnByName(column_name){
+/* Recuperando o tipo da coluna pelo seu nome */
+function getColumnTypeByName(column_name){
 	var select_columns = document.getElementById(CONST_SELECT_COLUMN);
 	var options_columns = select_columns.options;
 	for(var i = 0; i < options_columns.length; i++){
@@ -136,6 +179,7 @@ function getTypeColumnByName(column_name){
 	}
 }
 
+/* Validando valor numerico */
 function validatingByNumber(value_condition, value_json, signal){
 	value_condition = parseInt(value_condition);
 	value_json = parseInt(value_json);
@@ -155,6 +199,7 @@ function validatingByNumber(value_condition, value_json, signal){
 	return false;
 }
 
+/* Validando valor de texto */
 function validatingByText(value_condition, value_json, signal){
 	value_condition = value_condition.toLowerCase();
 	value_json = value_json.toLowerCase();
@@ -168,10 +213,10 @@ function validatingByText(value_condition, value_json, signal){
 	return false;
 }
 
+/* Validando valor de data */
 function validatingByDate(value_condition, value_json, signal){
 	var date_condition_split = value_condition.split('/');
 	var date_value_json_split = value_json.split('/');
-
 	var date_condition = new Date(date_condition_split[2],date_condition_split[1],date_condition_split[0]);
 	var date_value_json = new Date(date_value_json_split[2],date_value_json_split[1],date_value_json_split[0]);
 

@@ -6,6 +6,8 @@ $(document).ready(function() {
 		completejson = JSON_TEST;
 		// Preenchendo o combobox de colunas baseados no json (dinamicamente)
 		fillSelectColumnsWithJson(completejson);
+
+		setBarGraphic();
 	});
 
 	/* Preenchendo o combobox de colunas baseados no json */ 
@@ -45,6 +47,7 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Criando o datalist com os valores das colunas disponiveis para o filtro de condicao */
 	function arrayDataListColumns(text, options_columns){
 		var arrayOptions = new Array();
 		var option;
@@ -53,6 +56,16 @@ $(document).ready(function() {
 			arrayOptions.push(option);
 		}
 		return arrayOptions;
+	}
+
+	/* Recuperando qual a coluna presente no eixo X */
+	function getTypeAxisX(){
+		var column = null;
+		var column_element = document.getElementById(CONST_COLUMNS_GROUP_X).getElementsByClassName(CONST_PANEL_PANEL_DEFAULT)[0];
+		if(column_element != null){
+			column = column_element.id.split('-')[1];
+		}
+		return column;
 	}
 
 	/* Funcao recursiva para procurar valor na coluna para testar se e coluna válida */
@@ -117,7 +130,12 @@ $(document).ready(function() {
 
 	/* Refazendo pesquisa */
 	$('body').on('click', 'button.research', function() {
-	    researchColumn(this.id);
+	    researchGraphic(this.id);
+	});
+
+	/* Filtrando dados */
+	$('body').on('click', 'button.filter', function() {
+	    filterValuesColumn(this.id);
 	});
 
 	/* --------------------------------------------------------------------------------------------------------- */
@@ -132,6 +150,8 @@ $(document).ready(function() {
 		// Tipo da coluna selecionada: (text, number ou date)
 		var typecolumn = option.className.split('-')[0];
 		var newid;
+		var iddivpanel;
+		var selectcolumnvalue = String(selectcolumn.value);
 		// Verificando em qual eixo adicionar a coluna
 		if(selectaxis.value == CONST_AXIS_Y){
 			// Recuperando todas as colunas já existentes em Y
@@ -144,7 +164,8 @@ $(document).ready(function() {
 			} else {
 				newid = 1;
 			}
-			createColumnWithFilter(newid, selectcolumn, groupaxisy, typecolumn, CONST_Y);
+			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_Y+'-'+newid;
+			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisy, typecolumn, CONST_Y);
 		} else {
 			var groupaxisX = document.getElementById(CONST_COLUMNS_GROUP_X);
 			// Removendo a coluna anterior no eixo X pois so e permitido uma coluna
@@ -152,15 +173,19 @@ $(document).ready(function() {
 			    groupaxisX.removeChild(groupaxisX.firstChild);
 			}
 			newid = 1;
-			createColumnWithFilter(newid, selectcolumn, groupaxisX, typecolumn, CONST_X);
+			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_X+'-'+newid;
+			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisX, typecolumn, CONST_X);
+
+			// Forcando atualizar categories do grafico
+			var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
+			researchGraphic(button_research_id);
 		}
 	}
 
 	/* Criando o combobox com todos os filtros disponiveis */
-	function createColumnWithFilter(newid, selectcolumn, groupcolumns, typecolumn, axis){
+	function createColumnWithFilter(iddivpanel, newid, selectcolumn, groupcolumns, typecolumn, axis){
 		
 		// Div principal da coluna
-		var iddivpanel = CONST_COLUMN+'-'+selectcolumn.value+'-'+axis+'-'+newid;
 		var divpaneldefault = createNewDiv(iddivpanel, null, null, CONST_PANEL_PANEL_DEFAULT, null, null, null);	
 		// Div que tera o titulo com o nome da coluna e a opcao de fechar
 		var divpanelheading = createNewDiv(null, null, null, CONST_PANEL_HEADING, null, null, null);
@@ -168,8 +193,14 @@ $(document).ready(function() {
 		// Titulo do panel
 		var h4 = createNewH4(CONST_PANEL_TITLE);
 		var idpanelcollapse = CONST_COLLAPSE+'-'+iddivpanel;
+		var title = '';
+		if(axis == CONST_Y){
+			title = selectcolumn.value+'-'+newid;
+		} else {
+			title = selectcolumn.value;
+		}
 		// Inserindo opcao de remover a coluna
-		var adatatoggle = createNewA(null, null, null, CONST_COLLAPSE, idpanelcollapse, selectcolumn.value);
+		var adatatoggle = createNewA(null, null, null, CONST_COLLAPSE, idpanelcollapse, title);
 		var idaremove = CONST_REMOVE+'-'+iddivpanel
 		var aremove = createNewA(idaremove, CONST_PULL_RIGHT_REMOVE_COLUMN, null, null, null, null);
 		var img = createNewImg(null, CONST_IMG_CLOSE, null, null, CONST_REMOVE_COLUMN);
@@ -218,7 +249,7 @@ $(document).ready(function() {
 			}
 		}
 		// Div com o botao de pesquisar (refazer pesquisa)
-		var rowresearch = createRowResearch(iddivpanel);
+		var rowresearch = createRowFilterAndResearch(iddivpanel);
 		divpanelcollapse.appendChild(rowresearch);			
 		divpaneldefault.appendChild(divpanelcollapse);
 		if(axis == CONST_X){
@@ -245,8 +276,8 @@ $(document).ready(function() {
 		// Combobox com os tipos de grafico
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
 		// Options de tipos de graficos
-		var optionbar = createNewOption(CONST_BAR, BAR, null);
-		var optionline = createNewOption(CONST_LINE, LINE, null);
+		var optionbar = createNewOption(CONST_COLUMN, BAR, null);
+		var optionline = createNewOption(CONST_SPLINE, LINE, null);
 		select.appendChild(optionbar);
 		select.appendChild(optionline);
 		divcolxs8.appendChild(select);
@@ -372,15 +403,21 @@ $(document).ready(function() {
 	}
 
 	/* Criando a DIV com o botao de pesquisar */
-	function createRowResearch(iddivpanel){
+	function createRowFilterAndResearch(iddivpanel){
 
 		// Div que contera o botao de pesquisar/refazer pesquisa
 		var divrow = createNewDiv(null, null, null, CONST_ROW_REFRESH_COLUMNS_FILTERS, null, null, null);
 		var divwithbutton = createNewDiv(null, null, null, CONST_COL_XS_12_PULL_RIGHT, null, null, null);
-		var idbutton = CONST_RESEARCH+'-'+iddivpanel;
+		
+		var idbuttonfilter = CONST_FILTER+'-'+iddivpanel;
 		// Botao pesquisar/refazer pesquisa
-		var button = createNewButton(idbutton, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH, RESEARCH);
-		divwithbutton.appendChild(button);
+		var button_filter = createNewButton(idbuttonfilter, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER, TO_FILTER);
+		
+		var idbuttonresearch = CONST_RESEARCH+'-'+iddivpanel;
+		// Botao pesquisar/refazer pesquisa
+		var button_research = createNewButton(idbuttonresearch, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH, RESEARCH);
+		divwithbutton.appendChild(button_filter);
+		divwithbutton.appendChild(button_research);
 		divrow.appendChild(divwithbutton);
 		return divrow;
 	}
@@ -515,7 +552,6 @@ $(document).ready(function() {
 				}
 				break;		
 		}
-
 	}
 
 	/* Recuperando todos os valores disponiveis para a coluna baseado no json */
@@ -539,6 +575,8 @@ $(document).ready(function() {
 		}
 		if(options_temp.length > 0){
 			options_temp = sortArray(options_temp);
+			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null);
+			options.push(option);
 			for(var i = 0; i < options_temp.length; i++){
 				option = createNewOption(options_temp[i], options_temp[i], null);
 				options.push(option);
@@ -584,29 +622,47 @@ $(document).ready(function() {
 		var divid = id.replace(CONST_REMOVE+'-','');
 		var elem = document.getElementById(divid);
 		elem.parentNode.removeChild(elem);
+		removeSerieAfterCloseColumn(id);
+	}
+
+	/* Removendo grafico */
+	function removeSerieAfterCloseColumn(id){
+		var id_split = id.split('-');
+		var serie_name = id_split[2]+'-'+id_split[4];
+		removeSerieByName(CONST_CHART, serie_name);
+	}
+
+	/* Filtrando dados */
+	function filterValuesColumn(buttonid){
+		var axis = buttonid.split('-')[3];
+		var column_type = getTypeColumn(buttonid, CONST_FILTER);
+		filterValuesColumnByFilters(buttonid, column_type, axis);
 	}
 
 	/* Refazendo pesquisa */
-	function researchColumn(buttonid){
+	function researchGraphic(buttonid){
 		var axis = buttonid.split('-')[3];
-		var column_type = getTypeColumn(buttonid);
-		refreshValuesColumn(buttonid, column_type, axis);
+		var column_type = getTypeColumn(buttonid, CONST_RESEARCH);
+		if(axis == CONST_X){
+			researchValuesGraphicAxisX(buttonid, column_type, axis);
+		} else if(axis == CONST_Y){
+			researchValuesGraphicAxisY(buttonid, column_type, axis);
+		}
 	}
 
-	function refreshValuesColumn(buttonid, column_type, axis){
+	/* Filtrando os valores possiveis para a coluna baseado nos filtros do usuario */
+	function filterValuesColumnByFilters(buttonid, column_type, axis){
 		var valid = true;
 		var range_initial;
 		var range_final;
 		var filter_value;
-		var condition_value;
-
 		var column_name = buttonid.split('-')[2];
-		
+		/* Se a coluna for de data ou numero, é possivel filtrar por intervalo */
 		if(column_type == CONST_DATE || column_type == CONST_NUMBER){
 			// Recuperando filtro de intervalo da coluna, caso exista
-			var select_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_FILTER);
-			var initial_id = buttonid.replace(CONST_RESEARCH,CONST_INITIAL_INPUT);
-			var final_id = buttonid.replace(CONST_RESEARCH,CONST_FINAL_INPUT);
+			var select_id = buttonid.replace(CONST_FILTER,CONST_SELECT_FILTER);
+			var initial_id = buttonid.replace(CONST_FILTER,CONST_INITIAL_INPUT);
+			var final_id = buttonid.replace(CONST_FILTER,CONST_FINAL_INPUT);
 			var select_range_value = document.getElementById(select_id).value;
 			var initial_value = document.getElementById(initial_id).value;
 			var final_value = document.getElementById(final_id).value;
@@ -632,8 +688,8 @@ $(document).ready(function() {
 				}
 			}
 		} else if(column_type == CONST_TEXT && axis == CONST_X){
-			// Caso a coluna seja no eixo X e seja do tipo texto
-			var filter_id = buttonid.replace(CONST_RESEARCH,CONST_FILTER_TEXT_INPUT);
+			// Caso a coluna seja no eixo X e seja do tipo texto é possivel filtrar por texto
+			var filter_id = buttonid.replace(CONST_FILTER,CONST_FILTER_TEXT_INPUT);
 			filter_value = document.getElementById(filter_id).value;
 			if(filter_value != null && filter_value != ''){
 				var filter_split = filter_value.split('[');
@@ -647,9 +703,59 @@ $(document).ready(function() {
 				}		
 			}
 		}
-		if(valid && axis == CONST_Y){
+		if(valid){
+			var values = getValuesFromFilter(column_name, range_initial, range_final, column_type, filter_value);
+			updateSelectWithNewValues(buttonid, values, column_type);
+		} else {
+			alert(MESSAGE_INVALID_FILTERS);
+		}
+	}
+
+	function researchValuesGraphicAxisX(buttonid, column_type, axis){
+		var selected_values_x_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
+		var select_values = document.getElementById(selected_values_x_id);
+		var selected_value = select_values.value;
+		var categories = new Array();
+		if(selected_value != CONST_ALL_VALUES){
+			categories.push(selected_value);
+		} else {
+			var options = select_values.options;
+			for(var i = 1; i < options.length; i++){
+				categories.push(options[i].value);
+			}
+		}
+		setCategoriesByChart(CONST_CHART, categories);
+	}
+
+	function researchValuesGraphicAxisY(buttonid, column_type, axis){
+		var valid = true;
+		var column_name = buttonid.split('-')[2];
+		var column_name_x;
+		var condition_selected;
+		var condition_value;
+		
+		var categories = getCategoriesByChart(CONST_CHART);
+
+		if(categories != null && categories.length > 0){
+			column_name_x = getNameColumnOnAxisX();
+
+			// Recuperando os valores em Y
+			var selected_values_y_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
+			var select_values = document.getElementById(selected_values_y_id);
+			selected_value = select_values.value;
+			var values_y = new Array();
+			if(selected_value != CONST_ALL_VALUES){
+			values_y.push(selected_value);
+			} else {
+				var options = select_values.options;
+				for(var i = 1; i < options.length; i++){
+					values_y.push(options[i].value);
+				}
+			}
+			
+			// Recuperando a condicao
 			var condition_id = buttonid.replace(CONST_RESEARCH,CONST_CONDITION);
-			var condition_selected = document.getElementById(condition_id).value;
+			condition_selected = document.getElementById(condition_id).value;
 			if(condition_selected == CONST_COUNT_IF || condition_selected == CONST_SUM_IF){
 				var id_input;
 				if(condition_selected == CONST_COUNT_IF){
@@ -659,22 +765,73 @@ $(document).ready(function() {
 				}
 				condition_value = document.getElementById(id_input).value; 
 			}
-		}
-		if(valid){
-			var values = getValuesFromFilter(column_name, range_initial, range_final, condition_value, null, null, column_type, filter_value, axis);
-			updateSelectWithNewValues(buttonid, values, column_type);
+
+			var column_type_y = getColumnTypeByName(column_name)
+			var series = new Array();
+			var serie_total;
+			var serie_temp;
+			// Buscando valores para cada coluna em X
+			for(var i = 0; i < categories.length; i++){
+				for(var j = 0; j < values_y.length; j++){
+					serie_temp = getValuesToSeries(column_name, column_name_x, values_y[j], categories[i], condition_selected, condition_value);
+					if(j == 0){
+						serie_total = serie_temp;
+					} else {
+						serie_total = updateValuesSeries(serie_total, serie_temp, column_type_y);
+					}
+				}
+				series.push(serie_total);
+			}
+			var button_split = buttonid.split('-');
+			var column_name_y = button_split[2]+'-'+button_split[4];
+
+			var id_select_graphic_type = buttonid.replace(CONST_RESEARCH,CONST_SELECT_GRAPHIC);
+			var column_type = document.getElementById(id_select_graphic_type).value;
+
+			formatSeriesToGraphic(CONST_CHART, series, column_name_y, column_type, condition_selected);
+		} else {
+			alert(MESSAGE_NOT_VALUES_ON_AXIS_X);
 		}
 	}
 
-	/* Recuperando o tipo da coluna baseado no botao de refazer pesquisa */ 
-	function getTypeColumn(buttonid){
-		var select_id_number = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+CONST_NUMBER);
+	function updateValuesSeries(serie_total, serie_temp, column_type_y){
+		if(serie_total != null && serie_temp != null){
+			var object_total = serie_total[2];
+			var object_temp = serie_temp[2];
+			var count = parseInt(object_total.count) + parseInt(object_temp.count);
+			object_total.count = count;
+			if(column_type_y == CONST_NUMBER){
+				object_total.sum = parseInt(object_total.sum) + parseInt(object_temp.sum);
+				object_total.average = parseInt(object_total.average) + parseInt(object_temp.average);
+			}
+		}
+		return serie_total;
+	}
+
+
+
+	/* Recuperando o nome da coluna atual no eixo X */
+	function getNameColumnOnAxisX(){
+		var name = null;
+		var groupaxisx = document.getElementById(CONST_COLUMNS_GROUP_X);
+		if(groupaxisx != null){
+			var div = groupaxisx.getElementsByClassName(CONST_PANEL_PANEL_DEFAULT)[0];
+			if(div != null){
+				name = div.id.split('-')[1];
+			}
+		}
+		return name;
+	}
+
+	/* Recuperando o tipo da coluna baseado no botao de filtrar valores */ 
+	function getTypeColumn(buttonid, type){
+		var select_id_number = buttonid.replace(type,CONST_SELECT_VALUE+'-'+CONST_NUMBER);
 		var select_number = document.getElementById(select_id_number);
 	
-		var select_id_text = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+CONST_TEXT);
+		var select_id_text = buttonid.replace(type,CONST_SELECT_VALUE+'-'+CONST_TEXT);
 		var select_text = document.getElementById(select_id_text);
 
-		var select_id_date = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+CONST_DATE);
+		var select_id_date = buttonid.replace(type,CONST_SELECT_VALUE+'-'+CONST_DATE);
 		var select_date = document.getElementById(select_id_date);
 
 		if(select_number != null){
@@ -691,7 +848,7 @@ $(document).ready(function() {
 
 	/* Atualizando combobox com novos valores */
 	function updateSelectWithNewValues(buttonid, values, column_type){
-		var select_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
+		var select_id = buttonid.replace(CONST_FILTER,CONST_SELECT_VALUE+'-'+column_type);
 		var select_values = document.getElementById(select_id);
 		// Apagando todos os options antigos
 		select_values.options.length = 0;
@@ -701,6 +858,8 @@ $(document).ready(function() {
 			option = createNewOption(CONST_NO_DATA, NO_DATA, column_type);
 			select_values.appendChild(option);
 		} else {
+			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null);
+			select_values.appendChild(option);
 			for(var i = 0; i < values.length; i++){
 				option = createNewOption(values[i], values[i], column_type);
 				select_values.appendChild(option);
@@ -714,7 +873,7 @@ $(document).ready(function() {
 	function setBarGraphic(){
 		$('#chart').highcharts({
 	        chart: {
-	            type: 'column'
+	            type: CONST_COLUMN
 	        },
 	        title: {
 	            text: 'Situated'
