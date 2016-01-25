@@ -1,4 +1,5 @@
 
+/* Filtrando os valores baseado nos filtros do usuarios */
 function getValuesFromFilter(column_name, range_initial, range_final, column_type, filter_value){
 
 	var values = new Array();
@@ -43,6 +44,7 @@ function getValuesFromFilter(column_name, range_initial, range_final, column_typ
 	return values;
 }
 
+/* Criando o array de series para se plotar no gráfico */
 function getValuesToSeries(column_name, column_name_x, column_value_y, column_value_x, condition_selected, condition_value){
 
 	var values = new Array();

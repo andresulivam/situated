@@ -7,6 +7,7 @@ var AXIS = 'Eixo';
 var AXIS_X = 'Eixo X';
 var AXIS_Y = 'Eixo Y';
 var ALL_VALUES = 'Todos valores';
+var ASCENDANT = 'Ascendente';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -27,6 +28,7 @@ var COUNT_IF = 'Contar se';
 var DEFAULT_GRAPHIC = 'Gráfico padrão:';
 var DELETE = 'Deletar';
 var DESCRIPTION = 'Descrição:';
+var DESCENDANT = 'Descendente';
 /* ----------------------------- */
 
 /* ------------ E -------------- */
@@ -84,6 +86,7 @@ var SUM_IF = 'Somar se';
 var TABLE = 'Tabela';
 var TITLE = 'Título:';
 var TO_FILTER = 'Filtrar';
+var TO_ORDER = 'Ordenar';
 /* ----------------------------- */
 
 /* ------------ V -------------- */

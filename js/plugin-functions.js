@@ -123,6 +123,11 @@ $(document).ready(function() {
 		configureScreenByCondition(this);
 	}
 
+	/* Mudando a ordenacao */
+	function orderChange(){
+		configureValuesByOrder(this);
+	}
+
 	/* Removendo coluna */
 	$('body').on('click', 'a.remove-column', function() {
 	    removeDivWithColumn(this.id);
@@ -218,6 +223,9 @@ $(document).ready(function() {
 			var rowgraphic = createRowGraphicType(iddivpanel);
 			divfiltercolumn.appendChild(rowgraphic);
 		}
+		// Div com as opcoes de ordenacao
+		var rowwithsortingoptions = createRowWithSorting(iddivpanel, orderChange);
+		divfiltercolumn.appendChild(rowwithsortingoptions);
 		// Div que contera o combobox com os valores disponiveis
 		var rowfilterwithvalues = createRowWithValues(iddivpanel, selectcolumn.value, typecolumn);
 		divfiltercolumn.appendChild(rowfilterwithvalues);
@@ -281,6 +289,32 @@ $(document).ready(function() {
 		select.appendChild(optionbar);
 		select.appendChild(optionline);
 		divcolxs8.appendChild(select);
+		divrow.appendChild(divcolxs4);
+		divrow.appendChild(divcolxs8);
+		return divrow;
+	}
+
+	/* Criando o combobox com opcoes de ordenacao */
+	function createRowWithSorting(iddivpanel, functionorderChange){
+		// Div que contera o combobox com os valores disponiveis da coluna
+		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
+		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, null);
+		var label = createNewLabel(null, TO_ORDER, null, null, null, null);
+		divcolxs4.appendChild(label);
+		// Div com o botao para ordenar os dados (Crescente, Decrescente)
+		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
+		var idselectorder = CONST_SELECT_ORDER+'-'+iddivpanel;
+		// Combobox com os valores disponiveis
+		var selectorder = createNewSelect(idselectorder, CONST_FORM_CONTROL);
+		if(functionorderChange != null){
+			selectorder.onchange = functionorderChange;
+		}
+		// Options de ordenacao
+		var optionasc = createNewOption(CONST_ASCENDANT, ASCENDANT, null, null);
+		var optiondesc = createNewOption(CONST_DESCENDANT, DESCENDANT, null, null);
+		selectorder.appendChild(optionasc);
+		selectorder.appendChild(optiondesc);
+		divcolxs8.appendChild(selectorder);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
 		return divrow;
@@ -554,6 +588,46 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Ordenando valores baseados na escolha do usuario */
+	function configureValuesByOrder(select){
+		var selectid = select.id;
+		var column_type = getTypeColumn(selectid, CONST_SELECT_ORDER);
+		// Recuperando os valores em Y
+		var selected_values_y_id = selectid.replace(CONST_SELECT_ORDER,CONST_SELECT_VALUE+'-'+column_type);
+		var select_values = document.getElementById(selected_values_y_id);
+		var options_selected = select_values.options;
+		
+		var options = new Array();
+		for(var i = 1; i < options_selected.length; i++){
+			options.push(options_selected[i]);
+		}
+		// ordenando asc
+		options.sort(function(a,b) {
+		    if (a.text > b.text) return 1;
+		    else if (a.text < b.text) return -1;
+		    else return 0
+		})
+		// ordenando desc
+		if(select.value == CONST_DESCENDANT){
+			options.reverse();
+		}
+		// apagando antigos options
+		select_values.options.length = 0;
+		var option;
+		if(options.length == 0){
+			// Caso nao tenha nenhum valor para ser inserido
+			option = createNewOption(CONST_NO_DATA, NO_DATA, column_type, CONST_SELECTED);
+			select_values.appendChild(option);
+		} else {
+			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null, null);
+			select_values.appendChild(option);
+			for(var i = 0; i < options.length; i++){			
+				option = createNewOption(options[i].value, options[i].text, null, null);
+				select_values.appendChild(option);	
+			}
+		}
+	}
+
 	/* Recuperando todos os valores disponiveis para a coluna baseado no json */
 	function getAllValueOfColumnInAJson(column){
 		var options = new Array();
@@ -712,11 +786,16 @@ $(document).ready(function() {
 		if(valid){
 			var values = getValuesFromFilter(column_name, range_initial, range_final, column_type, filter_value);
 			updateSelectWithNewValues(buttonid, values, column_type);
+			// Selecionando ordenacao como asc
+			var select_order_id = buttonid.replace(CONST_FILTER,CONST_SELECT_ORDER);
+			var select_order = document.getElementById(select_order_id);
+			select_order.selectedIndex = 0;
 		} else {
 			alert(MESSAGE_INVALID_FILTERS);
 		}
 	}
 
+	/* Refazendo pesquisa para a coluna do eixo X */
 	function researchValuesGraphicAxisX(buttonid, column_type, axis){
 		var selected_values_x_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
 		var select_values = document.getElementById(selected_values_x_id);
@@ -743,6 +822,7 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Refazendo pesquisa para a coluna do eixo Y */
 	function researchValuesGraphicAxisY(buttonid, column_type, axis){
 		var valid = true;
 		var column_name = buttonid.split('-')[2];
@@ -810,6 +890,7 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Atualizando valor da serie para se plotar no grafico */
 	function updateValuesSeries(serie_total, serie_temp, column_type_y){
 		if(serie_total != null && serie_temp != null){
 			var object_total = serie_total[2];
@@ -851,14 +932,14 @@ $(document).ready(function() {
 	}
 
 	/* Recuperando o tipo da coluna baseado no botao de filtrar valores */ 
-	function getTypeColumn(buttonid, type){
-		var select_id_number = buttonid.replace(type,CONST_SELECT_VALUE+'-'+CONST_NUMBER);
+	function getTypeColumn(elementid, type){
+		var select_id_number = elementid.replace(type,CONST_SELECT_VALUE+'-'+CONST_NUMBER);
 		var select_number = document.getElementById(select_id_number);
 	
-		var select_id_text = buttonid.replace(type,CONST_SELECT_VALUE+'-'+CONST_TEXT);
+		var select_id_text = elementid.replace(type,CONST_SELECT_VALUE+'-'+CONST_TEXT);
 		var select_text = document.getElementById(select_id_text);
 
-		var select_id_date = buttonid.replace(type,CONST_SELECT_VALUE+'-'+CONST_DATE);
+		var select_id_date = elementid.replace(type,CONST_SELECT_VALUE+'-'+CONST_DATE);
 		var select_date = document.getElementById(select_id_date);
 
 		if(select_number != null){
@@ -874,8 +955,8 @@ $(document).ready(function() {
 	}
 
 	/* Atualizando combobox com novos valores */
-	function updateSelectWithNewValues(buttonid, values, column_type){
-		var select_id = buttonid.replace(CONST_FILTER,CONST_SELECT_VALUE+'-'+column_type);
+	function updateSelectWithNewValues(elementid, values, column_type){
+		var select_id = elementid.replace(CONST_FILTER,CONST_SELECT_VALUE+'-'+column_type);
 		var select_values = document.getElementById(select_id);
 		// Apagando todos os options antigos
 		select_values.options.length = 0;

@@ -4,6 +4,7 @@
 var CONST_AVERAGE = 'average';
 var CONST_AXIS_Y = 'axis-y';
 var CONST_ALL_VALUES = 'all-values';
+var CONST_ASCENDANT = 'ascendant';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -17,8 +18,10 @@ var CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER = 'btn btn-primary pull-left filter';
 /* ----------------------------- */
 
 /* ------------ C -------------- */
+var CONST_COL_XS_2 = 'col-xs-2';
 var CONST_COL_XS_3 = 'col-xs-3';
 var CONST_COL_XS_4 = 'col-xs-4';
+var CONST_COL_XS_6 = 'col-xs-6';
 var CONST_COL_XS_8 = 'col-xs-8';
 var CONST_COL_XS_12 = 'col-xs-12';
 var CONST_COL_XS_12_PULL_RIGHT = 'col-xs-12 pull-right';
@@ -40,6 +43,7 @@ var CONST_DATE = 'date';
 var CONST_DATE_TYPE = 'date-type';
 var CONST_DATALISTS = 'datalists';
 var CONST_DATALIST_COLUMNS = 'datalist-columns';
+var CONST_DESCENDANT = 'descendant';
 /* ----------------------------- */
 
 /* ------------ E -------------- */
@@ -114,6 +118,7 @@ var CONST_SELECT_FILTER = 'select-filter';
 var CONST_SELECT_GRAPHIC = 'select-graphic';
 var CONST_SELECT_COLUMN = 'select-column';
 var CONST_SELECT_VALUE = 'select-value';
+var CONST_SELECT_ORDER = 'select-order';
 var CONST_SUM = 'sum';
 var CONST_SUM_IF = 'sum-if';
 var CONST_SPLINE = 'spline';
