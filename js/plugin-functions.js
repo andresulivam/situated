@@ -7,7 +7,7 @@ $(document).ready(function() {
 		// Preenchendo o combobox de colunas baseados no json (dinamicamente)
 		fillSelectColumnsWithJson(completejson);
 
-		setBarGraphic();
+		initializeChart(CONST_CHART);
 	});
 
 	/* Preenchendo o combobox de colunas baseados no json */ 
@@ -26,7 +26,7 @@ $(document).ready(function() {
 					// Verificando se existe valor na coluna atual
 					validcolumn = validatingTheColumnFieldHasValue(data, columns[i], 0);
 					if(validcolumn.valid){
-						option = createNewOption(columns[i], columns[i], validcolumn.type);
+						option = createNewOption(columns[i], columns[i], validcolumn.type, null);
 						arrayoptions.push(option);
 					}
 				}
@@ -276,8 +276,8 @@ $(document).ready(function() {
 		// Combobox com os tipos de grafico
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
 		// Options de tipos de graficos
-		var optionbar = createNewOption(CONST_COLUMN, BAR, null);
-		var optionline = createNewOption(CONST_SPLINE, LINE, null);
+		var optionbar = createNewOption(CONST_COLUMN, BAR, null, null);
+		var optionline = createNewOption(CONST_SPLINE, LINE, null, null);
 		select.appendChild(optionbar);
 		select.appendChild(optionline);
 		divcolxs8.appendChild(select);
@@ -325,10 +325,10 @@ $(document).ready(function() {
 			select.onchange = functionfiltercolumnchange;
 		}
 		// Options de todos os tipos de filtros de intervalo disponiveis
-		var optionselect = createNewOption(CONST_SELECT, SELECT, null);
-		var optionrange = createNewOption(CONST_RANGE, RANGE, null);
-		var optionbiggerthan = createNewOption(CONST_BIGGER_THAN, BIGGER_THAN, null);
-		var optionlessthan = createNewOption(CONST_LESS_THAN, LESS_THAN, null);
+		var optionselect = createNewOption(CONST_SELECT, SELECT, null, null);
+		var optionrange = createNewOption(CONST_RANGE, RANGE, null, null);
+		var optionbiggerthan = createNewOption(CONST_BIGGER_THAN, BIGGER_THAN, null, null);
+		var optionlessthan = createNewOption(CONST_LESS_THAN, LESS_THAN, null, null);
 		select.appendChild(optionselect);
 		select.appendChild(optionrange);
 		select.appendChild(optionbiggerthan);
@@ -380,15 +380,15 @@ $(document).ready(function() {
 		var idselect = CONST_CONDITION+'-'+iddivpanel;
 		// Combobox com os filtros de condicao disponiveis
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
-		var optioncountall = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null);
-		var optioncountif = createNewOption(CONST_COUNT_IF, COUNT_IF, null);	
+		var optioncountall = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null, null);
+		var optioncountif = createNewOption(CONST_COUNT_IF, COUNT_IF, null, null);	
 		select.appendChild(optioncountall);
 		select.appendChild(optioncountif);
 		if(typecolumn == CONST_NUMBER){
 			// Para o caso de numero, acrescentar outras opcoes de condicao
-			var optionsum = createNewOption(CONST_SUM, SUM, null);
-			var optionsumif = createNewOption(CONST_SUM_IF, SUM_IF, null);
-			var optionaverage = createNewOption(CONST_AVERAGE, AVERAGE, null);
+			var optionsum = createNewOption(CONST_SUM, SUM, null, null);
+			var optionsumif = createNewOption(CONST_SUM_IF, SUM_IF, null, null);
+			var optionaverage = createNewOption(CONST_AVERAGE, AVERAGE, null, null);
 			select.appendChild(optionsum);
 			select.appendChild(optionsumif);
 			select.appendChild(optionaverage);
@@ -575,10 +575,10 @@ $(document).ready(function() {
 		}
 		if(options_temp.length > 0){
 			options_temp = sortArray(options_temp);
-			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null);
+			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null, null);
 			options.push(option);
 			for(var i = 0; i < options_temp.length; i++){
-				option = createNewOption(options_temp[i], options_temp[i], null);
+				option = createNewOption(options_temp[i], options_temp[i], null, null);
 				options.push(option);
 			}
 		}
@@ -622,7 +622,13 @@ $(document).ready(function() {
 		var divid = id.replace(CONST_REMOVE+'-','');
 		var elem = document.getElementById(divid);
 		elem.parentNode.removeChild(elem);
-		removeSerieAfterCloseColumn(id);
+
+		var axis = id.split('-')[3];
+		if(axis == CONST_Y){
+			removeSerieAfterCloseColumn(id);
+		} else if(axis == CONST_X){
+			removeCategoriesByChart(CONST_CHART);
+		}	
 	}
 
 	/* Removendo grafico */
@@ -725,6 +731,16 @@ $(document).ready(function() {
 			}
 		}
 		setCategoriesByChart(CONST_CHART, categories);
+
+		// refazendo pesquisa para as colunas inseridas no eixo Y
+		var coluns_y = getAllButtonResearchIdsColumnsY();
+		if(coluns_y != null && coluns_y.length > 0){
+			var column_type;
+			for(var i = 0; i < coluns_y.length; i++){
+				column_type = getTypeColumn(coluns_y[i], CONST_RESEARCH);
+				researchValuesGraphicAxisY(coluns_y[i], column_type, CONST_Y);
+			}
+		}
 	}
 
 	function researchValuesGraphicAxisY(buttonid, column_type, axis){
@@ -808,8 +824,6 @@ $(document).ready(function() {
 		return serie_total;
 	}
 
-
-
 	/* Recuperando o nome da coluna atual no eixo X */
 	function getNameColumnOnAxisX(){
 		var name = null;
@@ -821,6 +835,19 @@ $(document).ready(function() {
 			}
 		}
 		return name;
+	}
+
+	/* Recuperando o id de todos os botoes de refazer pesquisa das colunas em Y */
+	function getAllButtonResearchIdsColumnsY(){
+		var ids = new Array();
+		var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
+		if(groupaxisy != null){
+			var buttons_research = groupaxisy.getElementsByClassName(CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH);
+			for(var i = 0; i < buttons_research.length; i++){
+				ids.push(buttons_research[i].id);
+			}
+		}
+		return ids;
 	}
 
 	/* Recuperando o tipo da coluna baseado no botao de filtrar valores */ 
@@ -855,30 +882,17 @@ $(document).ready(function() {
 		var option;
 		if(values.length == 0){
 			// Caso nao tenha nenhum valor para ser inserido
-			option = createNewOption(CONST_NO_DATA, NO_DATA, column_type);
+			option = createNewOption(CONST_NO_DATA, NO_DATA, column_type, CONST_SELECTED);
 			select_values.appendChild(option);
 		} else {
-			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null);
+			option = createNewOption(CONST_ALL_VALUES, ALL_VALUES, null, null);
 			select_values.appendChild(option);
 			for(var i = 0; i < values.length; i++){
-				option = createNewOption(values[i], values[i], column_type);
+				option = createNewOption(values[i], values[i], column_type, null);
 				select_values.appendChild(option);
 			}
 		}
 	}
 
 	/* --------------------------------------------------------------------------------------------------------- */
-
-	/* change graphic to a bar graphic */
-	function setBarGraphic(){
-		$('#chart').highcharts({
-	        chart: {
-	            type: CONST_COLUMN
-	        },
-	        title: {
-	            text: 'Situated'
-	        }
-	    });
-	}
-
 });

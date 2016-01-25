@@ -1,4 +1,15 @@
 
+function initializeChart(chart_id){
+	$('#'+chart_id).highcharts({
+        chart: {
+            type: CONST_COLUMN
+        },
+        title: {
+            text: 'Situated'
+        }
+    });
+}
+
 function formatSeriesToGraphic(chart_id, series, column_name_y, column_type, condition_value){
 	var serie = new Array();
 	var value_action;
@@ -97,5 +108,9 @@ function removeSerieByName(chart_id, serie_name){
 			}
 		}
 	}
+}
+
+function removeCategoriesByChart(chart_id){
+	initializeChart(chart_id);
 }
 

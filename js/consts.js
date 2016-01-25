@@ -108,6 +108,7 @@ var CONST_ROW_REFRESH_COLUMNS_FILTERS = 'row refresh-columns-filters';
 
 /* ------------ S -------------- */
 var CONST_SELECT = 'select';
+var CONST_SELECTED = 'selected';
 var CONST_SELECT_AXIS = 'select-axis';
 var CONST_SELECT_FILTER = 'select-filter';
 var CONST_SELECT_GRAPHIC = 'select-graphic';

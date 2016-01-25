@@ -118,7 +118,7 @@
 	}
 
 	/* Criando novo OPTION */
-	function createNewOption(value, text, classname){
+	function createNewOption(value, text, classname, selected){
 		var option = document.createElement('option');
 		if(value != null){
 			option.value = value;
@@ -128,6 +128,9 @@
 		}
 		if(classname != null){
 			option.className = classname;
+		}
+		if(selected != null){
+			option.selected = selected;
 		}
 		return option;			
 	}

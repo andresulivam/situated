@@ -95,7 +95,6 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 				average = 0;
 			}
 		}
-		console.log(average);		
 		var object = new Object();
 		object.sum = sum;
 		object.count = count;
