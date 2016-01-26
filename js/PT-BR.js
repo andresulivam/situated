@@ -62,6 +62,7 @@ var MESSAGE_NOT_VALUES_ON_AXIS_X = 'Não existe valores no eixo X';
 /* ------------ N -------------- */
 var NEW = 'Novo';
 var NO_DATA = 'Sem dados';
+var NO_VALUE = 'Sem valor';
 /* ----------------------------- */
 
 /* ------------ P -------------- */

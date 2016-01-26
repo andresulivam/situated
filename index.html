@@ -38,6 +38,10 @@
 		<!-- FILTER FUNCTIONS -->
 		<script src="js/filter-columns-functions.js"></script>
 
+		<!-- X EDITABLE -->
+		<link href="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
 	  	<script>  
 		  	/* function to use language based on translate file */
 			function show(x){
@@ -109,15 +113,17 @@
 						</div>
 		  			</div>
 		  			<div class="col-xs-10">
-		  				<div class="form-group">
-							<label for="tit"><script>show(TITLE)</script></label>
-						  	<input id="title-plot" type="text" class="form-control">
-						</div>
-						<div class="form-group">
-							<label for="des"><script>show(DESCRIPTION)</script></label>
-		  					<textarea class="form-control" rows="5" id="description-plot"></textarea>
-						</div>
+						<label for="title-plot"><script>show(TITLE)</script></label>
+						<a href="#" id="title-plot" data-type="text" data-mode="inline" class="edit"></a>
 		  			</div>
+		  			<br>
+		  			<br>
+		  			<div class="col-xs-10">
+						<label for="description-plot"><script>show(DESCRIPTION)</script></label>
+						<a href="#" id="description-plot" data-type="textarea" data-mode="inline" class="edit"></a>
+		  			</div>
+		  			<br>
+		  			<br>
 		  		</div>
 		  		<div class="row">
 		  			<div class="col-xs-2">

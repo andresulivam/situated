@@ -10,6 +10,8 @@ $(document).ready(function() {
 		initializeChart(CONST_CHART);
 		// Inicializando o grafico de pizza
 		initializeChart(CONST_CHART_PIE);
+		// Inicializando textedits com xeditable
+		initializeXEditable();
 	});
 
 	/* Preenchendo o combobox de colunas baseados no json */ 
@@ -108,6 +110,14 @@ $(document).ready(function() {
 			}
 		}
 		return result;
+	}
+
+	function initializeXEditable(){
+		$('.edit').editable({
+			emptytext: NO_VALUE,
+			showbuttons: true,
+			onblur: 'submit'
+		})
 	}
 
 	/* --------------------------------------------------------------------------------------------------------- */
