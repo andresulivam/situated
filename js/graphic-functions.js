@@ -197,4 +197,3 @@ function removeSerieByName(chart_id, serie_name){
 function removeCategoriesByChart(chart_id){
 	initializeChart(chart_id);
 }
-

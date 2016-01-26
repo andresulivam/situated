@@ -197,4 +197,52 @@
 		}
 		return datalist;
 	}
+
+	/* Criando nova tabela */
+	function createNewTable(id, classname){
+		var table = document.createElement('table');
+		if(id != null){
+			table.id = id;
+		}
+		if(classname != null){
+			table.className = classname;
+		}
+		return table;
+	}
+
+	/* Criando nova head para tabela */
+	function createNewTHead(){
+		var thead = document.createElement('thead');
+		return thead;
+	}
+
+	/* Criando nova linha para tabela */
+	function createNewTr(){
+		var tr = document.createElement('tr');
+		return tr;
+	}
+
+	/* Criando nova coluna para head da tabela */
+	function createNewTh(innerhtml){
+		var th = document.createElement('th');
+		if(innerhtml != null){
+			th.innerHTML = innerhtml;
+		}
+		return th;
+	}
+
+	/* Criando novo body para tabela */
+	function createNewTBody(){
+		var tbody = document.createElement('tbody');
+		return tbody;
+	}
+
+	/* Criando nova coluna para linha da tabela */
+	function createNewTd(innerhtml){
+		var td = document.createElement('td');
+		if(innerhtml != null){
+			td.innerHTML = innerhtml;
+		}
+		return td;
+	}
 /* --------------------------------------------------------------------------------------------------------- */

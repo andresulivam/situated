@@ -5,6 +5,7 @@ var CONST_AVERAGE = 'average';
 var CONST_AXIS_Y = 'axis-y';
 var CONST_ALL_VALUES = 'all-values';
 var CONST_ASCENDANT = 'ascendant';
+var CONST_A_TITLE_REMOVE = 'a-title-remove';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -134,6 +135,7 @@ var CONST_TEXT = 'text';
 var CONST_TEXT_TYPE = 'text-type';
 var CONST_TYPE = 'type';
 var CONST_TABLE = 'table';
+var CONST_TABLE_TABLE_BORDERED_TABLE_STRIPE = 'table table-bordered table-striped';
 /* ----------------------------- */
 
 /* ------------ X -------------- */

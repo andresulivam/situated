@@ -223,7 +223,7 @@ $(document).ready(function() {
 			title = selectcolumn.value;
 		}
 		// Inserindo opcao de remover a coluna
-		var adatatoggle = createNewA(null, null, null, CONST_COLLAPSE, idpanelcollapse, title);
+		var adatatoggle = createNewA(null, CONST_A_TITLE_REMOVE, null, CONST_COLLAPSE, idpanelcollapse, title);
 		var idaremove = CONST_REMOVE+'-'+iddivpanel
 		var aremove = createNewA(idaremove, CONST_PULL_RIGHT_REMOVE_COLUMN, null, null, null, null);
 		var img = createNewImg(null, CONST_IMG_CLOSE, null, null, CONST_REMOVE_COLUMN);
@@ -284,6 +284,7 @@ $(document).ready(function() {
 			divcolxs3.appendChild(divpaneldefault);
 			divrow.appendChild(divcolxs3);
 			groupcolumns.appendChild(divrow);
+			generateTableWithGraphicData();
 		} else {
 			groupcolumns.appendChild(divpaneldefault);
 		}
@@ -521,6 +522,7 @@ $(document).ready(function() {
 		var div_chart = document.getElementById(CONST_CHART);
 		var div_chart_pie = document.getElementById(CONST_CHART_PIE);
 		var div_table = document.getElementById(CONST_TABLE);
+
 		if(value_selected != CONST_TABLE){
 			var id_selects_type_graphic = getAllSelectsGraphicTypeIds();
 			if(id_selects_type_graphic != null && id_selects_type_graphic.length > 0){
@@ -556,6 +558,11 @@ $(document).ready(function() {
 				}
 				changeGraphicTypeByChart(chart, value_selected);
 			}
+		} else {
+			generateTableWithGraphicData();
+			div_chart.hidden = true;
+			div_chart_pie.hidden = true;
+			div_table.hidden = false;	
 		}
 	}
 
@@ -765,10 +772,13 @@ $(document).ready(function() {
 			var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
 			if(select_graphic_type == CONST_PIE){
 				changeGraphicTypeByChart(CONST_CHART_PIE, select_graphic_type);
+			} else if(select_graphic_type == CONST_TABLE){
+				generateTableWithGraphicData();
 			}
 		} else if(axis == CONST_X){
 			removeCategoriesByChart(CONST_CHART);
 			removeCategoriesByChart(CONST_CHART_PIE);
+			generateTableWithGraphicData();
 		}	
 	}
 
@@ -802,6 +812,8 @@ $(document).ready(function() {
 		var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
 		if(select_graphic_type == CONST_PIE){
 			changeGraphicTypeByChart(CONST_CHART_PIE, select_graphic_type);
+		} else if(select_graphic_type == CONST_TABLE){
+			generateTableWithGraphicData();
 		}
 	}
 
@@ -959,6 +971,7 @@ $(document).ready(function() {
 			var id_select_graphic_type = buttonid.replace(CONST_RESEARCH,CONST_SELECT_GRAPHIC);
 			var column_type = document.getElementById(id_select_graphic_type).value;
 
+			// Gerando grafico com os dados agrupados
 			formatSeriesToGraphic(CONST_CHART, series, column_name_y, column_type, condition_selected);
 		} else {
 			alert(MESSAGE_NOT_VALUES_ON_AXIS_X);
@@ -1019,6 +1032,19 @@ $(document).ready(function() {
 		return ids;
 	}
 
+	/* Recuperando o nome de todas as colunas no eixo Y */
+	function getAllNameColumnsOnAxisY(){
+		var column_names = new Array();
+		var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
+		if(groupaxisy != null){
+			var a_title = groupaxisy.getElementsByClassName(CONST_A_TITLE_REMOVE);
+			for(var i = 0; i < a_title.length; i++){
+				column_names.push(a_title[i].innerHTML);
+			}
+		}
+		return column_names;
+	}
+
 	/* Recuperando o tipo da coluna baseado no botao de filtrar valores */ 
 	function getTypeColumn(elementid, type){
 		var select_id_number = elementid.replace(type,CONST_SELECT_VALUE+'-'+CONST_NUMBER);
@@ -1061,6 +1087,58 @@ $(document).ready(function() {
 				select_values.appendChild(option);
 			}
 		}
+	}
+
+	/* Gerando tabelas com os dados baseado no grafico */
+	function generateTableWithGraphicData(){
+		var div_table = document.getElementById(CONST_TABLE);
+		// Apagando tabela antiga
+		while (div_table.firstChild) {
+		    div_table.removeChild(div_table.firstChild);
+		}
+		var column_name_x = getNameColumnOnAxisX();
+		if(!column_name_x != null){
+			var columns_name_y = getAllNameColumnsOnAxisY();
+			generateTable(column_name_x, columns_name_y, div_table);
+		} else {
+			alert(MESSAGE_NOT_VALUES_ON_AXIS_X);
+		}		
+	}
+
+	/* Gerando tabela com os dados */
+	function generateTable(columnx_name, columns_name_y, div_table){
+		var table = createNewTable(null, CONST_TABLE_TABLE_BORDERED_TABLE_STRIPE);
+		var thead = createNewTHead();
+		var trhead = createNewTr();
+		var thhead = createNewTh(columnx_name);
+		// head
+		trhead.appendChild(thhead);	
+		if(columns_name_y != null){
+			for(var i = 0; i < columns_name_y.length; i++){
+				thhead = createNewTh(columns_name_y[i]);
+				trhead.appendChild(thhead);
+			}
+			thead.appendChild(trhead);
+		}	
+		// body
+		var tbody = createNewTBody();
+		var trbody;
+		var tdbody;
+		var categories = getCategoriesByChart(CONST_CHART);
+		var series = getSeriesByChart(CONST_CHART);
+		for(var i = 0; i < categories.length; i++){
+			trbody = createNewTr();
+			tdbody = createNewTd(categories[i]);
+			trbody.appendChild(tdbody);
+			for(var j = 0; j < series.length; j++){
+				tdbody = createNewTd(series[j].yData[i]);
+				trbody.appendChild(tdbody);
+			}
+			tbody.appendChild(trbody);
+		} 
+		table.appendChild(thead);
+		table.appendChild(tbody);
+		div_table.appendChild(table);
 	}
 
 	/* --------------------------------------------------------------------------------------------------------- */
