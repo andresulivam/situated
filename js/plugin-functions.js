@@ -148,7 +148,7 @@ $(document).ready(function() {
 
 	/* Refazendo pesquisa */
 	$('body').on('click', 'button.research', function() {
-	    researchGraphic(this.id);
+	    researchGraphic(this.id, null, null);
 	});
 
 	/* Filtrando dados */
@@ -170,6 +170,8 @@ $(document).ready(function() {
 		var newid;
 		var iddivpanel;
 		var selectcolumnvalue = String(selectcolumn.value);
+		var axis = null;
+		var column_type = null;
 		// Verificando em qual eixo adicionar a coluna
 		if(selectaxis.value == CONST_AXIS_Y){
 			// Recuperando todas as colunas já existentes em Y
@@ -184,6 +186,10 @@ $(document).ready(function() {
 			}
 			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_Y+'-'+newid;
 			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisy, typecolumn, CONST_Y);
+
+			// Valores para atualizar o grafico baseado no eixo Y
+			axis = CONST_Y;
+			column_type = getColumnTypeByName(selectcolumnvalue).replace('-'+CONST_TYPE,'');
 		} else {
 			var groupaxisX = document.getElementById(CONST_COLUMNS_GROUP_X);
 			// Removendo a coluna anterior no eixo X pois so e permitido uma coluna
@@ -192,12 +198,11 @@ $(document).ready(function() {
 			}
 			newid = 1;
 			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_X+'-'+newid;
-			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisX, typecolumn, CONST_X);
-
-			// Forcando atualizar categories do grafico
-			var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
-			researchGraphic(button_research_id);
+			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisX, typecolumn, CONST_X);		
 		}
+		var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
+		// Atualizando grafico
+		researchGraphic(button_research_id, axis, column_type);
 	}
 
 	/* Criando o combobox com todos os filtros disponiveis */
@@ -757,6 +762,10 @@ $(document).ready(function() {
 		var axis = id.split('-')[3];
 		if(axis == CONST_Y){
 			removeSerieAfterCloseColumn(id);
+			var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
+			if(select_graphic_type == CONST_PIE){
+				changeGraphicTypeByChart(CONST_CHART_PIE, select_graphic_type);
+			}
 		} else if(axis == CONST_X){
 			removeCategoriesByChart(CONST_CHART);
 			removeCategoriesByChart(CONST_CHART_PIE);
@@ -778,9 +787,13 @@ $(document).ready(function() {
 	}
 
 	/* Refazendo pesquisa */
-	function researchGraphic(buttonid){
-		var axis = buttonid.split('-')[3];
-		var column_type = getTypeColumn(buttonid, CONST_RESEARCH);
+	function researchGraphic(buttonid, axis, column_type){
+		if(axis == null){
+			axis = buttonid.split('-')[3];
+		}
+		if(column_type == null){
+			column_type = getTypeColumn(buttonid, CONST_RESEARCH);
+		}
 		if(axis == CONST_X){
 			researchValuesGraphicAxisX(buttonid, column_type, axis);
 		} else if(axis == CONST_Y){
