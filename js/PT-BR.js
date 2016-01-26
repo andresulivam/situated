@@ -80,6 +80,7 @@ var SAVE = 'Salvar';
 var SELECT = 'Selecione';
 var SUM = 'Somar';
 var SUM_IF = 'Somar se';
+var SUM_TOTAL = 'Soma total: ';
 /* ----------------------------- */
 
 /* ------------ T -------------- */

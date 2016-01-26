@@ -101,9 +101,9 @@
 		  				<div class="form-group">
 	  					  <label for="select-default-graphic"><script>show(DEFAULT_GRAPHIC)</script></label>
 						  <select id="select-default-graphic" class="form-control">
-						    <option value="bar"><script>show(BAR)</script></option>
+						    <option value="column"><script>show(BAR)</script></option>
 						    <option value="line"><script>show(LINE)</script></option>
-						    <option value="pizza"><script>show(PIE)</script></option>
+						    <option value="pie"><script>show(PIE)</script></option>
 						    <option value="table"><script>show(TABLE)</script></option>
 						  </select>
 						</div>
@@ -111,7 +111,7 @@
 		  			<div class="col-xs-10">
 		  				<div class="form-group">
 							<label for="tit"><script>show(TITLE)</script></label>
-						  	<input id="title-plot" type="text" class="form-control" id="tit">
+						  	<input id="title-plot" type="text" class="form-control">
 						</div>
 						<div class="form-group">
 							<label for="des"><script>show(DESCRIPTION)</script></label>
@@ -128,7 +128,21 @@
 						</div>	
 		  			</div>
 		  			<div class="col-xs-10">
-	  					<div id="chart"></div>
+		  				<div class="row">
+	  						<div class"col-xs-10">
+	  							<div id="chart"></div>
+	  						</div>
+	  					</div>
+	  					<div class="row">
+	  						<div class"col-xs-10">
+	  							<div id="chart-pie" hidden></div>
+	  						</div>
+	  					</div>
+	  					<div class="row">
+	  						<div class"col-xs-10">
+	  							<div id="table" hidden></div>
+	  						</div>
+	  					</div>
 	  					<br>
 	  					<div class="row">
 				  			<div class="col-xs-10">

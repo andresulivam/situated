@@ -6,8 +6,10 @@ $(document).ready(function() {
 		completejson = JSON_TEST;
 		// Preenchendo o combobox de colunas baseados no json (dinamicamente)
 		fillSelectColumnsWithJson(completejson);
-
+		// Inicializando o grafico
 		initializeChart(CONST_CHART);
+		// Inicializando o grafico de pizza
+		initializeChart(CONST_CHART_PIE);
 	});
 
 	/* Preenchendo o combobox de colunas baseados no json */ 
@@ -117,6 +119,11 @@ $(document).ready(function() {
 		var column = document.getElementById(CONST_SELECT_COLUMN);
 		var axis = document.getElementById(CONST_SELECT_AXIS);
 		generateNewColumnWithFilters(column, axis);
+	});
+
+	/* Mudando grafico padrao */
+	$('#select-default-graphic').on('change', function(){
+		configureScreenByDefaultGraphic(this);
 	});
 
 	/* Mudando o filtro de intervalo */
@@ -288,7 +295,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselect = CONST_SELECT_GRAPHIC+'-'+iddivpanel;
 		// Combobox com os tipos de grafico
-		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
+		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE);
 		// Options de tipos de graficos
 		var optionbar = createNewOption(CONST_COLUMN, BAR, null, null);
 		var optionline = createNewOption(CONST_SPLINE, LINE, null, null);
@@ -503,6 +510,50 @@ $(document).ready(function() {
 		return divrow;
 	}
 
+	/* Configurando a tela apos o usuario selecionar o tipo padrao de grafico */
+	function configureScreenByDefaultGraphic(select){
+		var value_selected = select.value;
+		var div_chart = document.getElementById(CONST_CHART);
+		var div_chart_pie = document.getElementById(CONST_CHART_PIE);
+		var div_table = document.getElementById(CONST_TABLE);
+		if(value_selected != CONST_TABLE){
+			var id_selects_type_graphic = getAllSelectsGraphicTypeIds();
+			if(id_selects_type_graphic != null && id_selects_type_graphic.length > 0){
+				var disabled = true;
+				var select_index = null;
+				if(value_selected == CONST_COLUMN || value_selected == CONST_LINE){
+					disabled = false;
+					if(value_selected == CONST_COLUMN){
+						select_index = 0;
+					} else if(value_selected == CONST_LINE){
+						select_index = 1;
+					}
+				}	
+				var select;
+				for(var i = 0; i < id_selects_type_graphic.length; i++){
+					select = document.getElementById(id_selects_type_graphic[i]);
+					select.disabled = disabled;
+					if(select_index != null){
+						select.selectedIndex = select_index;
+					}
+				}
+				var chart;
+				if(value_selected == CONST_PIE){
+					div_chart.hidden = true;
+					div_chart_pie.hidden = false;
+					div_table.hidden = true;
+					chart = CONST_CHART_PIE;
+				} else {
+					div_chart.hidden = false;
+					div_chart_pie.hidden = true;
+					div_table.hidden = true;
+					chart = CONST_CHART;
+				}
+				changeGraphicTypeByChart(chart, value_selected);
+			}
+		}
+	}
+
 	/* Configurando a tela apos o usuario selecionar filtro de intervalo */
 	function configureScreenBySelectFilter(select){	
 		var selectid = select.id;
@@ -708,6 +759,7 @@ $(document).ready(function() {
 			removeSerieAfterCloseColumn(id);
 		} else if(axis == CONST_X){
 			removeCategoriesByChart(CONST_CHART);
+			removeCategoriesByChart(CONST_CHART_PIE);
 		}	
 	}
 
@@ -733,6 +785,10 @@ $(document).ready(function() {
 			researchValuesGraphicAxisX(buttonid, column_type, axis);
 		} else if(axis == CONST_Y){
 			researchValuesGraphicAxisY(buttonid, column_type, axis);
+		}
+		var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
+		if(select_graphic_type == CONST_PIE){
+			changeGraphicTypeByChart(CONST_CHART_PIE, select_graphic_type);
 		}
 	}
 
@@ -922,6 +978,19 @@ $(document).ready(function() {
 			}
 		}
 		return name;
+	}
+
+	/* Recuperando o id de todos os selects de tipo de grafico */
+	function getAllSelectsGraphicTypeIds(){
+		var ids = new Array();
+		var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
+		if(groupaxisy != null){
+			var selects_type_graphic = groupaxisy.getElementsByClassName(CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE);
+			for(var i = 0; i < selects_type_graphic.length; i++){
+				ids.push(selects_type_graphic[i].id);
+			}
+		}
+		return ids;
 	}
 
 	/* Recuperando o id de todos os botoes de refazer pesquisa das colunas em Y */

@@ -34,6 +34,7 @@ var CONST_COUNT = 'count';
 var CONST_COUNT_ALL = 'count-all';
 var CONST_COUNT_IF = 'count-if';
 var CONST_CHART = 'chart';
+var CONST_CHART_PIE = 'chart-pie';
 var CONST_CONDITION_COUNT_IF_INPUT = 'condition-count-if-input';
 var CONST_CONDITION_SUM_IF_INPUT = 'condition-sum-if-input';
 /* ----------------------------- */
@@ -54,6 +55,7 @@ var CONST_DESCENDANT = 'descendant';
 var CONST_FILTER_COLUMN_Y = 'filter-column-y';
 var CONST_FINAL = 'final';
 var CONST_FORM_CONTROL = 'form-control';
+var CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE = 'form-control select-graphic-type';
 var CONST_FINAL_INPUT = 'final-input';
 var CONST_FILTER_TEXT = 'filter-text';
 var CONST_FILTER = 'filter';
@@ -98,6 +100,7 @@ var CONST_PANEL_PANEL_DEFAULT = 'panel panel-default';
 var CONST_PANEL_TITLE = 'panel-title';
 var CONST_PULL_RIGHT = 'pull-right';
 var CONST_PULL_RIGHT_REMOVE_COLUMN = 'pull-right remove-column';
+var CONST_PIE = 'pie';
 
 /* ----------------------------- */
 
@@ -111,6 +114,7 @@ var CONST_ROW_REFRESH_COLUMNS_FILTERS = 'row refresh-columns-filters';
 /* ----------------------------- */
 
 /* ------------ S -------------- */
+var CONST_SITUATED = 'SITUATED';
 var CONST_SELECT = 'select';
 var CONST_SELECTED = 'selected';
 var CONST_SELECT_AXIS = 'select-axis';
@@ -119,6 +123,7 @@ var CONST_SELECT_GRAPHIC = 'select-graphic';
 var CONST_SELECT_COLUMN = 'select-column';
 var CONST_SELECT_VALUE = 'select-value';
 var CONST_SELECT_ORDER = 'select-order';
+var CONST_SELECT_DEFAULT_GRAPHIC = 'select-default-graphic';
 var CONST_SUM = 'sum';
 var CONST_SUM_IF = 'sum-if';
 var CONST_SPLINE = 'spline';
@@ -128,6 +133,7 @@ var CONST_SPLINE = 'spline';
 var CONST_TEXT = 'text';
 var CONST_TEXT_TYPE = 'text-type';
 var CONST_TYPE = 'type';
+var CONST_TABLE = 'table';
 /* ----------------------------- */
 
 /* ------------ X -------------- */
