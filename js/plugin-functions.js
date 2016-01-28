@@ -177,6 +177,11 @@ $(document).ready(function() {
 		saveChartConfiguration();
 	});
 
+	/* Marcando/Desmarcando todos os plots */
+	$('#check-all-plots').on('change', function(){
+		checkAllPlot(this.checked);
+	});
+
 	/* Mudando o filtro de intervalo */
 	function filterColumnChange(){
 		configureScreenBySelectFilter(this);
@@ -1250,6 +1255,17 @@ $(document).ready(function() {
 		var groupaxis = document.getElementById(id);
 		while (groupaxis.firstChild) {
 		    groupaxis.removeChild(groupaxis.firstChild);
+		}
+	}
+
+	/* Marcando/Desmarcando todos os plots */
+	function checkAllPlot(checked){
+		var groupplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+		var plots = groupplots.getElementsByClassName(CONST_CHECKBOX_PLOTS);
+		if(plots != null && plots.length > 0){
+			for(var i = 0; i < plots.length; i++){
+				plots[i].checked = checked;
+			}
 		}
 	}
 
