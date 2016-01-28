@@ -97,7 +97,7 @@
 	}
 
 	/* Criando novo IMG */
-	function createNewImg(id, src, alt, title, classname){
+	function createNewImg(id, src, alt, title, classname, draggable){
 		var newimg = document.createElement('img');
 		if(id != null){
 			newimg.id = id;
@@ -113,6 +113,9 @@
 		}
 		if(classname != null){
 			newimg.className = classname;
+		}
+		if(draggable != null){
+			newimg.draggable = draggable;
 		}
 		return newimg;
 	}

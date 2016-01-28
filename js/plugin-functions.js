@@ -155,6 +155,13 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Callback apor droppar plot no grafico */
+	function callbackfunctionOnDropPlot(success, chart_configuration){
+		if(success){
+			openPlotDropped(chart_configuration);
+		}
+	}
+
 	/* --------------------------------------------------------------------------------------------------------- */
 
 	/* --------------------------------------------- EVENTOS --------------------------------------------------- */
@@ -257,6 +264,12 @@ $(document).ready(function() {
 	function dropPlot(ev){
 		ev.preventDefault();
 		var plot_id = ev.dataTransfer.getData(CONST_PLOT_ID);
+		var confirmation = confirm(MESSAGE_DO_YOU_WANT_TO_SAVE_THE_GRAPHIC);
+		if (confirmation == true) {
+			saveChartConfiguration();
+		} 
+		var chart_configuration_id = plot_id.split('-')[1];
+		onSearchChartConfiguration(chart_configuration_id, callbackfunctionOnDropPlot)
 	}
 
 	/* Drop plot */
@@ -335,7 +348,7 @@ $(document).ready(function() {
 		var adatatoggle = createNewA(null, CONST_A_TITLE_REMOVE, null, CONST_COLLAPSE, idpanelcollapse, title);
 		var idaremove = CONST_REMOVE+'-'+iddivpanel
 		var aremove = createNewA(idaremove, CONST_PULL_RIGHT_REMOVE_COLUMN, null, null, null, null);
-		var img = createNewImg(null, CONST_IMG_CLOSE, null, null, CONST_REMOVE_COLUMN);
+		var img = createNewImg(null, CONST_IMG_CLOSE, null, null, CONST_REMOVE_COLUMN, false);
 		aremove.appendChild(img);
 		h4.appendChild(adatatoggle);
 		h4.appendChild(aremove);
@@ -1551,7 +1564,7 @@ $(document).ready(function() {
 		var ida = CONST_REMOVE+'-'+id_plot;
 		var a = createNewA(ida, CONST_REMOVE_PLOT, onClickRemovePlot, null, null, null);
 
-		var img = createNewImg(null, CONST_IMG_TRASH, null, null, CONST_IMG_TRASH_CLASS);
+		var img = createNewImg(null, CONST_IMG_TRASH, null, null, CONST_IMG_TRASH_CLASS, false);
 
 		a.appendChild(img);
 		divcolxs12.appendChild(input);
@@ -1561,6 +1574,7 @@ $(document).ready(function() {
 		divgroup.appendChild(divrow);
 	}
 
+	/* Confirmacao de deletar o plot */
 	function confirmDeletePlot(divplot){
 		var confirmation = confirm(MESSAGE_HAVE_YOU_SURE_THAT_WANT_TO_DELETE_PLOT);
 		if (confirmation == true) {
@@ -1569,6 +1583,7 @@ $(document).ready(function() {
 		} 
 	}
 
+	/* Removendo o plot da tela apos ter sido deletado do banco */
 	function removeDivWithPlotDeleted(chart_configuration){
 		var divgroupwithplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
 		var divplots = divgroupwithplots.getElementsByClassName(CONST_ROW_DIV_WITH_PLOT);
@@ -1585,8 +1600,34 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Abrindo configuracao do plot dropado no grafico */
+	function openPlotDropped(chart_configuration){
+		var chart_configuration_object = JSON.parse(chart_configuration);
+		// Grafico ID
+		document.getElementById(CONST_ID_PLOT).value = chart_configuration_object.id;
+		// Grafico padrao
+		setDefaultGraphic(chart_configuration_object.default_graphic);
+		// Titulo e descricao
+		setTitleAndDescription(chart_configuration_object.title_plot, chart_configuration_object.description_plot);
+	}	
 
+	/* Settando o grafico padrao pelo plot dropado */
+	function setDefaultGraphic(default_graphic){
+		var select_default_graphic = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
+		select_default_graphic.options.length = 0;
+		var option;
+		for(var i = 0; i < default_graphic.options.length; i++){
+			option = createNewOption(default_graphic.options[i].value, default_graphic.options[i].text);
+			select_default_graphic.appendChild(option);
+		}
+		select_default_graphic.value = default_graphic.value;
+	}
 
+	/* Settando o o titulo e a descricao pelo plot dropado */
+	function setTitleAndDescription(title_plot, description_plot){
+		$('#'+CONST_TITLE_PLOT).editable('setValue', title_plot);
+		$('#'+CONST_DESCRIPTION_PLOT).editable('setValue', description_plot)	
+	}
 
 
 	/* --------------------------------------------------------------------------------------------------------- */
