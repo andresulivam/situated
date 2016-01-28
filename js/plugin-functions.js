@@ -10,6 +10,10 @@ $(document).ready(function() {
 		initializeChart(CONST_CHART_PIE);
 		// Inicializando textedits com xeditable
 		initializeXEditable();
+		// Inicialiando drag and drop plot para o grafico
+		initializingDragDropPlotToChart();
+		// Inicialiando drag and drop grafico para o grupo de plots
+		initializingDragDropChartToPlot();
 	});
 
 	/* Preenchendo o combobox de colunas baseados no json */ 
@@ -215,6 +219,51 @@ $(document).ready(function() {
 	$('body').on('click', 'button.filter', function() {
 	    filterValuesColumn(this.id);
 	});
+
+	/* --------------------------------------------------------------------------------------------------------- */
+
+	/* -------------------------------------------- DRAG AND DROP ---------------------------------------------- */
+	
+	/* Permitindo o drop no elemento */
+	function allowDrop(ev) {
+	    ev.preventDefault();
+	}
+
+	function initializingDragDropPlotToChart(){
+		var chart = document.getElementById(CONST_CHART);
+		var chart_pie = document.getElementById(CONST_CHART_PIE);
+		chart.ondrop = dropPlot;
+		chart.ondragover = allowDrop;
+		chart.draggable = true;
+
+		chart_pie.ondrop = dropPlot;
+		chart_pie.ondragover = allowDrop;
+		chart_pie.draggable = true;
+	}
+
+	function initializingDragDropChartToPlot(){
+		var group_plot = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+		group_plot.ondrop = dropChart;
+		group_plot.ondragover = allowDrop;
+	}
+
+	/* Drag plot */
+	function dragPlot(ev){
+		var plot_id = ev.target.id;
+		ev.dataTransfer.setData(CONST_PLOT_ID, plot_id);
+	}
+
+	/* Drop plot */
+	function dropPlot(ev){
+		ev.preventDefault();
+		var plot_id = ev.dataTransfer.getData(CONST_PLOT_ID);
+	}
+
+	/* Drop plot */
+	function dropChart(ev){
+		ev.preventDefault();
+		saveChartConfiguration();
+	}
 
 	/* --------------------------------------------------------------------------------------------------------- */
 
@@ -588,7 +637,6 @@ $(document).ready(function() {
 		var div_chart = document.getElementById(CONST_CHART);
 		var div_chart_pie = document.getElementById(CONST_CHART_PIE);
 		var div_table = document.getElementById(CONST_TABLE);
-
 		if(value_selected != CONST_TABLE){
 			var id_selects_type_graphic = getAllSelectsGraphicTypeIds();
 			if(id_selects_type_graphic != null && id_selects_type_graphic.length > 0){
@@ -610,20 +658,20 @@ $(document).ready(function() {
 						select.selectedIndex = select_index;
 					}
 				}
-				var chart;
-				if(value_selected == CONST_PIE){
-					div_chart.hidden = true;
-					div_chart_pie.hidden = false;
-					div_table.hidden = true;
-					chart = CONST_CHART_PIE;
-				} else {
-					div_chart.hidden = false;
-					div_chart_pie.hidden = true;
-					div_table.hidden = true;
-					chart = CONST_CHART;
-				}
-				changeGraphicTypeByChart(chart, value_selected);
 			}
+			var chart;
+			if(value_selected == CONST_PIE){
+				div_chart.hidden = true;
+				div_chart_pie.hidden = false;
+				div_table.hidden = true;
+				chart = CONST_CHART_PIE;
+			} else {
+				div_chart.hidden = false;
+				div_chart_pie.hidden = true;
+				div_table.hidden = true;
+				chart = CONST_CHART;
+			}
+			changeGraphicTypeByChart(chart, value_selected);
 		} else {
 			generateTableWithGraphicData();
 			div_chart.hidden = true;
@@ -1235,6 +1283,10 @@ $(document).ready(function() {
 		// Reinicializando os graficos
 		initializeChart(CONST_CHART);
 		initializeChart(CONST_CHART_PIE);
+		// Inicializando drag and drop plot no grafico
+		initializingDragDropPlotToChart();
+		// Inicializando drag and drop grafico no grupo de plots
+		initializingDragDropChartToPlot();
 		// Removendo id do grafico atual
 		document.getElementById(CONST_ID_PLOT).value = '';
 		// Removendo valores de titulo e descricao
@@ -1488,7 +1540,7 @@ $(document).ready(function() {
 		var id_plot = CONST_PLOT+'-'+id_configuration+'-'+title_configuration;
 		
 		// Div que contera o plot
-		var divrow = createNewDiv(id_plot, null, null, CONST_ROW_DIV_WITH_PLOT, null, null, null);
+		var divrow = createNewDiv(id_plot, true, dragPlot, CONST_ROW_DIV_WITH_PLOT, null, null, null);
 		var divcolxs12 = createNewDiv(null, null, null, CONST_COL_XS_12, null, null, null);
 		var inputid = CONST_CHECKBOX+'-'+id_plot;
 		var input = createNewInput(inputid, CONST_CHECKBOX, CONST_CHECKBOX_PLOTS, null, null);

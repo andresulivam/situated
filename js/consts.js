@@ -119,6 +119,7 @@ var CONST_PULL_RIGHT = 'pull-right';
 var CONST_PULL_RIGHT_REMOVE_COLUMN = 'pull-right remove-column';
 var CONST_PIE = 'pie';
 var CONST_PLOT = 'plot';
+var CONST_PLOT_ID = 'plot-id';
 
 /* ----------------------------- */
 
