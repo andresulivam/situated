@@ -1,11 +1,9 @@
 $(document).ready(function() {
 	
 	/* Desenhando tela */
-	$('onload',function(completejson) {
-		// JSON_TEST está no arquivo consts.js
-		completejson = JSON_TEST;
-		// Preenchendo o combobox de colunas baseados no json (dinamicamente)
-		fillSelectColumnsWithJson(completejson);
+	$('onload',function() {	
+		// Requisicao ao banco (Arquivo database-functions.js)
+		onLoadPlugin(callbackfunctionOnLoad);
 		// Inicializando o grafico
 		initializeChart(CONST_CHART);
 		// Inicializando o grafico de pizza
@@ -122,8 +120,46 @@ $(document).ready(function() {
 
 	/* --------------------------------------------------------------------------------------------------------- */
 
+	/* --------------------------------------------- CALLBACK FUNCTIONS ---------------------------------------- */
+	
+	/* Callback para iniciar plugin */
+	function callbackfunctionOnLoad(success, json_with_data, json_charts_configurations){
+		if(success){
+			// Variavel global usada pelo sistema quando necessita verificar as colunas
+			JSON_WITH_DATA = json_with_data;
+			// Preenchendo o combobox de colunas baseados no json (dinamicamente)
+			fillSelectColumnsWithJson(json_with_data);
+		}
+	}
+
+	/* Callback apos salvar configuracao */
+	function callbackfunctionOnSave(success, chart_configuration){
+		if(success){
+			var idplot = document.getElementById(CONST_ID_PLOT);
+			if(idplot.value == null || idplot.value == ''){
+				var chart_configuration_object = JSON.parse(chart_configuration);
+				idplot.value = chart_configuration_object.id;
+				generateNewPlotByChartConfiguration(chart_configuration);
+			}				
+		}
+	}
+
+	/* Callback apos remover configuracao */
+	function callbackfunctionOnRemove(success, chart_configuration){
+		if(success){
+			removeDivWithPlotDeleted(chart_configuration);
+		}
+	}
+
+	/* --------------------------------------------------------------------------------------------------------- */
+
 	/* --------------------------------------------- EVENTOS --------------------------------------------------- */
 	
+	/* Criando novo grafico */
+	$('#generate-new').on('click', function(){
+		newChartConfiguration();
+	});
+
 	/* Adicionando nova coluna */
 	$('#add-column').on('click', function(){
 		var column = document.getElementById(CONST_SELECT_COLUMN);
@@ -134,6 +170,11 @@ $(document).ready(function() {
 	/* Mudando grafico padrao */
 	$('#select-default-graphic').on('change', function(){
 		configureScreenByDefaultGraphic(this);
+	});
+
+	/* Mudando grafico padrao */
+	$('#save-chart-configuration').on('click', function(){
+		saveChartConfiguration();
 	});
 
 	/* Mudando o filtro de intervalo */
@@ -149,6 +190,10 @@ $(document).ready(function() {
 	/* Mudando a ordenacao */
 	function orderChange(){
 		configureValuesByOrder(this);
+	}
+
+	function onClickRemovePlot(){
+		confirmDeletePlot(this);
 	}
 
 	/* Removendo coluna */
@@ -334,7 +379,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselectorder = CONST_SELECT_ORDER+'-'+iddivpanel;
 		// Combobox com os valores disponiveis
-		var selectorder = createNewSelect(idselectorder, CONST_FORM_CONTROL);
+		var selectorder = createNewSelect(idselectorder, CONST_FORM_CONTROL_SELECT_ORDER);
 		if(functionorderChange != null){
 			selectorder.onchange = functionorderChange;
 		}
@@ -360,7 +405,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselect = CONST_SELECT_VALUE+'-'+typecolumn+'-'+iddivpanel;
 		// Combobox com os valores disponiveis
-		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
+		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_VALUE);
 		// Options de todos os valores disponiveis
 		var all_options = getAllValueOfColumnInAJson(column);
 		for(var i = 0; i < all_options.length; i++){
@@ -383,7 +428,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselect = CONST_SELECT_FILTER+'-'+iddivpanel;
 		// Combobox com os filtros de intervalo disponiveis
-		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
+		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_FILTER);
 		if(functionfiltercolumnchange != null){
 			select.onchange = functionfiltercolumnchange;
 		}
@@ -408,12 +453,15 @@ $(document).ready(function() {
 		// Validando qual tipo de intervalo (menor que ou maior que)
 		var current;
 		var currentlabel;
+		var classname;
 		if(type ==  INITIAL){
 			current = CONST_INITIAL_INPUT;
 			currentlabel = CONST_INITIAL;
+			classname = CONST_FORM_CONTROL_INITIAL_INPUT;
 		} else if(type == FINAL){
 			current = CONST_FINAL_INPUT;
 			currentlabel = CONST_FINAL;
+			classname = CONST_FORM_CONTROL_FINAL_INPUT;
 		}
 		// Div que contera o filtro de intervalo (menor que ou maior que)
 		var divid = currentlabel+'-'+iddivpanel;
@@ -424,7 +472,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, false);
 		var idinput = current+'-'+iddivpanel; 
 		// Input com o filtro de intervalo baseado no seu tipo (date ou number)
-		var inputrange = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);
+		var inputrange = createNewInput(idinput, inputtype, classname, null, null);
 		divcolxs8.appendChild(inputrange);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
@@ -442,7 +490,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselect = CONST_CONDITION+'-'+iddivpanel;
 		// Combobox com os filtros de condicao disponiveis
-		var select = createNewSelect(idselect, CONST_FORM_CONTROL);
+		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_CONDITION);
 		var optioncountall = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null, null);
 		var optioncountif = createNewOption(CONST_COUNT_IF, COUNT_IF, null, null);	
 		select.appendChild(optioncountall);
@@ -497,7 +545,7 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, false);
 		var idinput = CONST_FILTER_TEXT_INPUT+'-'+iddivpanel; 
 		// Input para filtrar o texto
-		var inputrange = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);	
+		var inputrange = createNewInput(idinput, inputtype, CONST_FORM_CONTROL_FILTER_TEXT_INPUT, null, null);	
 		divcolxs8.appendChild(inputrange);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
@@ -508,10 +556,13 @@ $(document).ready(function() {
 	function createRowConditionInputText(iddivpanel, inputtype, type, hidden){	
 
 		var current;
+		var classname;
 		if(type == CONST_COUNT_IF){
 			current = CONST_CONDITION_COUNT_IF_INPUT;
+			classname = CONST_FORM_CONTROL_CONDITION_COUNT_IF;
 		} else if(type == CONST_SUM_IF){
 			current = CONST_CONDITION_SUM_IF_INPUT;
+			classname = CONST_FORM_CONTROL_CONDITION_SUM_IF;
 		}
 		// Div que contera a condicao
 		var divid = type+'-'+iddivpanel;
@@ -519,7 +570,7 @@ $(document).ready(function() {
 		var divcolxs12 = createNewDiv(null, null, null, CONST_COL_XS_12, null, null, false);
 		var idinput = current+'-'+iddivpanel; 
 		// Input para a condicao
-		var inputcondition = createNewInput(idinput, inputtype, CONST_FORM_CONTROL, null, null);
+		var inputcondition = createNewInput(idinput, inputtype, classname, null, null);
 		inputcondition.setAttribute(CONST_LIST, CONST_DATALIST_COLUMNS);
 		divcolxs12.appendChild(inputcondition);
 		divrow.appendChild(divcolxs12);
@@ -710,7 +761,7 @@ $(document).ready(function() {
 	/* Recuperando todos os valores disponiveis para a coluna baseado no json */
 	function getAllValueOfColumnInAJson(column){
 		var options = new Array();
-		complete_json = JSON_TEST;
+		complete_json = JSON_WITH_DATA;
 		if(complete_json != null) {
 			var fieldsJson = complete_json.message;
 			var exist_value = true;
@@ -1150,6 +1201,325 @@ $(document).ready(function() {
 		table.appendChild(tbody);
 		div_table.appendChild(table);
 	}
+
+	/* Criando novo grafico */
+	function newChartConfiguration(){
+		var confirmation = confirm(MESSAGE_DO_YOU_WANT_TO_SAVE_THE_GRAPHIC);
+		if (confirmation == true) {
+			saveChartConfiguration();
+		} 
+		cleanPlugin();
+	}
+
+	/* Salvando configuracao do chart */
+	function saveChartConfiguration(){
+		var idplot = document.getElementById(CONST_ID_PLOT).value;
+		var id = '';
+		if(idplot != null || idplot != ''){
+			id = idplot;
+		}
+		var chart_configuration = getJsonWithValuesOfChart(id);
+		onSaveChartConfiguration(chart_configuration, callbackfunctionOnSave);
+	}
+
+	/* Limpando todas as configuracoes da tela atual */
+	function cleanPlugin(){
+		// Removendo colunas
+		removeColumns(CONST_Y);
+		removeColumns(CONST_X);
+		// Reinicializando os graficos
+		initializeChart(CONST_CHART);
+		initializeChart(CONST_CHART_PIE);
+		// Removendo id do grafico atual
+		document.getElementById(CONST_ID_PLOT).value = '';
+		// Removendo valores de titulo e descricao
+		$('.edit').editable('setValue', null)
+		// Grafico padrao como de barra
+		var select = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
+		select.selectedIndex = 0;
+	}
+
+	/* Removendo todas as colunas do eixo enviado por parametro */
+	function removeColumns(axis){
+		var id;
+		if(axis == CONST_Y){
+			id = CONST_COLUMNS_GROUP_Y;
+		} else if(axis == CONST_X){
+			id = CONST_COLUMNS_GROUP_X;
+		}
+		var groupaxis = document.getElementById(id);
+		while (groupaxis.firstChild) {
+		    groupaxis.removeChild(groupaxis.firstChild);
+		}
+	}
+
+	/* Criando JSON com todos os valores de configuracao do grafico atual */
+	function getJsonWithValuesOfChart(id){
+		var json_complete;
+		var data = new Object();
+		var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y); 
+		var group_columns_axis_y = groupaxisy.getElementsByClassName(CONST_PANEL_PANEL_DEFAULT);
+		var object_all_columns_axis_y = new Array();
+		var object_all_columns_axis_x = new Array();
+		var object_column;
+
+		var title_plot = document.getElementById(CONST_TITLE_PLOT).innerHTML;
+		var description_plot = document.getElementById(CONST_DESCRIPTION_PLOT).innerHTML;
+
+		if(title_plot == NO_VALUE){
+			title_plot = '';
+		}
+		if(description_plot == NO_VALUE){
+			description_plot = '';
+		}
+		if(id != null && id != ''){
+			data.id = id;
+		}
+		data.title_plot = title_plot;
+		data.description_plot = description_plot;
+		data.default_graphic = getSelectGraphicDefault();
+
+		var title_plot = document.getElementById(CONST_TITLE_PLOT)
+
+		// Colunas no eixo Y
+		if(group_columns_axis_y != null && group_columns_axis_y.length > 0){
+			for(var i = 0; i < group_columns_axis_y.length; i++){
+				object_column = getAllConfigurationsOfColumn(group_columns_axis_y[i]);
+				object_all_columns_axis_y.push(object_column);
+			}
+		}
+		data.columns_axis_y = object_all_columns_axis_y;
+
+		// Colunas no eixo X
+		var groupaxisx = document.getElementById(CONST_COLUMNS_GROUP_X); 
+		var group_columns_axis_x = groupaxisx.getElementsByClassName(CONST_PANEL_PANEL_DEFAULT);
+		if(group_columns_axis_x != null && group_columns_axis_x.length > 0){
+			object_column = getAllConfigurationsOfColumn(group_columns_axis_x[0])
+			object_all_columns_axis_x.push(object_column);
+		}
+		data.columns_axis_x = object_all_columns_axis_x;
+
+		json_complete = JSON.stringify(data);
+		return json_complete;
+	}
+
+	/* Recuperando todos os valores de configuracao do grafico atual */ 
+	function getAllConfigurationsOfColumn(div_column){
+		var column_configuration = new Object();
+		column_configuration.id = div_column.id;
+		column_configuration.title = div_column.getElementsByClassName(CONST_A_TITLE_REMOVE)[0].innerHTML;
+
+		column_configuration.select_graphic_type = getSelectGraphicType(div_column);
+		column_configuration.select_order = getSelectOrderValues(div_column);
+		column_configuration.select_value = getSelectValue(div_column);
+		column_configuration.select_filter = getSelectFilterAndInputs(div_column);
+		column_configuration.select_condition = getSelectConditionAndInputs(div_column);
+		column_configuration.filter_text = getFilterTextInput(div_column);
+
+		return column_configuration;
+	}
+
+	/* Recuperando o grafico padrao selecionado e as opcoes disponiveis */
+	function getSelectGraphicDefault(){
+		var object = new Object();
+		var select = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
+		if(select != null){
+			object.value = select.value;
+			var options = new Array();
+			var option;
+			for(var i = 0; i < select.options.length; i++){
+				option = new Object();
+				option.value = select.options[i].value;
+				option.text = select.options[i].text;
+				options.push(option);
+			}
+			object.options = options;
+		}
+		return object;
+	}
+
+	/* Recuperando o tipo de grafico selecionado pela coluna e as opcoes disponiveis */
+	function getSelectGraphicType(div_column){
+		var object = new Object();
+		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE);
+		if(select != null && select.length > 0){
+			object.value = select[0].value;
+			var options = new Array();
+			var option;
+			for(var i = 0; i < select[0].options.length; i++){
+				option = new Object();
+				option.value = select[0].options[i].value;
+				option.text = select[0].options[i].text;
+				options.push(option);
+			}
+			object.options = options;
+		}
+		return object;
+	}
+
+	/* Recuperando o tipo de ordenacao selecionado pela coluna e as opcoes disponiveis */
+	function getSelectOrderValues(div_column){
+		var object = new Object();
+		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_ORDER);
+		if(select != null && select.length > 0){
+			object.value = select[0].value;
+			var options = new Array();
+			var option;
+			for(var i = 0; i < select[0].options.length; i++){
+				option = new Object();
+				option.value = select[0].options[i].value;
+				option.text = select[0].options[i].text;
+				options.push(option);
+			}
+			object.options = options;
+		}
+		return object;
+	}
+
+	/* Recuperando o valor selecionado pela coluna e as opcoes disponiveis */
+	function getSelectValue(div_column){
+		var object = new Object();
+		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_VALUE);
+		if(select != null && select.length > 0){
+			object.value = select[0].value;
+			var options = new Array();
+			var option;
+			for(var i = 0; i < select[0].options.length; i++){
+				option = new Object();
+				option.value = select[0].options[i].value;
+				option.text = select[0].options[i].text;
+				options.push(option);
+			}
+			object.options = options;
+		}
+		return object;
+	}
+
+	/* Recuperando o filtro selecionado pela coluna e as opcoes disponiveis */
+	function getSelectFilterAndInputs(div_column){
+		var object = new Object();
+		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_FILTER);
+		if(select != null && select.length > 0){
+			object.value = select[0].value;
+			var options = new Array();
+			var option;
+			for(var i = 0; i < select[0].options.length; i++){
+				option = new Object();
+				option.value = select[0].options[i].value;
+				option.text = select[0].options[i].text;
+				options.push(option);
+			}
+			object.options = options;
+
+			var initial_input = div_column.getElementsByClassName(CONST_FORM_CONTROL_INITIAL_INPUT);
+			if(initial_input != null && initial_input.length > 0){
+				object.initial_input = initial_input[0].value;
+			}
+			var final_input = div_column.getElementsByClassName(CONST_FORM_CONTROL_FINAL_INPUT);
+			if(final_input != null && final_input.length > 0){
+				object.final_input = final_input[0].value;
+			}
+		}
+		return object;
+	}
+
+	/* Recuperando a condicao selecionada pela coluna e as opcoes disponiveis */
+	function getSelectConditionAndInputs(div_column){
+		var object = new Object();
+		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_CONDITION);
+		if(select != null && select.length > 0){
+			object.value = select[0].value;
+			var options = new Array();
+			var option;
+			for(var i = 0; i < select[0].options.length; i++){
+				option = new Object();
+				option.value = select[0].options[i].value;
+				option.text = select[0].options[i].text;
+				options.push(option);
+			}
+			object.options = options;
+
+			var count_if = div_column.getElementsByClassName(CONST_FORM_CONTROL_CONDITION_COUNT_IF);
+			if(count_if != null && count_if.length > 0){
+				object.count_if = count_if[0].value;
+			}
+			var sum_if = div_column.getElementsByClassName(CONST_FORM_CONTROL_CONDITION_SUM_IF);
+			if(sum_if != null && sum_if.length > 0){
+				object.sum_if = sum_if[0].value;
+			}
+		}
+		return object;
+	}
+
+	/* Recuperando o filtro inserido pelo usuario na coluna */
+	function getFilterTextInput(div_column){
+		var object = new Object();
+		var filter_text_input = div_column.getElementsByClassName(CONST_FILTER_TEXT);
+		if(filter_text_input != null && filter_text_input.length > 0){
+			object.filter_text_input = filter_text_input[0].value;
+		}	
+		return object;
+	}
+
+	/* Gerando o novo plot baseado na configuracao */
+	function generateNewPlotByChartConfiguration(chart_configuration){
+
+		var divgroup = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+		var chart_configuration_object = JSON.parse(chart_configuration);
+		var id_configuration = chart_configuration_object.id;
+		var title_configuration = (chart_configuration_object.title_plot).split(' ').join('_');
+		
+		var id_plot = CONST_PLOT+'-'+id_configuration+'-'+title_configuration;
+		
+		// Div que contera o plot
+		var divrow = createNewDiv(id_plot, null, null, CONST_ROW_DIV_WITH_PLOT, null, null, null);
+		var divcolxs12 = createNewDiv(null, null, null, CONST_COL_XS_12, null, null, null);
+		var inputid = CONST_CHECKBOX+'-'+id_plot;
+		var input = createNewInput(inputid, CONST_CHECKBOX, CONST_CHECKBOX_PLOTS, null, null);
+
+		var labeltext = chart_configuration_object.title_plot;
+		var label = createNewLabel(null, labeltext, null, null, null, null);
+
+		var ida = CONST_REMOVE+'-'+id_plot;
+		var a = createNewA(ida, CONST_REMOVE_PLOT, onClickRemovePlot, null, null, null);
+
+		var img = createNewImg(null, CONST_IMG_TRASH, null, null, CONST_IMG_TRASH_CLASS);
+
+		a.appendChild(img);
+		divcolxs12.appendChild(input);
+		divcolxs12.appendChild(label);
+		divcolxs12.appendChild(a);
+		divrow.appendChild(divcolxs12);
+		divgroup.appendChild(divrow);
+	}
+
+	function confirmDeletePlot(divplot){
+		var confirmation = confirm(MESSAGE_HAVE_YOU_SURE_THAT_WANT_TO_DELETE_PLOT);
+		if (confirmation == true) {
+			var chart_configuration_id = (divplot.id).split('-')[2];
+		    onRemoveChartConfiguration(chart_configuration_id, callbackfunctionOnRemove);
+		} 
+	}
+
+	function removeDivWithPlotDeleted(chart_configuration){
+		var divgroupwithplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+		var divplots = divgroupwithplots.getElementsByClassName(CONST_ROW_DIV_WITH_PLOT);
+		if(divplots != null && divplots.length > 0){
+			var chart_configuration_object = JSON.parse(chart_configuration);
+			var divplotid;
+			for(var i = 0; i < divplots.length; i++){
+				divplotid = (divplots[i].id).split('-')[1];
+				if(divplotid == String(chart_configuration_object.id)){
+					var elem = document.getElementById(divplots[i].id);
+					elem.parentNode.removeChild(elem);
+				}
+			}
+		}
+	}
+
+
+
+
 
 	/* --------------------------------------------------------------------------------------------------------- */
 });

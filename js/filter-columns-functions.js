@@ -4,7 +4,7 @@ function getValuesFromFilter(column_name, range_initial, range_final, column_typ
 
 	var values = new Array();
 
-	var complete_json = JSON_TEST;
+	var complete_json = JSON_WITH_DATA;
 	if(complete_json != null) {
 		var fieldsJson = complete_json.message;
 		var valid_value = true;
@@ -49,7 +49,7 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 
 	var values = new Array();
 
-	var complete_json = JSON_TEST;
+	var complete_json = JSON_WITH_DATA;
 	
 	if(complete_json != null) {
 		var column_type_y = getColumnTypeByName(column_name);

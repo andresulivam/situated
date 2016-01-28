@@ -38,6 +38,9 @@ var CONST_CHART = 'chart';
 var CONST_CHART_PIE = 'chart-pie';
 var CONST_CONDITION_COUNT_IF_INPUT = 'condition-count-if-input';
 var CONST_CONDITION_SUM_IF_INPUT = 'condition-sum-if-input';
+var CONST_CHECKBOX = 'checkbox';
+var CONST_CHECKBOX_PLOTS = 'checkbox-plots';
+var CONST_CHECKBOX_PLOTS_GROUP = 'checkbox-plots-group';
 /* ----------------------------- */
 
 /* ------------ D -------------- */
@@ -46,6 +49,7 @@ var CONST_DATE_TYPE = 'date-type';
 var CONST_DATALISTS = 'datalists';
 var CONST_DATALIST_COLUMNS = 'datalist-columns';
 var CONST_DESCENDANT = 'descendant';
+var CONST_DESCRIPTION_PLOT = 'description-plot';
 /* ----------------------------- */
 
 /* ------------ E -------------- */
@@ -57,6 +61,15 @@ var CONST_FILTER_COLUMN_Y = 'filter-column-y';
 var CONST_FINAL = 'final';
 var CONST_FORM_CONTROL = 'form-control';
 var CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE = 'form-control select-graphic-type';
+var CONST_FORM_CONTROL_SELECT_ORDER = 'form-control select-order';
+var CONST_FORM_CONTROL_SELECT_VALUE = 'form-control select-value';
+var CONST_FORM_CONTROL_SELECT_FILTER = 'form-control select-filter';
+var CONST_FORM_CONTROL_SELECT_CONDITION = 'form-control select-condition';
+var CONST_FORM_CONTROL_INITIAL_INPUT = 'form-control initial-input';
+var CONST_FORM_CONTROL_FINAL_INPUT = 'form-control final-input';
+var CONST_FORM_CONTROL_CONDITION_COUNT_IF = 'form-control condition-count-if';
+var CONST_FORM_CONTROL_CONDITION_SUM_IF = 'form-control condition-sum-if';
+var CONST_FORM_CONTROL_FILTER_TEXT_INPUT = 'form-control filter-text-input';
 var CONST_FINAL_INPUT = 'final-input';
 var CONST_FILTER_TEXT = 'filter-text';
 var CONST_FILTER = 'filter';
@@ -69,8 +82,11 @@ var CONST_FILTER_TEXT_INPUT = 'filter-text-input';
 
 /* ------------ I -------------- */
 var CONST_IMG_CLOSE = 'img/close.png';
+var CONST_IMG_TRASH = 'img/trash.png';
+var CONST_IMG_TRASH_CLASS = 'img-trash-class';
 var CONST_INITIAL = 'initial';
 var CONST_INITIAL_INPUT = 'initial-input';
+var CONST_ID_PLOT = 'id-plot';
 /* ----------------------------- */
 
 /* ------------ L -------------- */
@@ -102,6 +118,7 @@ var CONST_PANEL_TITLE = 'panel-title';
 var CONST_PULL_RIGHT = 'pull-right';
 var CONST_PULL_RIGHT_REMOVE_COLUMN = 'pull-right remove-column';
 var CONST_PIE = 'pie';
+var CONST_PLOT = 'plot';
 
 /* ----------------------------- */
 
@@ -109,8 +126,10 @@ var CONST_PIE = 'pie';
 var CONST_RANGE = 'range';
 var CONST_REMOVE = 'remove';
 var CONST_REMOVE_COLUMN = 'remove-column';
+var CONST_REMOVE_PLOT = 'remove-plot';
 var CONST_RESEARCH = 'research';
 var CONST_ROW = 'row';
+var CONST_ROW_DIV_WITH_PLOT = 'row div-with-plot';
 var CONST_ROW_REFRESH_COLUMNS_FILTERS = 'row refresh-columns-filters';
 /* ----------------------------- */
 
@@ -135,6 +154,7 @@ var CONST_TEXT = 'text';
 var CONST_TEXT_TYPE = 'text-type';
 var CONST_TYPE = 'type';
 var CONST_TABLE = 'table';
+var CONST_TITLE_PLOT = 'title-plot';
 var CONST_TABLE_TABLE_BORDERED_TABLE_STRIPE = 'table table-bordered table-striped';
 /* ----------------------------- */
 
@@ -4309,6 +4329,6 @@ var CLIENT = "{"
 		+"  \"op\": \"GET_CHAIRS_LIST\""
 		+"}"; 
 
-var JSON_TEST = jQuery.parseJSON(CLIENT);
+var JSON_WITH_DATA = jQuery.parseJSON(CLIENT);
 
 

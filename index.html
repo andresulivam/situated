@@ -14,13 +14,20 @@
 	 	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	 	<!-- ------------ >
 
+		<!-- X EDITABLE -->
+		<link href="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
 		<!-- HIGHCHARTS -->
 		<script src="highcharts/highcharts.js"></script>
 		<script src="highcharts/highcharts-3d.js"></script>
 		<script src="highcharts/modules/exporting.js"></script>
 		<!-- -------------->
 
+		<!-- CSS -->
 		<link rel="stylesheet" href="css/main.css">
+
+		<!-- PLUGIN FUNCTIONS -->
 		<script src="js/plugin-functions.js"></script>
 
 		<!-- LANGUAGE -->
@@ -38,9 +45,8 @@
 		<!-- FILTER FUNCTIONS -->
 		<script src="js/filter-columns-functions.js"></script>
 
-		<!-- X EDITABLE -->
-		<link href="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+		<!-- DATABASE FUNCTIONS -->
+		<script src="js/database-functions.js"></script>
 
 	  	<script>  
 		  	/* function to use language based on translate file */
@@ -157,7 +163,7 @@
 				  				</div>
 							</div>
 							<div class="col-xs-2 pull-right">
-				  				<button id="button-save" type="button" class="btn btn-primary btn-block" disabled=false><script>show(SAVE)</script></button>
+				  				<button id="save-chart-configuration" type="button" class="btn btn-primary btn-block"><script>show(SAVE)</script></button>
 				  			</div>
 				  		</div>
 		  			</div>
@@ -167,15 +173,23 @@
 
 		  	<!-- right column -->
 		  	<div class="col-xs-2">
-		  		<h2 align="center"><script>show(PLOTS)</script></h2>
-		  		<div class="plots">
-		  			<div class="checkbox">
-					  <label><input type="checkbox" id="check-all-plots" value=""><script>show(CHECK_ALL)</script></label>
-					</div>
-					<br>
-					<div id="checkbox-plots-group">
-						<!-- space with the checkbox plots to export -->
-					</div>	
+		  		<div class="row">
+		  			<div class="col-xs-12">
+		  				<h2 align="center"><script>show(PLOTS)</script></h2>
+		  			</div>
+		  		</div>
+		  		<div class="row">
+		  			<div class="col-xs-12 checkbox">
+		  				<label><input type="checkbox" id="check-all-plots" value=""><script>show(CHECK_ALL)</script></label>
+		  			</div>
+		  		</div>
+		  		<br>
+		  		<div class="row">
+		  			<div class="col-xs-12">
+		  				<div id="checkbox-plots-group">
+							<!-- space with all plots -->
+		  				</div>
+		  			</div>
 		  		</div>
 				<br>
 				<button type="button" class="btn btn-primary btn-block"><script>show(EXPORT)</script></button>
