@@ -35,7 +35,7 @@ function onSaveChartConfiguration(chart_configuration, callbackfunction){
 }
 
 
-/* APENAS PARA TESTES */
+/* ----------------------------------- APENAS PARA TESTES ----------------------------------*/
 
 function loadPlugin(){
 	var values = new Array();

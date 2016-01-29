@@ -50,6 +50,7 @@ var CONST_DATALISTS = 'datalists';
 var CONST_DATALIST_COLUMNS = 'datalist-columns';
 var CONST_DESCENDANT = 'descendant';
 var CONST_DESCRIPTION_PLOT = 'description-plot';
+var CONST_DIV_INPUT_PERSONALIZED = 'div-input-personalized';
 /* ----------------------------- */
 
 /* ------------ E -------------- */
@@ -87,6 +88,7 @@ var CONST_IMG_TRASH_CLASS = 'img-trash-class';
 var CONST_INITIAL = 'initial';
 var CONST_INITIAL_INPUT = 'initial-input';
 var CONST_ID_PLOT = 'id-plot';
+var CONST_INPUT_PERSONALIZED = 'input-personalized';
 /* ----------------------------- */
 
 /* ------------ L -------------- */

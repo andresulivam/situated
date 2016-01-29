@@ -70,6 +70,7 @@ var NO_VALUE = 'Sem valor';
 /* ------------ P -------------- */
 var PIE = 'Pizza';
 var PLOTS = 'Plots';
+var PERSONALIZED = 'Personalizado';
 /* ----------------------------- */
 
 /* ------------ R -------------- */

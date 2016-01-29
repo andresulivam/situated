@@ -195,6 +195,11 @@ $(document).ready(function() {
 		checkAllPlot(this.checked);
 	});
 
+	/* Mudando grafico padrao */
+	$('#check-personalized').on('change', function(){
+		enableInputPersonalized(!this.checked);
+	});
+
 	/* Mudando o filtro de intervalo */
 	function filterColumnChange(){
 		configureScreenBySelectFilter(this);
@@ -418,6 +423,21 @@ $(document).ready(function() {
 		} else {
 			groupcolumns.appendChild(divpaneldefault);
 		}
+	}
+
+	/* Configurando tela para o filtro personalizado */
+	function enableInputPersonalized(hidden){
+		var div_input = document.getElementById(CONST_DIV_INPUT_PERSONALIZED);
+		var input_personalized = document.getElementById(CONST_INPUT_PERSONALIZED);
+		var select_column = document.getElementById(CONST_SELECT_COLUMN);
+		var select_axis = document.getElementById(CONST_SELECT_AXIS);
+
+		input_personalized.value = '';
+		div_input.hidden = hidden;
+
+		// Desabilitando os selects de colunas e de eixo
+		select_column.disabled = !hidden;
+		select_axis.disabled = !hidden;
 	}
 
 	/* Criando o combobox com os tipos de grafico disponiveis */
