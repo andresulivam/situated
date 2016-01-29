@@ -140,10 +140,12 @@ $(document).ready(function() {
 	function callbackfunctionOnSave(success, chart_configuration){
 		if(success){
 			var idplot = document.getElementById(CONST_ID_PLOT);
+			var chart_configuration_object = JSON.parse(chart_configuration);
 			if(idplot.value == null || idplot.value == ''){
-				var chart_configuration_object = JSON.parse(chart_configuration);
 				idplot.value = chart_configuration_object.id;
 				generateNewPlotByChartConfiguration(chart_configuration);
+			} else {
+				updatePlotConfiguration(chart_configuration);
 			}				
 		}
 	}
@@ -307,7 +309,7 @@ $(document).ready(function() {
 				newid = 1;
 			}
 			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_Y+'-'+newid;
-			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisy, typecolumn, CONST_Y);
+			createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisy, typecolumn, CONST_Y, null);
 
 			// Valores para atualizar o grafico baseado no eixo Y
 			axis = CONST_Y;
@@ -315,20 +317,21 @@ $(document).ready(function() {
 		} else {
 			var groupaxisX = document.getElementById(CONST_COLUMNS_GROUP_X);
 			// Removendo a coluna anterior no eixo X pois so e permitido uma coluna
-			while (groupaxisX.firstChild) {
-			    groupaxisX.removeChild(groupaxisX.firstChild);
-			}
+			removeColumns(CONST_X);
+
 			newid = 1;
 			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_X+'-'+newid;
-			createColumnWithFilter(iddivpanel, newid, selectcolumn, groupaxisX, typecolumn, CONST_X);		
+			createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisX, typecolumn, CONST_X, null);		
 		}
 		var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
 		// Atualizando grafico
 		researchGraphic(button_research_id, axis, column_type);
+		var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
+		configureScreenByDefaultGraphic(select_graphic_type);
 	}
 
 	/* Criando o combobox com todos os filtros disponiveis */
-	function createColumnWithFilter(iddivpanel, newid, selectcolumn, groupcolumns, typecolumn, axis){
+	function createColumnWithFilter(iddivpanel, newid, selectcolumnvalue, groupcolumns, typecolumn, axis, column){
 		
 		// Div principal da coluna
 		var divpaneldefault = createNewDiv(iddivpanel, null, null, CONST_PANEL_PANEL_DEFAULT, null, null, null);	
@@ -339,11 +342,16 @@ $(document).ready(function() {
 		var h4 = createNewH4(CONST_PANEL_TITLE);
 		var idpanelcollapse = CONST_COLLAPSE+'-'+iddivpanel;
 		var title = '';
-		if(axis == CONST_Y){
-			title = selectcolumn.value+'-'+newid;
+		if(column == null){
+			if(axis == CONST_Y){
+				title = selectcolumnvalue+'-'+newid;
+			} else {
+				title = selectcolumnvalue;
+			}
 		} else {
-			title = selectcolumn.value;
+			title = column.title;
 		}
+
 		// Inserindo opcao de remover a coluna
 		var adatatoggle = createNewA(null, CONST_A_TITLE_REMOVE, null, CONST_COLLAPSE, idpanelcollapse, title);
 		var idaremove = CONST_REMOVE+'-'+iddivpanel
@@ -360,39 +368,39 @@ $(document).ready(function() {
 		var divfiltercolumn = createNewDiv(null, null, null, CONST_FILTER_COLUMN_Y, null, CONST_COLLAPSE, null);
 		if(axis == CONST_Y){
 			// Combobox com o tipo de grafico: (barra, linha)
-			var rowgraphic = createRowGraphicType(iddivpanel);
+			var rowgraphic = createRowGraphicType(iddivpanel, column);
 			divfiltercolumn.appendChild(rowgraphic);
 		}
 		// Div com as opcoes de ordenacao
-		var rowwithsortingoptions = createRowWithSorting(iddivpanel, orderChange);
+		var rowwithsortingoptions = createRowWithSorting(iddivpanel, orderChange, column);
 		divfiltercolumn.appendChild(rowwithsortingoptions);
 		// Div que contera o combobox com os valores disponiveis
-		var rowfilterwithvalues = createRowWithValues(iddivpanel, selectcolumn.value, typecolumn);
+		var rowfilterwithvalues = createRowWithValues(iddivpanel, selectcolumnvalue, typecolumn, column);
 		divfiltercolumn.appendChild(rowfilterwithvalues);
 		if(typecolumn == CONST_NUMBER || typecolumn == CONST_DATE){
 			// Div com o combobox com o filtro de intervalo: (faixa, menor ou maior)
-			var rowfilter = createRowFilter(iddivpanel, filterColumnChange);
+			var rowfilter = createRowFilter(iddivpanel, filterColumnChange, column);
 			// Div com o filtro para o intervalo maior que
-			var rowrangeinitial = createRowRange(iddivpanel, typecolumn, INITIAL, true);
+			var rowrangeinitial = createRowRange(iddivpanel, typecolumn, INITIAL, true, column);
 			// Div com o filtro para o intervalor menor que
-			var rowrangefinal = createRowRange(iddivpanel, typecolumn, FINAL, true);
+			var rowrangefinal = createRowRange(iddivpanel, typecolumn, FINAL, true, column);
 			divfiltercolumn.appendChild(rowfilter);
 			divfiltercolumn.appendChild(rowrangeinitial);
 			divfiltercolumn.appendChild(rowrangefinal);
 		} else if(typecolumn == CONST_TEXT && axis == CONST_X){
 			// Div com o filtro para texto: (Igual, contem, diferente)
-			var rowfilter = createRowFilterText(iddivpanel, typecolumn, null);
+			var rowfilter = createRowFilterText(iddivpanel, typecolumn, null, column);
 			divfiltercolumn.appendChild(rowfilter);
 		}
 		divpanelcollapse.appendChild(divfiltercolumn);
 		if(axis == CONST_Y){
 			// Div com o filtro de condicao
-			var rowcondition = createRowCondition(iddivpanel, typecolumn, conditionChange);
-			var inputconditioncountif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_COUNT_IF, true);
+			var rowcondition = createRowCondition(iddivpanel, typecolumn, conditionChange, column);
+			var inputconditioncountif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_COUNT_IF, true, column);
 			divpanelcollapse.appendChild(rowcondition);
 			divpanelcollapse.appendChild(inputconditioncountif);
 			if(typecolumn == CONST_NUMBER){
-				var inputconditionsumif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_SUM_IF, true);
+				var inputconditionsumif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_SUM_IF, true, column);
 				divpanelcollapse.appendChild(inputconditionsumif);
 			}
 		}
@@ -413,7 +421,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o combobox com os tipos de grafico disponiveis */
-	function createRowGraphicType(iddivpanel){
+	function createRowGraphicType(iddivpanel, column){
 
 		// Div que contera o combobox com os tipos de graficos disponiveis
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
@@ -425,10 +433,22 @@ $(document).ready(function() {
 		// Combobox com os tipos de grafico
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE);
 		// Options de tipos de graficos
-		var optionbar = createNewOption(CONST_COLUMN, BAR, null, null);
-		var optionline = createNewOption(CONST_SPLINE, LINE, null, null);
-		select.appendChild(optionbar);
-		select.appendChild(optionline);
+		if(column == null){
+			var optionbar = createNewOption(CONST_COLUMN, BAR, null, null);
+			var optionline = createNewOption(CONST_SPLINE, LINE, null, null);
+			select.appendChild(optionbar);
+			select.appendChild(optionline);
+		} else {
+			// caso ja exista a coluna	
+			var options = column.select_graphic_type.options;
+			var option;
+			for(var i = 0; i < options.length; i++){
+				option = createNewOption(options[i].value, options[i].text, null, null);
+				select.appendChild(option);
+			}
+			select.value = column.select_graphic_type.value;
+		}
+
 		divcolxs8.appendChild(select);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
@@ -436,7 +456,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o combobox com opcoes de ordenacao */
-	function createRowWithSorting(iddivpanel, functionorderChange){
+	function createRowWithSorting(iddivpanel, functionorderChange, column){
 		// Div que contera o combobox com os valores disponiveis da coluna
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
 		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, null);
@@ -451,10 +471,21 @@ $(document).ready(function() {
 			selectorder.onchange = functionorderChange;
 		}
 		// Options de ordenacao
-		var optionasc = createNewOption(CONST_ASCENDANT, ASCENDANT, null, null);
-		var optiondesc = createNewOption(CONST_DESCENDANT, DESCENDANT, null, null);
-		selectorder.appendChild(optionasc);
-		selectorder.appendChild(optiondesc);
+		if(column == null){	
+			var optionasc = createNewOption(CONST_ASCENDANT, ASCENDANT, null, null);
+			var optiondesc = createNewOption(CONST_DESCENDANT, DESCENDANT, null, null);
+			selectorder.appendChild(optionasc);
+			selectorder.appendChild(optiondesc);
+		} else {
+			// caso ja exista a coluna	
+			var options = column.select_order.options;
+			var option;
+			for(var i = 0; i < options.length; i++){
+				option = createNewOption(options[i].value, options[i].text, null, null);
+				selectorder.appendChild(option);
+			}
+			selectorder.value = column.select_order.value;
+		}
 		divcolxs8.appendChild(selectorder);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
@@ -462,7 +493,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o combobox com todos os valores disponiveis da coluna */
-	function createRowWithValues(iddivpanel, column, typecolumn){
+	function createRowWithValues(iddivpanel, column_name, typecolumn, column){
 
 		// Div que contera o combobox com os valores disponiveis da coluna
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
@@ -474,9 +505,20 @@ $(document).ready(function() {
 		// Combobox com os valores disponiveis
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_VALUE);
 		// Options de todos os valores disponiveis
-		var all_options = getAllValueOfColumnInAJson(column);
-		for(var i = 0; i < all_options.length; i++){
-			select.appendChild(all_options[i]);
+		if(column == null){	
+			var all_options = getAllValueOfColumnInAJson(column_name);
+			for(var i = 0; i < all_options.length; i++){
+				select.appendChild(all_options[i]);
+			}
+		} else {
+			// caso ja exista a coluna	
+			var options = column.select_value.options;
+			var option;
+			for(var i = 0; i < options.length; i++){
+				option = createNewOption(options[i].value, options[i].text, null, null);
+				select.appendChild(option);
+			}
+			select.value = column.select_value.value;
 		}
 		divcolxs8.appendChild(select);
 		divrow.appendChild(divcolxs4);
@@ -485,7 +527,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando os filtros (faixa, menor ou maior) */
-	function createRowFilter(iddivpanel, functionfiltercolumnchange){
+	function createRowFilter(iddivpanel, functionfiltercolumnchange, column){
 
 		// Div que contera o combobox com os filtros de intervalo
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
@@ -500,14 +542,25 @@ $(document).ready(function() {
 			select.onchange = functionfiltercolumnchange;
 		}
 		// Options de todos os tipos de filtros de intervalo disponiveis
-		var optionselect = createNewOption(CONST_SELECT, SELECT, null, null);
-		var optionrange = createNewOption(CONST_RANGE, RANGE, null, null);
-		var optionbiggerthan = createNewOption(CONST_BIGGER_THAN, BIGGER_THAN, null, null);
-		var optionlessthan = createNewOption(CONST_LESS_THAN, LESS_THAN, null, null);
-		select.appendChild(optionselect);
-		select.appendChild(optionrange);
-		select.appendChild(optionbiggerthan);
-		select.appendChild(optionlessthan);
+		if(column == null){	
+			var optionselect = createNewOption(CONST_SELECT, SELECT, null, null);
+			var optionrange = createNewOption(CONST_RANGE, RANGE, null, null);
+			var optionbiggerthan = createNewOption(CONST_BIGGER_THAN, BIGGER_THAN, null, null);
+			var optionlessthan = createNewOption(CONST_LESS_THAN, LESS_THAN, null, null);
+			select.appendChild(optionselect);
+			select.appendChild(optionrange);
+			select.appendChild(optionbiggerthan);
+			select.appendChild(optionlessthan);
+		} else {
+			// caso ja exista a coluna	
+			var options = column.select_filter.options;
+			var option;
+			for(var i = 0; i < options.length; i++){
+				option = createNewOption(options[i].value, options[i].text, null, null);
+				select.appendChild(option);
+			}
+			select.value = column.select_filter.value;
+		}
 		divcolxs8.appendChild(select);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
@@ -515,20 +568,28 @@ $(document).ready(function() {
 	}
 
 	/* Criando o filtro de alcance (range) */
-	function createRowRange(iddivpanel, inputtype, type, hidden){	
+	function createRowRange(iddivpanel, inputtype, type, hidden, column){	
 
 		// Validando qual tipo de intervalo (menor que ou maior que)
 		var current;
 		var currentlabel;
 		var classname;
+		var value_input;
 		if(type ==  INITIAL){
 			current = CONST_INITIAL_INPUT;
 			currentlabel = CONST_INITIAL;
 			classname = CONST_FORM_CONTROL_INITIAL_INPUT;
+			value_input = CONST_INITIAL_INPUT.replace('-','_');
 		} else if(type == FINAL){
 			current = CONST_FINAL_INPUT;
 			currentlabel = CONST_FINAL;
 			classname = CONST_FORM_CONTROL_FINAL_INPUT;
+			value_input = CONST_FINAL_INPUT.replace('-','_');
+		}
+		if(column != null){
+			if(column.select_filter[value_input] != null && column.select_filter[value_input] != ''){
+				hidden = false;
+			}
 		}
 		// Div que contera o filtro de intervalo (menor que ou maior que)
 		var divid = currentlabel+'-'+iddivpanel;
@@ -540,6 +601,9 @@ $(document).ready(function() {
 		var idinput = current+'-'+iddivpanel; 
 		// Input com o filtro de intervalo baseado no seu tipo (date ou number)
 		var inputrange = createNewInput(idinput, inputtype, classname, null, null);
+		if(column != null){
+			inputrange.value = column.select_filter[value_input];
+		}
 		divcolxs8.appendChild(inputrange);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
@@ -547,7 +611,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o filtro de condicao */
-	function createRowCondition(iddivpanel, typecolumn, functionconditionchange){
+	function createRowCondition(iddivpanel, typecolumn, functionconditionchange, column){
 
 		// Div que contera o combobox com os filtros de condicao
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
@@ -558,18 +622,30 @@ $(document).ready(function() {
 		var idselect = CONST_CONDITION+'-'+iddivpanel;
 		// Combobox com os filtros de condicao disponiveis
 		var select = createNewSelect(idselect, CONST_FORM_CONTROL_SELECT_CONDITION);
-		var optioncountall = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null, null);
-		var optioncountif = createNewOption(CONST_COUNT_IF, COUNT_IF, null, null);	
-		select.appendChild(optioncountall);
-		select.appendChild(optioncountif);
-		if(typecolumn == CONST_NUMBER){
-			// Para o caso de numero, acrescentar outras opcoes de condicao
-			var optionsum = createNewOption(CONST_SUM, SUM, null, null);
-			var optionsumif = createNewOption(CONST_SUM_IF, SUM_IF, null, null);
-			var optionaverage = createNewOption(CONST_AVERAGE, AVERAGE, null, null);
-			select.appendChild(optionsum);
-			select.appendChild(optionsumif);
-			select.appendChild(optionaverage);
+		// Options para a condicao
+		if(column == null){	
+			var optioncountall = createNewOption(CONST_COUNT_ALL, COUNT_ALL, null, null);
+			var optioncountif = createNewOption(CONST_COUNT_IF, COUNT_IF, null, null);	
+			select.appendChild(optioncountall);
+			select.appendChild(optioncountif);
+			if(typecolumn == CONST_NUMBER){
+				// Para o caso de numero, acrescentar outras opcoes de condicao
+				var optionsum = createNewOption(CONST_SUM, SUM, null, null);
+				var optionsumif = createNewOption(CONST_SUM_IF, SUM_IF, null, null);
+				var optionaverage = createNewOption(CONST_AVERAGE, AVERAGE, null, null);
+				select.appendChild(optionsum);
+				select.appendChild(optionsumif);
+				select.appendChild(optionaverage);
+			}
+		} else {
+			// caso ja exista a coluna	
+			var options = column.select_condition.options;
+			var option;
+			for(var i = 0; i < options.length; i++){
+				option = createNewOption(options[i].value, options[i].text, null, null);
+				select.appendChild(option);
+			}
+			select.value = column.select_condition.value;
 		}
 		if(functionconditionchange != null){
 			select.onchange = functionconditionchange;
@@ -601,7 +677,7 @@ $(document).ready(function() {
 	}
 
 	/* Criando o filtro de texto (Igual, contem, diferente) */
-	function createRowFilterText(iddivpanel, inputtype, hidden){	
+	function createRowFilterText(iddivpanel, inputtype, hidden, column){	
 
 		// Div que contera o filtro de texto
 		var divid = CONST_FILTER_TEXT+'-'+iddivpanel;
@@ -612,24 +688,35 @@ $(document).ready(function() {
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, false);
 		var idinput = CONST_FILTER_TEXT_INPUT+'-'+iddivpanel; 
 		// Input para filtrar o texto
-		var inputrange = createNewInput(idinput, inputtype, CONST_FORM_CONTROL_FILTER_TEXT_INPUT, null, null);	
-		divcolxs8.appendChild(inputrange);
+		var inputfilter = createNewInput(idinput, inputtype, CONST_FORM_CONTROL_FILTER_TEXT_INPUT, null, null);	
+		if(column != null){
+			inputfilter.value = column.filter_text.filter_text_input;
+		}
+		divcolxs8.appendChild(inputfilter);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
 		return divrow;
 	}
 
 	/* Criando o filtro de texto (Igual, contem, diferente) */
-	function createRowConditionInputText(iddivpanel, inputtype, type, hidden){	
+	function createRowConditionInputText(iddivpanel, inputtype, type, hidden, column){	
 
 		var current;
 		var classname;
+		var value_input;
 		if(type == CONST_COUNT_IF){
 			current = CONST_CONDITION_COUNT_IF_INPUT;
 			classname = CONST_FORM_CONTROL_CONDITION_COUNT_IF;
+			value_input = CONST_COUNT_IF.replace('-','_');
 		} else if(type == CONST_SUM_IF){
 			current = CONST_CONDITION_SUM_IF_INPUT;
 			classname = CONST_FORM_CONTROL_CONDITION_SUM_IF;
+			value_input = CONST_SUM_IF.replace('-','_'); 
+		}
+		if(column != null){
+			if(column.select_condition[value_input] != null && column.select_condition[value_input] != ''){
+				hidden = false;
+			}
 		}
 		// Div que contera a condicao
 		var divid = type+'-'+iddivpanel;
@@ -639,6 +726,9 @@ $(document).ready(function() {
 		// Input para a condicao
 		var inputcondition = createNewInput(idinput, inputtype, classname, null, null);
 		inputcondition.setAttribute(CONST_LIST, CONST_DATALIST_COLUMNS);
+		if(column != null){
+			inputcondition.value = column.select_condition[value_input];
+		}
 		divcolxs12.appendChild(inputcondition);
 		divrow.appendChild(divcolxs12);
 		return divrow;
@@ -1159,6 +1249,19 @@ $(document).ready(function() {
 		return ids;
 	}
 
+	/* Recuperando o id de todos os botoes de refazer pesquisa das colunas em Y */
+	function getButtonResearchIdsColumnX(){
+		var id = null;
+		var groupaxisx = document.getElementById(CONST_COLUMNS_GROUP_X);
+		if(groupaxisx != null){
+			var buttons_research = groupaxisx.getElementsByClassName(CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH);
+			if(buttons_research.length > 0){
+				id = buttons_research[0].id;
+			}
+		}
+		return id;
+	}
+
 	/* Recuperando o nome de todas as colunas no eixo Y */
 	function getAllNameColumnsOnAxisY(){
 		var column_names = new Array();
@@ -1307,6 +1410,7 @@ $(document).ready(function() {
 		// Grafico padrao como de barra
 		var select = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
 		select.selectedIndex = 0;
+		configureScreenByDefaultGraphic(select);
 	}
 
 	/* Removendo todas as colunas do eixo enviado por parametro */
@@ -1405,6 +1509,8 @@ $(document).ready(function() {
 		var object = new Object();
 		var select = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
 		if(select != null){
+			object.id = select.id;
+			object.classname = select.className;
 			object.value = select.value;
 			var options = new Array();
 			var option;
@@ -1424,6 +1530,8 @@ $(document).ready(function() {
 		var object = new Object();
 		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_GRAPHIC_TYPE);
 		if(select != null && select.length > 0){
+			object.id = select.id;
+			object.classname = select.className;
 			object.value = select[0].value;
 			var options = new Array();
 			var option;
@@ -1443,6 +1551,8 @@ $(document).ready(function() {
 		var object = new Object();
 		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_ORDER);
 		if(select != null && select.length > 0){
+			object.id = select.id;
+			object.classname = select.className;
 			object.value = select[0].value;
 			var options = new Array();
 			var option;
@@ -1462,6 +1572,8 @@ $(document).ready(function() {
 		var object = new Object();
 		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_VALUE);
 		if(select != null && select.length > 0){
+			object.id = select.id;
+			object.classname = select.className;
 			object.value = select[0].value;
 			var options = new Array();
 			var option;
@@ -1481,6 +1593,8 @@ $(document).ready(function() {
 		var object = new Object();
 		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_FILTER);
 		if(select != null && select.length > 0){
+			object.id = select.id;
+			object.classname = select.className;
 			object.value = select[0].value;
 			var options = new Array();
 			var option;
@@ -1509,6 +1623,8 @@ $(document).ready(function() {
 		var object = new Object();
 		var select = div_column.getElementsByClassName(CONST_FORM_CONTROL_SELECT_CONDITION);
 		if(select != null && select.length > 0){
+			object.id = select.id;
+			object.classname = select.className;
 			object.value = select[0].value;
 			var options = new Array();
 			var option;
@@ -1535,8 +1651,10 @@ $(document).ready(function() {
 	/* Recuperando o filtro inserido pelo usuario na coluna */
 	function getFilterTextInput(div_column){
 		var object = new Object();
-		var filter_text_input = div_column.getElementsByClassName(CONST_FILTER_TEXT);
+		var filter_text_input = div_column.getElementsByClassName(CONST_FILTER_TEXT_INPUT);
 		if(filter_text_input != null && filter_text_input.length > 0){
+			object.filter_text_input_id = filter_text_input[0].id;
+			object.filter_text_input_classname = filter_text_input[0].className;
 			object.filter_text_input = filter_text_input[0].value;
 		}	
 		return object;
@@ -1559,7 +1677,7 @@ $(document).ready(function() {
 		var input = createNewInput(inputid, CONST_CHECKBOX, CONST_CHECKBOX_PLOTS, null, null);
 
 		var labeltext = chart_configuration_object.title_plot;
-		var label = createNewLabel(null, labeltext, null, null, null, null);
+		var label = createNewLabel(null, labeltext, null, null, null, CONST_LABEL_TITLE_PLOT);
 
 		var ida = CONST_REMOVE+'-'+id_plot;
 		var a = createNewA(ida, CONST_REMOVE_PLOT, onClickRemovePlot, null, null, null);
@@ -1572,6 +1690,29 @@ $(document).ready(function() {
 		divcolxs12.appendChild(a);
 		divrow.appendChild(divcolxs12);
 		divgroup.appendChild(divrow);
+	}
+
+	function updatePlotConfiguration(chart_configuration){
+		var chart_configuration_object = JSON.parse(chart_configuration);
+		var divgroupwithplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+		var divplots = divgroupwithplots.getElementsByClassName(CONST_ROW_DIV_WITH_PLOT);
+		var div;
+		var div_id_split;
+		var new_div_id;
+		var title;
+		var label_title;
+		for(var i = 0; i < divplots.length; i++){
+			div = divplots[i];
+			div_id_split = div.id.split('-');
+			if(div_id_split[1] == chart_configuration_object.id){
+				title = chart_configuration_object.title_plot.split(' ').join('_');
+				new_div_id = div_id_split[0]+'-'+div_id_split[1]+'-'+title;
+				div.id = new_div_id;
+				label_title = div.getElementsByClassName(CONST_LABEL_TITLE_PLOT)[0];
+				label_title.innerHTML = chart_configuration_object.title_plot;
+				break;
+			}
+		}
 	}
 
 	/* Confirmacao de deletar o plot */
@@ -1602,6 +1743,7 @@ $(document).ready(function() {
 
 	/* Abrindo configuracao do plot dropado no grafico */
 	function openPlotDropped(chart_configuration){
+		cleanPlugin();
 		var chart_configuration_object = JSON.parse(chart_configuration);
 		// Grafico ID
 		document.getElementById(CONST_ID_PLOT).value = chart_configuration_object.id;
@@ -1609,6 +1751,8 @@ $(document).ready(function() {
 		setDefaultGraphic(chart_configuration_object.default_graphic);
 		// Titulo e descricao
 		setTitleAndDescription(chart_configuration_object.title_plot, chart_configuration_object.description_plot);
+		// Colunas no eixo X e no eixo Y
+		setColumnsOnAxis(chart_configuration_object.columns_axis_y, chart_configuration_object.columns_axis_x);
 	}	
 
 	/* Settando o grafico padrao pelo plot dropado */
@@ -1627,6 +1771,33 @@ $(document).ready(function() {
 	function setTitleAndDescription(title_plot, description_plot){
 		$('#'+CONST_TITLE_PLOT).editable('setValue', title_plot);
 		$('#'+CONST_DESCRIPTION_PLOT).editable('setValue', description_plot)	
+	}
+
+	function setColumnsOnAxis(columns_axis_y, columns_axis_x){
+		if(columns_axis_y != null && columns_axis_y.length > 0){
+			var column;
+			for(var i = 0; i < columns_axis_y.length; i++){
+				column = columns_axis_y[i];
+				var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
+				var name_column = column.title.split('-')[0];
+				var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
+				createColumnWithFilter(column.id, null, null, groupaxisy, typecolumn, CONST_Y, column);
+			}
+		}
+
+		if(columns_axis_x != null && columns_axis_x.length > 0){
+			for(var i = 0; i < columns_axis_x.length; i++){
+				column = columns_axis_x[i];
+				var groupaxisx = document.getElementById(CONST_COLUMNS_GROUP_X);
+				var name_column = column.title.split('-')[0];
+				var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
+				createColumnWithFilter(column.id, null, null, groupaxisx, typecolumn, CONST_X, column);
+				var button_research_id = getButtonResearchIdsColumnX();
+				researchGraphic(button_research_id, CONST_X, typecolumn);
+				var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
+				configureScreenByDefaultGraphic(select_graphic_type);
+			}
+		}
 	}
 
 

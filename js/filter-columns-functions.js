@@ -156,19 +156,25 @@ function filterByRange(range, value, range_type, column_type){
 function filterByCondition(condition, jsoncolumns){
 	if(condition != null && condition.length >0){
 		var split_condition = condition.split(' ');
-		var column = split_condition[0].replace(':','');
-		var signal = split_condition[1];
-		var split_value = condition.split('[');
-		var value_condition = split_value[1].replace(']','');
-		var value_json = jsoncolumns[column];
-		var column_type = getColumnTypeByName(column);
+		if(split_condition.length > 0){
+			var column = split_condition[0].replace(':','');
+			var signal = split_condition[1];
+			if(signal != null){
+				var split_value = condition.split('[');
+				if(split_value.length > 0){
+					var value_condition = split_value[1].replace(']','');
+					var value_json = jsoncolumns[column];
+					var column_type = getColumnTypeByName(column);
 
-		if(column_type == CONST_NUMBER_TYPE){
-			return validatingByNumber(value_condition, value_json, signal);
-		} else if(column_type == CONST_TEXT_TYPE){
-			return validatingByText(value_condition, value_json, signal);
-		} else if(column_type == CONST_DATE_TYPE){
-			return validatingByDate(value_condition, value_json, signal);
+					if(column_type == CONST_NUMBER_TYPE){
+						return validatingByNumber(value_condition, value_json, signal);
+					} else if(column_type == CONST_TEXT_TYPE){
+						return validatingByText(value_condition, value_json, signal);
+					} else if(column_type == CONST_DATE_TYPE){
+						return validatingByDate(value_condition, value_json, signal);
+					}
+				}	
+			}
 		}
 	}
 	return true;

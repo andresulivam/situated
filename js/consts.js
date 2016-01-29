@@ -93,6 +93,7 @@ var CONST_ID_PLOT = 'id-plot';
 var CONST_LABEL_COLUMNS_FILTERS = 'label-columns-filters';
 var CONST_LESS_THAN = 'lessthan';
 var CONST_LINE = 'line';
+var CONST_LABEL_TITLE_PLOT = 'label-title-plot';
 var CONST_LABEL_COLUMNS_TEXT_FILTERS = 'label-columns-text-filters';
 var CONST_LABEL_COLUMNS_CONDITION_FILTERS = 'label-columns-condition-filters';
 var CONST_LIST = 'list';

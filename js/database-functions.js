@@ -107,4 +107,5 @@ function updateConfiguration(chart_configuration){
 			break;
 		}
 	}
+	return chart_configuration;
 }
