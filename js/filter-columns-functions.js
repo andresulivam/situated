@@ -53,6 +53,7 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 	
 	if(complete_json != null) {
 		var column_type_y = getColumnTypeByName(column_name);
+		console.log(column_type_y);
 		var fieldsJson = complete_json.message;
 		var valid_value = true;
 		var sum = 0;
@@ -60,10 +61,12 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 		var average = 0;
 		var value;
 		for(var i = 0; i < fieldsJson.length; i++){
-			value = fieldsJson[i][column_name];			
-			if(value != column_value_y){
-				valid_value = false;
-			}
+			value = fieldsJson[i][column_name];	
+			if(column_value_y != null){
+				if(value != column_value_y){
+					valid_value = false;
+				}
+			}		
 			// Filtrando pelo valor de X
 			if(valid_value){
 				if(column_name_x != null){
@@ -101,6 +104,7 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 		object.sum = sum;
 		object.count = count;
 		object.average = average;
+		object.avg = average;
 		values.push(object);	
 	}
 	return values;
@@ -288,6 +292,60 @@ function sortArray(array){
 		array.sort();
 	}
 	return array;
+}
+
+function operationByPersonalized(column_name_x, column_value_x){
+	var values = new Array();
+
+	var complete_json = JSON_WITH_DATA;
+	
+	if(complete_json != null) {
+		var column_type_y = getColumnTypeByName(column_name);
+		var fieldsJson = complete_json.message;
+		var valid_value = true;
+		var sum = 0;
+		var count = 0;
+		var average = 0;
+		var value;
+		for(var i = 0; i < fieldsJson.length; i++){
+			value = fieldsJson[i][column_name];			
+			if(value != column_value_y){
+				valid_value = false;
+			}
+			// Filtrando pelo valor de X
+			if(valid_value){
+				if(column_name_x != null){
+					var y_value_column_x = String(fieldsJson[i][column_name_x]).toLowerCase();
+					column_value_x = String(column_value_x).toLowerCase();
+					if(column_value_x != y_value_column_x){
+						valid_value = false;
+					}
+				}
+			}
+			if(valid_value){
+				count = count+1;
+				if(column_type_y == CONST_NUMBER_TYPE){
+					sum = sum + parseInt(value);
+				}	
+			}
+			valid_value = true;
+		}
+		values.push(column_value_x);
+		values.push(column_value_y);
+		if(column_type_y == CONST_NUMBER_TYPE){
+			if($.isNumeric(sum) && $.isNumeric(count) && count > 0){
+				average = sum/count;
+			} else {
+				average = 0;
+			}
+		}
+		var object = new Object();
+		object.sum = sum;
+		object.count = count;
+		object.average = average;
+		values.push(object);	
+	}
+	return values;
 }
 
 

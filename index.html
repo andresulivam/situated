@@ -47,6 +47,9 @@
 		<!-- DATABASE FUNCTIONS -->
 		<script src="js/database-functions.js"></script>
 
+		<!-- PERSONALIZED FUNCTIONS -->
+		<script src="js/personalized-functions.js"></script>
+
 	  	<script>  
 		  	/* function to use language based on translate file */
 			function show(x){
@@ -64,13 +67,13 @@
 
 		<div class="row">
 			<div id="datalists">
-				
+				<datalist id="datalist-columns-personalize"></datalist>
 			</div>
 			<!-- plot id -->
 			<input id="id-plot" hidden></input>
 
 		  	<!-- left column -->
-		  	<div class="col-xs-1">
+		  	<div class="col-xs-2">
 		  		<!-- part 1 -->
 		  		<div class="row">
 					<div class="col-xs-12">
@@ -106,12 +109,14 @@
 						 <label for="checkbox"><script>show(PERSONALIZED)</script></label>
 					</div>
 				</div>
-				<br>
+				<br>		
 				<div class="row" id='div-input-personalized' hidden>
-					<div class="col-xs-10">	
-						<input type="text" id="input-personalized">
-					</div>
-				</div>
+					<div class="col-xs-12">	
+						<div class="form-group">
+						  <input type="text" class="form-control" id="input-personalized" list="datalist-columns-personalize">
+						</div>
+					</div>		
+				</div>		
 				<br>
 				<div class="row">
 					<div class="col-xs-12">	 			
@@ -123,7 +128,7 @@
 		  	<!----------------->
 
 		  	<!-- center column -->
-		  	<div class="col-xs-9">
+		  	<div class="col-xs-8">
 		  		<div class="row">
 		  			<div class="col-xs-2">
 		  				<div class="form-group">

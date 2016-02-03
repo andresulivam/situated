@@ -14,6 +14,9 @@ $(document).ready(function() {
 		initializingDragDropPlotToChart();
 		// Inicialiando drag and drop grafico para o grupo de plots
 		initializingDragDropChartToPlot();
+		// Inicializando onchange do input de personalizado
+		var input_personalized = document.getElementById(CONST_INPUT_PERSONALIZED);
+		input_personalized.oninput = onChangeInputPersonalized;
 	});
 
 	/* Preenchendo o combobox de colunas baseados no json */ 
@@ -175,9 +178,14 @@ $(document).ready(function() {
 
 	/* Adicionando nova coluna */
 	$('#add-column').on('click', function(){
-		var column = document.getElementById(CONST_SELECT_COLUMN);
-		var axis = document.getElementById(CONST_SELECT_AXIS);
-		generateNewColumnWithFilters(column, axis);
+		var input_personalized = document.getElementById(CONST_INPUT_PERSONALIZED);
+		if(input_personalized.value != null && input_personalized.value != ''){
+			getValuesOfFunctions(input_personalized.value);
+		} else {
+			var column = document.getElementById(CONST_SELECT_COLUMN);
+			var axis = document.getElementById(CONST_SELECT_AXIS);
+			generateNewColumnWithFilters(column, axis);
+		}
 	});
 
 	/* Mudando grafico padrao */
@@ -410,7 +418,7 @@ $(document).ready(function() {
 			}
 		}
 		// Div com o botao de pesquisar (refazer pesquisa)
-		var rowresearch = createRowFilterAndResearch(iddivpanel);
+		var rowresearch = createRowFilterAndResearch(iddivpanel, typecolumn);
 		divpanelcollapse.appendChild(rowresearch);			
 		divpaneldefault.appendChild(divpanelcollapse);
 		if(axis == CONST_X){
@@ -677,20 +685,22 @@ $(document).ready(function() {
 	}
 
 	/* Criando a DIV com o botao de pesquisar */
-	function createRowFilterAndResearch(iddivpanel){
+	function createRowFilterAndResearch(iddivpanel, typecolumn){
 
 		// Div que contera o botao de pesquisar/refazer pesquisa
 		var divrow = createNewDiv(null, null, null, CONST_ROW_REFRESH_COLUMNS_FILTERS, null, null, null);
 		var divwithbutton = createNewDiv(null, null, null, CONST_COL_XS_12_PULL_RIGHT, null, null, null);
 		
-		var idbuttonfilter = CONST_FILTER+'-'+iddivpanel;
-		// Botao pesquisar/refazer pesquisa
-		var button_filter = createNewButton(idbuttonfilter, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER, TO_FILTER);
-		
+		if(typecolumn != CONST_TEXT){
+			var idbuttonfilter = CONST_FILTER+'-'+iddivpanel;
+			// Botao pesquisar/refazer pesquisa
+			var button_filter = createNewButton(idbuttonfilter, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER, TO_FILTER);
+			divwithbutton.appendChild(button_filter);
+		}
 		var idbuttonresearch = CONST_RESEARCH+'-'+iddivpanel;
 		// Botao pesquisar/refazer pesquisa
 		var button_research = createNewButton(idbuttonresearch, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH, RESEARCH);
-		divwithbutton.appendChild(button_filter);
+		
 		divwithbutton.appendChild(button_research);
 		divrow.appendChild(divwithbutton);
 		return divrow;
@@ -1756,6 +1766,10 @@ $(document).ready(function() {
 				if(divplotid == String(chart_configuration_object.id)){
 					var elem = document.getElementById(divplots[i].id);
 					elem.parentNode.removeChild(elem);
+					var idplot = document.getElementById(CONST_ID_PLOT);
+					if(idplot.value == chart_configuration_object.id){
+						idplot.value = '';
+					}
 				}
 			}
 		}

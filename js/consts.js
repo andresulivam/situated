@@ -6,6 +6,7 @@ var CONST_AXIS_Y = 'axis-y';
 var CONST_ALL_VALUES = 'all-values';
 var CONST_ASCENDANT = 'ascendant';
 var CONST_A_TITLE_REMOVE = 'a-title-remove';
+var CONST_AVG = 'avg';
 /* ----------------------------- */
 
 /* ------------ B -------------- */
@@ -48,6 +49,7 @@ var CONST_DATE = 'date';
 var CONST_DATE_TYPE = 'date-type';
 var CONST_DATALISTS = 'datalists';
 var CONST_DATALIST_COLUMNS = 'datalist-columns';
+var CONST_DATALIST_COLUMNS_PERSONALIZE = 'datalist-columns-personalize';
 var CONST_DESCENDANT = 'descendant';
 var CONST_DESCRIPTION_PLOT = 'description-plot';
 var CONST_DIV_INPUT_PERSONALIZED = 'div-input-personalized';
@@ -89,6 +91,7 @@ var CONST_INITIAL = 'initial';
 var CONST_INITIAL_INPUT = 'initial-input';
 var CONST_ID_PLOT = 'id-plot';
 var CONST_INPUT_PERSONALIZED = 'input-personalized';
+var CONST_INVALID = 'invalid';
 /* ----------------------------- */
 
 /* ------------ L -------------- */
@@ -109,6 +112,10 @@ var CONST_LIST = 'list';
 var CONST_NUMBER = 'number';
 var CONST_NUMBER_TYPE = 'number-type';
 var CONST_NO_DATA = 'no-data';
+/* ----------------------------- */
+
+/* ------------ O -------------- */
+var CONST_OPTION = 'option';
 /* ----------------------------- */
 
 /* ------------ P -------------- */
