@@ -303,44 +303,46 @@ $(document).ready(function() {
 		// Coluna selecionada
 		var option = selectcolumn.children[selectcolumn.selectedIndex];		
 		// Tipo da coluna selecionada: (text, number ou date)
-		var typecolumn = option.className.split('-')[0];
-		var newid;
-		var iddivpanel;
-		var selectcolumnvalue = String(selectcolumn.value);
-		var axis = null;
-		var column_type = null;
-		// Verificando em qual eixo adicionar a coluna
-		if(selectaxis.value == CONST_AXIS_Y){
-			// Recuperando todas as colunas já existentes em Y
-			var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);		
-			var lastchildren = groupaxisy.children[groupaxisy.children.length-1];
-			// Gerando o novo id da coluna
-			if(lastchildren != null){
-				var idlastchildren = lastchildren.id;
-				newid = parseInt(idlastchildren.split('-')[3]) + 1;
+		if(option != null){
+			var typecolumn = option.className.split('-')[0];
+			var newid;
+			var iddivpanel;
+			var selectcolumnvalue = String(selectcolumn.value);
+			var axis = null;
+			var column_type = null;
+			// Verificando em qual eixo adicionar a coluna
+			if(selectaxis.value == CONST_AXIS_Y){
+				// Recuperando todas as colunas já existentes em Y
+				var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);		
+				var lastchildren = groupaxisy.children[groupaxisy.children.length-1];
+				// Gerando o novo id da coluna
+				if(lastchildren != null){
+					var idlastchildren = lastchildren.id;
+					newid = parseInt(idlastchildren.split('-')[3]) + 1;
+				} else {
+					newid = 1;
+				}
+				iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_Y+'-'+newid;
+				createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisy, typecolumn, CONST_Y, null);
+
+				// Valores para atualizar o grafico baseado no eixo Y
+				axis = CONST_Y;
+				column_type = getColumnTypeByName(selectcolumnvalue).replace('-'+CONST_TYPE,'');
 			} else {
+				var groupaxisX = document.getElementById(CONST_COLUMNS_GROUP_X);
+				// Removendo a coluna anterior no eixo X pois so e permitido uma coluna
+				removeColumns(CONST_X);
+
 				newid = 1;
+				iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_X+'-'+newid;
+				createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisX, typecolumn, CONST_X, null);		
 			}
-			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_Y+'-'+newid;
-			createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisy, typecolumn, CONST_Y, null);
-
-			// Valores para atualizar o grafico baseado no eixo Y
-			axis = CONST_Y;
-			column_type = getColumnTypeByName(selectcolumnvalue).replace('-'+CONST_TYPE,'');
-		} else {
-			var groupaxisX = document.getElementById(CONST_COLUMNS_GROUP_X);
-			// Removendo a coluna anterior no eixo X pois so e permitido uma coluna
-			removeColumns(CONST_X);
-
-			newid = 1;
-			iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_X+'-'+newid;
-			createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisX, typecolumn, CONST_X, null);		
+			var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
+			// Atualizando grafico
+			researchGraphic(button_research_id, axis, column_type);
+			var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
+			configureScreenByDefaultGraphic(select_graphic_type);
 		}
-		var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
-		// Atualizando grafico
-		researchGraphic(button_research_id, axis, column_type);
-		var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
-		configureScreenByDefaultGraphic(select_graphic_type);
 	}
 
 	/* Criando o combobox com todos os filtros disponiveis */
