@@ -53,7 +53,6 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 	
 	if(complete_json != null) {
 		var column_type_y = getColumnTypeByName(column_name);
-		console.log(column_type_y);
 		var fieldsJson = complete_json.message;
 		var valid_value = true;
 		var sum = 0;

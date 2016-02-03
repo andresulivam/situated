@@ -418,7 +418,7 @@ $(document).ready(function() {
 			}
 		}
 		// Div com o botao de pesquisar (refazer pesquisa)
-		var rowresearch = createRowFilterAndResearch(iddivpanel, typecolumn);
+		var rowresearch = createRowFilterAndResearch(iddivpanel, typecolumn, axis);
 		divpanelcollapse.appendChild(rowresearch);			
 		divpaneldefault.appendChild(divpanelcollapse);
 		if(axis == CONST_X){
@@ -685,13 +685,13 @@ $(document).ready(function() {
 	}
 
 	/* Criando a DIV com o botao de pesquisar */
-	function createRowFilterAndResearch(iddivpanel, typecolumn){
+	function createRowFilterAndResearch(iddivpanel, typecolumn, axis){
 
 		// Div que contera o botao de pesquisar/refazer pesquisa
 		var divrow = createNewDiv(null, null, null, CONST_ROW_REFRESH_COLUMNS_FILTERS, null, null, null);
 		var divwithbutton = createNewDiv(null, null, null, CONST_COL_XS_12_PULL_RIGHT, null, null, null);
 		
-		if(typecolumn != CONST_TEXT){
+		if(typecolumn != CONST_TEXT || axis == CONST_X){
 			var idbuttonfilter = CONST_FILTER+'-'+iddivpanel;
 			// Botao pesquisar/refazer pesquisa
 			var button_filter = createNewButton(idbuttonfilter, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER, TO_FILTER);
