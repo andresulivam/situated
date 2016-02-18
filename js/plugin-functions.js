@@ -439,15 +439,14 @@ $(document).ready(function() {
 	function enableInputPersonalized(hidden){
 		var div_input = document.getElementById(CONST_DIV_INPUT_PERSONALIZED);
 		var input_personalized = document.getElementById(CONST_INPUT_PERSONALIZED);
-		var select_column = document.getElementById(CONST_SELECT_COLUMN);
 		var select_axis = document.getElementById(CONST_SELECT_AXIS);
 
 		input_personalized.value = '';
 		div_input.hidden = hidden;
 
 		// Desabilitando os selects de colunas e de eixo
-		select_column.disabled = !hidden;
 		select_axis.disabled = !hidden;
+		select_axis.selectedIndex = 0;
 	}
 
 	/* Criando o combobox com os tipos de grafico disponiveis */
@@ -1417,7 +1416,7 @@ $(document).ready(function() {
 		var idplot = document.getElementById(CONST_ID_PLOT).value;
 		var id = '';
 		if(idplot != null || idplot != ''){
-			id = idplot;
+			id = Number(idplot);
 		}
 		var chart_configuration = getJsonWithValuesOfChart(id);
 		onSaveChartConfiguration(chart_configuration, callbackfunctionOnSave);
