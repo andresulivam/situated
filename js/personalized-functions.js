@@ -181,11 +181,16 @@ function getValuesOfFunctions(expression_value){
 					}
 				}
 			}
+			if(expression_temp != CONST_INVALID){
+				if(!$.isNumeric(expression_temp)){
+					expression_temp = CONST_INVALID;
+				}
+			}
 			array_substring.push(expression_temp);
 			expression_temp = expression_value;	
 		}
 	}
-	console.log(array_substring);
+	return array_substring;
 }
 
 /* Recuperando qual operacao e para ser feita (sum, avg ou count) */

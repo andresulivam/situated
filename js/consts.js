@@ -25,6 +25,7 @@ var CONST_COL_XS_3 = 'col-xs-3';
 var CONST_COL_XS_4 = 'col-xs-4';
 var CONST_COL_XS_6 = 'col-xs-6';
 var CONST_COL_XS_8 = 'col-xs-8';
+var CONST_COL_XS_10 = 'col-xs-10';
 var CONST_COL_XS_12 = 'col-xs-12';
 var CONST_COL_XS_12_PULL_RIGHT = 'col-xs-12 pull-right';
 var CONST_COLLAPSE = 'collapse';
@@ -77,6 +78,7 @@ var CONST_FINAL_INPUT = 'final-input';
 var CONST_FILTER_TEXT = 'filter-text';
 var CONST_FILTER = 'filter';
 var CONST_FILTER_TEXT_INPUT = 'filter-text-input';
+var CONST_FORM_CONTROL_PERSONALIZED_TEXT_INPUT = 'form-control personalized-text-input';
 /* ----------------------------- */
 
 /* ------------ G -------------- */
@@ -102,6 +104,7 @@ var CONST_LABEL_TITLE_PLOT = 'label-title-plot';
 var CONST_LABEL_COLUMNS_TEXT_FILTERS = 'label-columns-text-filters';
 var CONST_LABEL_COLUMNS_CONDITION_FILTERS = 'label-columns-condition-filters';
 var CONST_LIST = 'list';
+var CONST_LABEL_COLUMNS_TEXT_PERSONALIZED = 'label-columns-text-personalized';
 /* ----------------------------- */
 
 /* ------------ M -------------- */
@@ -130,7 +133,9 @@ var CONST_PULL_RIGHT_REMOVE_COLUMN = 'pull-right remove-column';
 var CONST_PIE = 'pie';
 var CONST_PLOT = 'plot';
 var CONST_PLOT_ID = 'plot-id';
-
+var CONST_PERSONALIZED = 'personalizado';
+var CONST_PERSONALIZED_TEXT = 'personalized-text';
+var CONST_PERSONALIZED_TEXT_INPUT = 'personalized-text-input';
 /* ----------------------------- */
 
 /* ------------ R -------------- */

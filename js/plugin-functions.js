@@ -179,11 +179,23 @@ $(document).ready(function() {
 	/* Adicionando nova coluna */
 	$('#add-column').on('click', function(){
 		var input_personalized = document.getElementById(CONST_INPUT_PERSONALIZED);
+		var array_values;
+		var column;
+		var axis;
 		if(input_personalized.value != null && input_personalized.value != ''){
-			getValuesOfFunctions(input_personalized.value);
+			array_values = getValuesOfFunctions(input_personalized.value);
+			if(!validatingArrayValuesOfPersonalized(array_values)){
+				array_values = null;
+			}
+			if(array_values != null){
+				array_values = convertingValuesOfPersonalizedToNumber(array_values);
+				generateNewColumnWithFiltersPersonalized(array_values, input_personalized.value);
+			} else {
+				alert(MESSAGE_INVALID_FORMULA);
+			}	
 		} else {
-			var column = document.getElementById(CONST_SELECT_COLUMN);
-			var axis = document.getElementById(CONST_SELECT_AXIS);
+			column = document.getElementById(CONST_SELECT_COLUMN);
+			axis = document.getElementById(CONST_SELECT_AXIS);
 			generateNewColumnWithFilters(column, axis);
 		}
 	});
@@ -323,7 +335,7 @@ $(document).ready(function() {
 					newid = 1;
 				}
 				iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_Y+'-'+newid;
-				createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisy, typecolumn, CONST_Y, null);
+				createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisy, typecolumn, CONST_Y, null, null);
 
 				// Valores para atualizar o grafico baseado no eixo Y
 				axis = CONST_Y;
@@ -335,7 +347,7 @@ $(document).ready(function() {
 
 				newid = 1;
 				iddivpanel = CONST_COLUMN+'-'+selectcolumnvalue+'-'+CONST_X+'-'+newid;
-				createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisX, typecolumn, CONST_X, null);		
+				createColumnWithFilter(iddivpanel, newid, selectcolumn.value, groupaxisX, typecolumn, CONST_X, null, null);		
 			}
 			var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
 			// Atualizando grafico
@@ -345,8 +357,39 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Gerando nova coluna com a formula do personalizado */
+	function generateNewColumnWithFiltersPersonalized(array_values, personalized_value){
+		var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);		
+		var lastchildren = groupaxisy.children[groupaxisy.children.length-1];
+		var newid;
+		// Gerando o novo id da coluna
+		if(lastchildren != null){
+			var idlastchildren = lastchildren.id;
+			newid = parseInt(idlastchildren.split('-')[3]) + 1;
+		} else {
+			newid = 1;
+		}
+		var iddivpanel = CONST_COLUMN+'-'+CONST_PERSONALIZED+'-'+CONST_Y+'-'+newid;
+		createColumnWithFilter(iddivpanel, newid, CONST_PERSONALIZED, groupaxisy, CONST_PERSONALIZED, CONST_Y, null, personalized_value);
+		
+		var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
+		if(select_graphic_type == CONST_PIE || select_graphic_type == CONST_COLUMN || select_graphic_type == CONST_LINE){	
+			setSeriesByChart(CONST_CHART, array_values, CONST_PERSONALIZED+'-'+newid, select_graphic_type);
+			var chart_id;
+			if(select_graphic_type == CONST_PIE){
+				chart_id = CONST_CHART_PIE;
+			} else {
+				chart_id = CONST_CHART;
+			}
+			changeGraphicTypeByChart(chart_id, select_graphic_type);
+		} else if(select_graphic_type == CONST_TABLE){
+			setSeriesByChart(CONST_CHART, array_values, CONST_PERSONALIZED+'-'+newid, CONST_COLUMN);
+			generateTableWithGraphicData();
+		} 
+	}
+
 	/* Criando o combobox com todos os filtros disponiveis */
-	function createColumnWithFilter(iddivpanel, newid, selectcolumnvalue, groupcolumns, typecolumn, axis, column){
+	function createColumnWithFilter(iddivpanel, newid, selectcolumnvalue, groupcolumns, typecolumn, axis, column, personalized_value){
 		
 		// Div principal da coluna
 		var divpaneldefault = createNewDiv(iddivpanel, null, null, CONST_PANEL_PANEL_DEFAULT, null, null, null);	
@@ -386,39 +429,46 @@ $(document).ready(function() {
 			var rowgraphic = createRowGraphicType(iddivpanel, column);
 			divfiltercolumn.appendChild(rowgraphic);
 		}
-		// Div com as opcoes de ordenacao
-		var rowwithsortingoptions = createRowWithSorting(iddivpanel, orderChange, column);
-		divfiltercolumn.appendChild(rowwithsortingoptions);
-		// Div que contera o combobox com os valores disponiveis
-		var rowfilterwithvalues = createRowWithValues(iddivpanel, selectcolumnvalue, typecolumn, column);
-		divfiltercolumn.appendChild(rowfilterwithvalues);
-		if(typecolumn == CONST_NUMBER || typecolumn == CONST_DATE){
-			// Div com o combobox com o filtro de intervalo: (faixa, menor ou maior)
-			var rowfilter = createRowFilter(iddivpanel, filterColumnChange, column);
-			// Div com o filtro para o intervalo maior que
-			var rowrangeinitial = createRowRange(iddivpanel, typecolumn, INITIAL, true, column);
-			// Div com o filtro para o intervalor menor que
-			var rowrangefinal = createRowRange(iddivpanel, typecolumn, FINAL, true, column);
-			divfiltercolumn.appendChild(rowfilter);
-			divfiltercolumn.appendChild(rowrangeinitial);
-			divfiltercolumn.appendChild(rowrangefinal);
-		} else if(typecolumn == CONST_TEXT && axis == CONST_X){
-			// Div com o filtro para texto: (Igual, contem, diferente)
-			var rowfilter = createRowFilterText(iddivpanel, typecolumn, null, column);
-			divfiltercolumn.appendChild(rowfilter);
-		}
-		divpanelcollapse.appendChild(divfiltercolumn);
-		if(axis == CONST_Y){
-			// Div com o filtro de condicao
-			var rowcondition = createRowCondition(iddivpanel, typecolumn, conditionChange, column);
-			var inputconditioncountif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_COUNT_IF, true, column);
-			divpanelcollapse.appendChild(rowcondition);
-			divpanelcollapse.appendChild(inputconditioncountif);
-			if(typecolumn == CONST_NUMBER){
-				var inputconditionsumif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_SUM_IF, true, column);
-				divpanelcollapse.appendChild(inputconditionsumif);
+		if(typecolumn != CONST_PERSONALIZED){
+			// Div com as opcoes de ordenacao
+			var rowwithsortingoptions = createRowWithSorting(iddivpanel, orderChange, column);
+			divfiltercolumn.appendChild(rowwithsortingoptions);
+			// Div que contera o combobox com os valores disponiveis
+			var rowfilterwithvalues = createRowWithValues(iddivpanel, selectcolumnvalue, typecolumn, column);
+			divfiltercolumn.appendChild(rowfilterwithvalues);
+			if(typecolumn == CONST_NUMBER || typecolumn == CONST_DATE){
+				// Div com o combobox com o filtro de intervalo: (faixa, menor ou maior)
+				var rowfilter = createRowFilter(iddivpanel, filterColumnChange, column);
+				// Div com o filtro para o intervalo maior que
+				var rowrangeinitial = createRowRange(iddivpanel, typecolumn, INITIAL, true, column);
+				// Div com o filtro para o intervalor menor que
+				var rowrangefinal = createRowRange(iddivpanel, typecolumn, FINAL, true, column);
+				divfiltercolumn.appendChild(rowfilter);
+				divfiltercolumn.appendChild(rowrangeinitial);
+				divfiltercolumn.appendChild(rowrangefinal);
+			} else if(typecolumn == CONST_TEXT && axis == CONST_X){
+				// Div com o filtro para texto: (Igual, contem, diferente)
+				var rowfilter = createRowFilterText(iddivpanel, typecolumn, null, column);
+				divfiltercolumn.appendChild(rowfilter);
 			}
+			divpanelcollapse.appendChild(divfiltercolumn);
+			if(axis == CONST_Y){
+				// Div com o filtro de condicao
+				var rowcondition = createRowCondition(iddivpanel, typecolumn, conditionChange, column);
+				var inputconditioncountif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_COUNT_IF, true, column);
+				divpanelcollapse.appendChild(rowcondition);
+				divpanelcollapse.appendChild(inputconditioncountif);
+				if(typecolumn == CONST_NUMBER){
+					var inputconditionsumif = createRowConditionInputText(iddivpanel, CONST_TEXT, CONST_SUM_IF, true, column);
+					divpanelcollapse.appendChild(inputconditionsumif);
+				}
+			}
+		} else {
+			var rowwithinputpersonalized = createRowPersonalizedText(iddivpanel, CONST_TEXT, column, personalized_value);
+			divpanelcollapse.appendChild(divfiltercolumn);
+			divpanelcollapse.appendChild(rowwithinputpersonalized);
 		}
+		
 		// Div com o botao de pesquisar (refazer pesquisa)
 		var rowresearch = createRowFilterAndResearch(iddivpanel, typecolumn, axis);
 		divpanelcollapse.appendChild(rowresearch);			
@@ -692,7 +742,7 @@ $(document).ready(function() {
 		var divrow = createNewDiv(null, null, null, CONST_ROW_REFRESH_COLUMNS_FILTERS, null, null, null);
 		var divwithbutton = createNewDiv(null, null, null, CONST_COL_XS_12_PULL_RIGHT, null, null, null);
 		
-		if(typecolumn != CONST_TEXT || axis == CONST_X){
+		if((typecolumn != CONST_TEXT && typecolumn != CONST_PERSONALIZED) || axis == CONST_X){
 			var idbuttonfilter = CONST_FILTER+'-'+iddivpanel;
 			// Botao pesquisar/refazer pesquisa
 			var button_filter = createNewButton(idbuttonfilter, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_LEFT_FILTER, TO_FILTER);
@@ -700,7 +750,7 @@ $(document).ready(function() {
 		}
 		var idbuttonresearch = CONST_RESEARCH+'-'+iddivpanel;
 		// Botao pesquisar/refazer pesquisa
-		var button_research = createNewButton(idbuttonresearch, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH, RESEARCH);
+		var button_research = createNewButton(idbuttonresearch, CONST_BUTTON, CONST_BTN_BTN_PRIMARY_PULL_RIGHT_RESEARCH, APPLY);
 		
 		divwithbutton.appendChild(button_research);
 		divrow.appendChild(divwithbutton);
@@ -726,6 +776,26 @@ $(document).ready(function() {
 		divcolxs8.appendChild(inputfilter);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
+		return divrow;
+	}
+
+	/* Criando o campo de texto com o texto personalizado */
+	function createRowPersonalizedText(iddivpanel, inputtype, column, personalized_value){	
+
+		// Div que contera o filtro de texto
+		var divid = CONST_PERSONALIZED_TEXT+'-'+iddivpanel;
+		var divrow = createNewDiv(divid, null, null, CONST_ROW, null, null, false);
+		var divcolxs10 = createNewDiv(null, null, null, CONST_COL_XS_10, null, null, false);
+		var idinput = CONST_PERSONALIZED_TEXT_INPUT+'-'+iddivpanel; 
+		// Input com o texto personalizado
+		var inputtextpersonalized = createNewInput(idinput, inputtype, CONST_FORM_CONTROL_PERSONALIZED_TEXT_INPUT, null, null);	
+		if(column != null){
+			inputtextpersonalized.value = column.text_personalized.text_input_personalized;
+		} else if(personalized_value != null){
+			inputtextpersonalized.value = personalized_value;
+		}
+		divcolxs10.appendChild(inputtextpersonalized);
+		divrow.appendChild(divcolxs10);
 		return divrow;
 	}
 
@@ -1169,61 +1239,83 @@ $(document).ready(function() {
 
 		if(categories != null && categories.length > 0){
 			column_name_x = getNameColumnOnAxisX();
-
-			// Recuperando os valores em Y
-			var selected_values_y_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
-			var select_values = document.getElementById(selected_values_y_id);
-			selected_value = select_values.value;
-			var values_y = new Array();
-			if(selected_value != CONST_ALL_VALUES){
-			values_y.push(selected_value);
-			} else {
-				var options = select_values.options;
-				for(var i = 1; i < options.length; i++){
-					values_y.push(options[i].value);
-				}
-			}
-			
-			// Recuperando a condicao
-			var condition_id = buttonid.replace(CONST_RESEARCH,CONST_CONDITION);
-			condition_selected = document.getElementById(condition_id).value;
-			if(condition_selected == CONST_COUNT_IF || condition_selected == CONST_SUM_IF){
-				var id_input;
-				if(condition_selected == CONST_COUNT_IF){
-					id_input = buttonid.replace(CONST_RESEARCH,CONST_CONDITION_COUNT_IF_INPUT);
-				} else if(condition_selected == CONST_SUM_IF){
-					id_input = buttonid.replace(CONST_RESEARCH,CONST_CONDITION_SUM_IF_INPUT);
-				}
-				condition_value = document.getElementById(id_input).value; 
-			}
-
-			var column_type_y = getColumnTypeByName(column_name)
-			var series = new Array();
-			var serie_total;
-			var serie_temp;
-			// Buscando valores para cada coluna em X
-			for(var i = 0; i < categories.length; i++){
-				for(var j = 0; j < values_y.length; j++){
-					serie_temp = getValuesToSeries(column_name, column_name_x, values_y[j], categories[i], condition_selected, condition_value);
-					if(j == 0){
-						serie_total = serie_temp;
-					} else {
-						serie_total = updateValuesSeries(serie_total, serie_temp, column_type_y);
+			if(buttonid.split('-')[2] == CONST_PERSONALIZED){
+				researchValuesPersonalized(buttonid);
+			} else {	
+				// Recuperando os valores em Y
+				var selected_values_y_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
+				var select_values = document.getElementById(selected_values_y_id);
+				selected_value = select_values.value;
+				var values_y = new Array();
+				if(selected_value != CONST_ALL_VALUES){
+				values_y.push(selected_value);
+				} else {
+					var options = select_values.options;
+					for(var i = 1; i < options.length; i++){
+						values_y.push(options[i].value);
 					}
 				}
-				series.push(serie_total);
+				
+				// Recuperando a condicao
+				var condition_id = buttonid.replace(CONST_RESEARCH,CONST_CONDITION);
+				condition_selected = document.getElementById(condition_id).value;
+				if(condition_selected == CONST_COUNT_IF || condition_selected == CONST_SUM_IF){
+					var id_input;
+					if(condition_selected == CONST_COUNT_IF){
+						id_input = buttonid.replace(CONST_RESEARCH,CONST_CONDITION_COUNT_IF_INPUT);
+					} else if(condition_selected == CONST_SUM_IF){
+						id_input = buttonid.replace(CONST_RESEARCH,CONST_CONDITION_SUM_IF_INPUT);
+					}
+					condition_value = document.getElementById(id_input).value; 
+				}
+
+				var column_type_y = getColumnTypeByName(column_name)
+				var series = new Array();
+				var serie_total;
+				var serie_temp;
+				// Buscando valores para cada coluna em X
+				for(var i = 0; i < categories.length; i++){
+					for(var j = 0; j < values_y.length; j++){
+						serie_temp = getValuesToSeries(column_name, column_name_x, values_y[j], categories[i], condition_selected, condition_value);
+						if(j == 0){
+							serie_total = serie_temp;
+						} else {
+							serie_total = updateValuesSeries(serie_total, serie_temp, column_type_y);
+						}
+					}
+					series.push(serie_total);
+				}
+				var button_split = buttonid.split('-');
+				var column_name_y = button_split[2]+'-'+button_split[4];
+
+				var id_select_graphic_type = buttonid.replace(CONST_RESEARCH,CONST_SELECT_GRAPHIC);
+				var column_type = document.getElementById(id_select_graphic_type).value;
+
+				// Gerando grafico com os dados agrupados
+				formatSeriesToGraphic(CONST_CHART, series, column_name_y, column_type, condition_selected);
 			}
-			var button_split = buttonid.split('-');
-			var column_name_y = button_split[2]+'-'+button_split[4];
-
-			var id_select_graphic_type = buttonid.replace(CONST_RESEARCH,CONST_SELECT_GRAPHIC);
-			var column_type = document.getElementById(id_select_graphic_type).value;
-
-			// Gerando grafico com os dados agrupados
-			formatSeriesToGraphic(CONST_CHART, series, column_name_y, column_type, condition_selected);
 		} else {
 			alert(MESSAGE_NOT_VALUES_ON_AXIS_X);
 		}
+	}
+
+	function researchValuesPersonalized(buttonid){
+		var id_input = buttonid.replace(CONST_RESEARCH,CONST_PERSONALIZED_TEXT_INPUT);
+		var input_personalized = document.getElementById(id_input).value;
+		var button_split = buttonid.split('-');
+		var column_name_y = button_split[2]+'-'+button_split[4];
+		var id_select_graphic_type = buttonid.replace(CONST_RESEARCH,CONST_SELECT_GRAPHIC);
+		var column_type = document.getElementById(id_select_graphic_type).value;
+		var array_values = getValuesOfFunctions(input_personalized);
+		if(!validatingArrayValuesOfPersonalized(array_values)){
+			array_values = null;
+		}
+		if(array_values != null){
+			array_values = convertingValuesOfPersonalizedToNumber(array_values);
+			setSeriesByChart(CONST_CHART, array_values, column_name_y, column_type);
+		} else {
+			alert(MESSAGE_INVALID_FORMULA);
+		}	
 	}
 
 	/* Atualizando valor da serie para se plotar no grafico */
@@ -1531,6 +1623,7 @@ $(document).ready(function() {
 		column_configuration.select_filter = getSelectFilterAndInputs(div_column);
 		column_configuration.select_condition = getSelectConditionAndInputs(div_column);
 		column_configuration.filter_text = getFilterTextInput(div_column);
+		column_configuration.text_personalized = getTextInputPersonalized(div_column);
 
 		return column_configuration;
 	}
@@ -1691,6 +1784,18 @@ $(document).ready(function() {
 		return object;
 	}
 
+	/* Recuperando o texto personalizado inserido pelo usuario */
+	function getTextInputPersonalized(div_column){
+		var object = new Object();
+		var text_input_personalized = div_column.getElementsByClassName(CONST_PERSONALIZED_TEXT_INPUT);
+		if(text_input_personalized != null && text_input_personalized.length > 0){
+			object.text_input_personalized_id = text_input_personalized[0].id;
+			object.text_input_personalized_classname = text_input_personalized[0].className;
+			object.text_input_personalized = text_input_personalized[0].value;
+		}	
+		return object;
+	}
+
 	/* Gerando o novo plot baseado na configuracao */
 	function generateNewPlotByChartConfiguration(chart_configuration){
 
@@ -1815,8 +1920,13 @@ $(document).ready(function() {
 				column = columns_axis_y[i];
 				var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
 				var name_column = column.title.split('-')[0];
-				var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
-				createColumnWithFilter(column.id, null, null, groupaxisy, typecolumn, CONST_Y, column);
+				if(name_column != CONST_PERSONALIZED){
+					var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
+					createColumnWithFilter(column.id, null, null, groupaxisy, typecolumn, CONST_Y, column, null);
+				} else {
+					createColumnWithFilter(column.id, null, CONST_PERSONALIZED, groupaxisy, CONST_PERSONALIZED, CONST_Y, column, null);
+				}
+				
 			}
 		}
 
@@ -1826,7 +1936,7 @@ $(document).ready(function() {
 				var groupaxisx = document.getElementById(CONST_COLUMNS_GROUP_X);
 				var name_column = column.title.split('-')[0];
 				var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
-				createColumnWithFilter(column.id, null, null, groupaxisx, typecolumn, CONST_X, column);
+				createColumnWithFilter(column.id, null, null, groupaxisx, typecolumn, CONST_X, column, null);
 				var button_research_id = getButtonResearchIdsColumnX();
 				researchGraphic(button_research_id, CONST_X, typecolumn);
 				var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
@@ -1835,6 +1945,32 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Validando se existe algum valor válido no array de valores baseado no personalizado */
+	function validatingArrayValuesOfPersonalized(array_values){
+		if(array_values != null){
+			for(var i = 0; i < array_values.length; i++){
+				if($.isNumeric(array_values[i])){
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/* Validando se existe algum valor válido no array de valores baseado no personalizado */
+	function convertingValuesOfPersonalizedToNumber(array_values){
+		if(array_values != null){
+			var new_value;
+			for(var i = 0; i < array_values.length; i++){
+				if($.isNumeric(array_values[i])){
+					new_value = parseFloat(array_values[i]).toFixed(2);
+					console.log(new_value);
+					array_values[i] = Number(new_value);
+				}
+			}
+		}
+		return array_values;
+	}
 
 	/* --------------------------------------------------------------------------------------------------------- */
 });
