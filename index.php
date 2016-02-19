@@ -50,9 +50,9 @@
 		<!-- PERSONALIZED FUNCTIONS -->
 		<script src="js/personalized-functions.js"></script>
 
-		<link rel="stylesheet" href="://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/css/bootstrap-datepicker.min.css" type="text/css">
-		<script src="://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/js/bootstrap-datepicker.min.js"></script>
-    	<script src="://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/locales/bootstrap-datepicker.pt-BR.min.js"></script>
+		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/css/bootstrap-datepicker.min.css" type="text/css">
+		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/js/bootstrap-datepicker.min.js"></script>
+    	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/locales/bootstrap-datepicker.pt-BR.min.js"></script>
 
 	  	<script>  
 		  	/* function to use language based on translate file */
