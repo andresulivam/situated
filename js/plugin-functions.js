@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	
+	$('.datepicker').datepicker({language: 'pt-BR'});
 	/* Desenhando tela */
 	$('onload',function() {	
 		// Requisicao ao banco (Arquivo database-functions.js)
@@ -661,12 +661,12 @@ $(document).ready(function() {
 		if(type ==  INITIAL){
 			current = CONST_INITIAL_INPUT;
 			currentlabel = CONST_INITIAL;
-			classname = CONST_FORM_CONTROL_INITIAL_INPUT;
+			classname = CONST_FORM_CONTROL_INITIAL_INPUT+' '+CONST_DATEPICKER;
 			value_input = CONST_INITIAL_INPUT.replace('-','_');
 		} else if(type == FINAL){
 			current = CONST_FINAL_INPUT;
 			currentlabel = CONST_FINAL;
-			classname = CONST_FORM_CONTROL_FINAL_INPUT;
+			classname = CONST_FORM_CONTROL_FINAL_INPUT+' '+CONST_DATEPICKER;
 			value_input = CONST_FINAL_INPUT.replace('-','_');
 		}
 		if(column != null){

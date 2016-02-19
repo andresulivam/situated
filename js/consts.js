@@ -54,6 +54,7 @@ var CONST_DATALIST_COLUMNS_PERSONALIZE = 'datalist-columns-personalize';
 var CONST_DESCENDANT = 'descendant';
 var CONST_DESCRIPTION_PLOT = 'description-plot';
 var CONST_DIV_INPUT_PERSONALIZED = 'div-input-personalized';
+var CONST_DATEPICKER = 'datepicker';
 /* ----------------------------- */
 
 /* ------------ E -------------- */
