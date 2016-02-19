@@ -22,8 +22,8 @@ function onSearchChartConfiguration(chart_configuration_id, callbackfunction){
 function onRemoveChartConfiguration(chart_configuration_id, callbackfunction){
 	// ajax de remocao do JSON com os dados da configuracao do grafico a ser removido
 	// no caso 'success', chamar o callbackfunction enviando 'true' e o id do grafico removido para ser retirado da tela
-	var object = removeConfiguration(chart_configuration_id);
-	callbackfunction(true, object);
+	removeConfiguration(chart_configuration_id);
+	callbackfunction(true, chart_configuration_id);
 }
 
 function onSaveChartConfiguration(chart_configuration, callbackfunction){

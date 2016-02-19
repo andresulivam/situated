@@ -28,7 +28,7 @@ var COUNT_IF = 'Contar se';
 /* ------------ D -------------- */
 var DEFAULT_GRAPHIC = 'Gráfico padrão:';
 var DELETE = 'Deletar';
-var DESCRIPTION = 'Descrição:';
+var DESCRIPTION = 'Descrição';
 var DESCENDANT = 'Descendente';
 /* ----------------------------- */
 
@@ -69,8 +69,13 @@ var NO_DATA = 'Sem dados';
 var NO_VALUE = 'Sem valor';
 /* ----------------------------- */
 
+/* ------------ O -------------- */
+var OPERATION = 'Operação';
+/* ----------------------------- */
+
 /* ------------ P -------------- */
 var PIE = 'Pizza';
+var PLOT = 'Plot:';
 var PLOTS = 'Plots';
 var PERSONALIZED = 'Personalizado';
 /* ----------------------------- */
@@ -91,7 +96,7 @@ var SUM_TOTAL = 'Soma total: ';
 
 /* ------------ T -------------- */
 var TABLE = 'Tabela';
-var TITLE = 'Título:';
+var TITLE = 'Título';
 var TO_FILTER = 'Filtrar';
 var TO_ORDER = 'Ordenar';
 /* ----------------------------- */

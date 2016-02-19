@@ -82,8 +82,8 @@ function getValuesToSeries(column_name, column_name_x, column_value_y, column_va
 					valid_value = filterByCondition(condition_value, fieldsJson[i]);
 				}
 			}
-			if(valid_value && value != null){
-				count = count+1;
+			if(valid_value && value != null){	
+				count = count+1;		
 				if(column_type_y == CONST_NUMBER_TYPE){
 					sum = sum + parseInt(value);
 				}	

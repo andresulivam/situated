@@ -119,10 +119,14 @@ $(document).ready(function() {
 
 	function initializeXEditable(){
 		$('.edit').editable({
-			emptytext: NO_VALUE,
 			showbuttons: true,
 			onblur: 'submit'
-		})
+		});
+		$('.edit').editable('setValue', null);
+		var title = document.getElementById('title-plot');
+		title.innerHTML = TITLE;
+		var description = document.getElementById('description-plot');
+		description.innerHTML = DESCRIPTION;
 	}
 
 	/* --------------------------------------------------------------------------------------------------------- */
@@ -154,9 +158,9 @@ $(document).ready(function() {
 	}
 
 	/* Callback apos remover configuracao */
-	function callbackfunctionOnRemove(success, chart_configuration){
+	function callbackfunctionOnRemove(success, chart_configuration_id){
 		if(success){
-			removeDivWithPlotDeleted(chart_configuration);
+			removeDivWithPlotDeleted(chart_configuration_id);
 		}
 	}
 
@@ -539,7 +543,7 @@ $(document).ready(function() {
 		// Div que contera o combobox com os valores disponiveis da coluna
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
 		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, null);
-		var label = createNewLabel(null, TO_ORDER, null, null, null, null);
+		var label = createNewLabel(null, TO_ORDER, null, null, null, CONST_LABEL_COLUMNS_FILTERS);
 		divcolxs4.appendChild(label);
 		// Div com o botao para ordenar os dados (Crescente, Decrescente)
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
@@ -577,7 +581,7 @@ $(document).ready(function() {
 		// Div que contera o combobox com os valores disponiveis da coluna
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
 		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, null);
-		var label = createNewLabel(null, VALUES, null, null, null, null);
+		var label = createNewLabel(null, VALUES, null, null, null, CONST_LABEL_COLUMNS_FILTERS);
 		divcolxs4.appendChild(label);
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselect = CONST_SELECT_VALUE+'-'+typecolumn+'-'+iddivpanel;
@@ -695,7 +699,7 @@ $(document).ready(function() {
 		// Div que contera o combobox com os filtros de condicao
 		var divrow = createNewDiv(null, null, null, CONST_ROW, null, null, null);
 		var divcolxs4 = createNewDiv(null, null, null, CONST_COL_XS_4, null, null, null);
-		var label = createNewLabel(null, CONDITION, null, null, null, CONST_LABEL_COLUMNS_FILTERS);
+		var label = createNewLabel(null, OPERATION, null, null, null, CONST_LABEL_COLUMNS_FILTERS);
 		divcolxs4.appendChild(label);
 		var divcolxs8 = createNewDiv(null, null, null, CONST_COL_XS_8, null, null, null);
 		var idselect = CONST_CONDITION+'-'+iddivpanel;
@@ -1285,6 +1289,8 @@ $(document).ready(function() {
 					}
 					series.push(serie_total);
 				}
+				series = updateAverageValuesSeries(series, column_type_y);
+
 				var button_split = buttonid.split('-');
 				var column_name_y = button_split[2]+'-'+button_split[4];
 
@@ -1327,8 +1333,22 @@ $(document).ready(function() {
 			object_total.count = count;
 			if(column_type_y == CONST_NUMBER_TYPE){
 				object_total.sum = parseInt(object_total.sum) + parseInt(object_temp.sum);
-				object_total.average = parseInt(object_total.average) + parseInt(object_temp.average);
 			}
+		}
+		return serie_total;
+	}
+
+	/* Atualizando valor da serie para se plotar no grafico */
+	function updateAverageValuesSeries(serie_total, column_type_y){
+		if(serie_total != null){
+			for(var i = 0; i < serie_total.length; i++){
+				var object_total = serie_total[i][2];
+				var count = parseInt(object_total.count);
+				if(column_type_y == CONST_NUMBER_TYPE){
+					object_total.average = Number(parseFloat(parseInt(object_total.sum) / count).toFixed(2));
+					object_total.avg = object_total.average;
+				}
+			}	
 		}
 		return serie_total;
 	}
@@ -1529,7 +1549,7 @@ $(document).ready(function() {
 		// Removendo id do grafico atual
 		document.getElementById(CONST_ID_PLOT).value = '';
 		// Removendo valores de titulo e descricao
-		$('.edit').editable('setValue', null)
+		initializeXEditable();
 		// Grafico padrao como de barra
 		var select = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
 		select.selectedIndex = 0;
@@ -1572,11 +1592,13 @@ $(document).ready(function() {
 		var object_column;
 
 		var title_plot = document.getElementById(CONST_TITLE_PLOT).innerHTML;
+		if(title_plot == null || title_plot == NO_VALUE || title_plot == TITLE){
+			var groupplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+			var plots = groupplots.getElementsByClassName(CONST_CHECKBOX_PLOTS);
+			title_plot = PLOT+' '+String(plots.length + 1);
+		}
 		var description_plot = document.getElementById(CONST_DESCRIPTION_PLOT).innerHTML;
 
-		if(title_plot == NO_VALUE){
-			title_plot = '';
-		}
 		if(description_plot == NO_VALUE){
 			description_plot = '';
 		}
@@ -1861,19 +1883,19 @@ $(document).ready(function() {
 	}
 
 	/* Removendo o plot da tela apos ter sido deletado do banco */
-	function removeDivWithPlotDeleted(chart_configuration){
+	function removeDivWithPlotDeleted(chart_configuration_object_id){
 		var divgroupwithplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
 		var divplots = divgroupwithplots.getElementsByClassName(CONST_ROW_DIV_WITH_PLOT);
 		if(divplots != null && divplots.length > 0){
-			var chart_configuration_object = JSON.parse(chart_configuration);
+			var chart_configuration_id = String(chart_configuration_object_id);
 			var divplotid;
 			for(var i = 0; i < divplots.length; i++){
 				divplotid = (divplots[i].id).split('-')[1];
-				if(divplotid == String(chart_configuration_object.id)){
+				if(divplotid == chart_configuration_id){
 					var elem = document.getElementById(divplots[i].id);
 					elem.parentNode.removeChild(elem);
 					var idplot = document.getElementById(CONST_ID_PLOT);
-					if(idplot.value == chart_configuration_object.id){
+					if(idplot.value == chart_configuration_id){
 						idplot.value = '';
 					}
 				}
