@@ -118,7 +118,7 @@ function getValuesOfFunctions(expression_value){
 	var count;
 	var expression_initial;
 	var expression_final;
-	if(categories != null){
+	if(categories != null && categories.length > 0){
 		var column_name_x = getNameColumnOnAxisX();
 		for(var z = 0; z < categories.length; z++){
 			// Percorrendo toda a expressao para procura e calculo das partes que possuem sum, avg ou count
@@ -188,7 +188,7 @@ function getValuesOfFunctions(expression_value){
 			}
 			array_substring.push(expression_temp);
 			expression_temp = expression_value;	
-		}
+		} 
 	}
 	return array_substring;
 }

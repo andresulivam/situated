@@ -58,7 +58,7 @@ var LINE = 'Linha';
 var MESSAGE_NOT_COLUMN_ON_AXIS_X = 'Não existe coluna no eixo X';
 var MESSAGE_INVALID_FILTERS = 'Filtro invalido';
 var MESSAGE_INVALID_FORMULA = 'Fórmula inválida';
-var MESSAGE_NOT_VALUES_ON_AXIS_X = 'Não existe valores no eixo X';
+var MESSAGE_NOT_VALUES_ON_AXIS_X = 'Não existem valores no eixo X';
 var MESSAGE_HAVE_YOU_SURE_THAT_WANT_TO_DELETE_PLOT = 'Você tem certeza que deseja deletar o plot?';
 var MESSAGE_DO_YOU_WANT_TO_SAVE_THE_GRAPHIC = 'Deseja salvar o gráfico?';
 /* ----------------------------- */

@@ -3,7 +3,8 @@
 function initializeChart(chart_id){
 	$('#'+chart_id).highcharts({
         chart: {
-            type: CONST_COLUMN
+            type: CONST_COLUMN,
+            width: 930
         },
         title: {
             text: CONST_SITUATED

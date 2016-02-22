@@ -195,8 +195,13 @@ $(document).ready(function() {
 				array_values = convertingValuesOfPersonalizedToNumber(array_values);
 				generateNewColumnWithFiltersPersonalized(array_values, input_personalized.value);
 			} else {
-				alert(MESSAGE_INVALID_FORMULA);
-			}	
+				var categories = getCategoriesByChart(CONST_CHART);
+				if(categories != null && categories.length > 0){
+					alert(MESSAGE_INVALID_FORMULA);
+				} else {
+					alert(MESSAGE_NOT_VALUES_ON_AXIS_X);
+				}
+			}
 		} else {
 			column = document.getElementById(CONST_SELECT_COLUMN);
 			axis = document.getElementById(CONST_SELECT_AXIS);
