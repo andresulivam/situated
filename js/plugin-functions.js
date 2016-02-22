@@ -1,5 +1,5 @@
 $(document).ready(function() {
-	$('.datepicker').datepicker({language: 'pt-BR'});
+	
 	/* Desenhando tela */
 	$('onload',function() {	
 		// Requisicao ao banco (Arquivo database-functions.js)
@@ -487,6 +487,7 @@ $(document).ready(function() {
 		} else {
 			groupcolumns.appendChild(divpaneldefault);
 		}
+		$('.datepicker').datepicker({language: 'pt-BR'});
 	}
 
 	/* Configurando tela para o filtro personalizado */
@@ -661,13 +662,17 @@ $(document).ready(function() {
 		if(type ==  INITIAL){
 			current = CONST_INITIAL_INPUT;
 			currentlabel = CONST_INITIAL;
-			classname = CONST_FORM_CONTROL_INITIAL_INPUT+' '+CONST_DATEPICKER;
+			classname = CONST_FORM_CONTROL_INITIAL_INPUT;
 			value_input = CONST_INITIAL_INPUT.replace('-','_');
 		} else if(type == FINAL){
 			current = CONST_FINAL_INPUT;
 			currentlabel = CONST_FINAL;
-			classname = CONST_FORM_CONTROL_FINAL_INPUT+' '+CONST_DATEPICKER;
+			classname = CONST_FORM_CONTROL_FINAL_INPUT;
 			value_input = CONST_FINAL_INPUT.replace('-','_');
+		}
+		if(inputtype == CONST_DATE){
+			classname = classname+' '+CONST_DATEPICKER;
+			inputtype = CONST_INPUT;
 		}
 		if(column != null){
 			if(column.select_filter[value_input] != null && column.select_filter[value_input] != ''){
@@ -690,6 +695,7 @@ $(document).ready(function() {
 		divcolxs8.appendChild(inputrange);
 		divrow.appendChild(divcolxs4);
 		divrow.appendChild(divcolxs8);
+
 		return divrow;
 	}
 

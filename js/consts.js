@@ -95,6 +95,7 @@ var CONST_INITIAL_INPUT = 'initial-input';
 var CONST_ID_PLOT = 'id-plot';
 var CONST_INPUT_PERSONALIZED = 'input-personalized';
 var CONST_INVALID = 'invalid';
+var CONST_INPUT = 'input';
 /* ----------------------------- */
 
 /* ------------ L -------------- */

@@ -137,9 +137,9 @@ function filterByRange(range, value, range_type, column_type){
 	} else if(column_type == CONST_DATE){
 		var parsedDate = Date.parse(value);
 		if (isNaN(value) && !isNaN(parsedDate)) {
-			var datea = range.split('-');
+			var datea = range.split('/');
 			var dateb = value.split('/');
-			var date_a = new Date(datea[0],datea[1],datea[2]);
+			var date_a = new Date(datea[2],datea[1],datea[0]);
 			var date_b = new Date(dateb[2],dateb[1],dateb[0]);
 			if(range_type == CONST_INITIAL){
 				if(date_b >= date_a){
