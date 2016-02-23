@@ -3,8 +3,7 @@
 function initializeChart(chart_id){
 	$('#'+chart_id).highcharts({
         chart: {
-            type: CONST_COLUMN,
-            width: 930
+            type: CONST_COLUMN
         },
         title: {
             text: CONST_SITUATED
@@ -114,6 +113,7 @@ function formatSeriesToGraphic(chart_id, series, column_name_y, column_type, con
 	setSeriesByChart(chart_id, serie, column_name_y, column_type);
 }
 
+/* Retorna chart baseado no id enviado por parametro */
 function getChartById(chart_id){
 	var chart = $('#'+chart_id);
 	if(chart != null && chart.highcharts() != null){
@@ -122,6 +122,7 @@ function getChartById(chart_id){
 	return null;
 }
 
+/* Lista com as categorias do chart baseado no id enviado por parametro */
 function getCategoriesByChart(chart_id){
 	var categories = null;
 	if(chart_id != null){
@@ -134,6 +135,7 @@ function getCategoriesByChart(chart_id){
 	return categories;
 }
 
+/* Inserindo category no chart baseado no id enviado por parametro */
 function setCategoriesByChart(chart_id, categories_values){
 	var chart = $('#'+chart_id);
 	var highcharts = chart.highcharts();
@@ -143,6 +145,7 @@ function setCategoriesByChart(chart_id, categories_values){
 	}
 }
 
+/* Lista com as series do chart baseado no id enviado por parametro */
 function getSeriesByChart(chart_id){
 	var series = null;
 	if(chart_id != null){
@@ -155,6 +158,7 @@ function getSeriesByChart(chart_id){
 	return series;
 }
 
+/* Inserindo as series no chart baseado no id enviado por parametro */
 function setSeriesByChart(chart_id, serie, serie_name, serie_type){
 	var highcharts = getChartById(chart_id);
 	if(highcharts != null){
@@ -182,6 +186,7 @@ function setSeriesByChart(chart_id, serie, serie_name, serie_type){
 	}
 }
 
+/* Removendo serie pelo nome */
 function removeSerieByName(chart_id, serie_name){
 	var highcharts = getChartById(chart_id);
 	if(highcharts != null){
@@ -197,4 +202,9 @@ function removeSerieByName(chart_id, serie_name){
 /* Inicializa grafico vazio */
 function removeCategoriesByChart(chart_id){
 	initializeChart(chart_id);
+}
+
+/* Exportando graficos */
+function exportingGraphics(select_type_export, array_chart_configurations){
+
 }

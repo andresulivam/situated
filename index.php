@@ -223,8 +223,11 @@
 				<br>
 				<button id="button-export" type="button" class="btn btn-primary btn-block"><script>show(EXPORT)</script></button>
 				<div class="form-group">
-				  <select class="form-control" id="sel6">
-				    <option>Formato 1</option>
+				  <select class="form-control" id="select-export-type">
+				    <option value="png">PNG</option>
+				    <option value="jpeg">JPEG</option>
+				    <option value="pdf">PDF</option>
+				    <option value="svg">SVG</option>
 				  </select>
 				</div>
 		  	</div>

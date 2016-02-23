@@ -162,6 +162,7 @@ var CONST_SELECT_COLUMN = 'select-column';
 var CONST_SELECT_VALUE = 'select-value';
 var CONST_SELECT_ORDER = 'select-order';
 var CONST_SELECT_DEFAULT_GRAPHIC = 'select-default-graphic';
+var CONST_SELECT_EXPORT_TYPE = 'select-export-type';
 var CONST_SUM = 'sum';
 var CONST_SUM_IF = 'sum-if';
 var CONST_SPLINE = 'spline';

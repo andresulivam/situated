@@ -229,6 +229,11 @@ $(document).ready(function() {
 		enableInputPersonalized(!this.checked);
 	});
 
+	/* Exportando relatorios */
+	$('#button-export').on('click', function(){
+		exportPlots();
+	});
+
 	/* Mudando o filtro de intervalo */
 	function filterColumnChange(){
 		configureScreenBySelectFilter(this);
@@ -1592,6 +1597,21 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Array com os plots marcados/nao marcados baseados no parametro enviado */
+	function getPlotsByChecked(checked){
+		var array_plots = new Array();
+		var groupplots = document.getElementById(CONST_CHECKBOX_PLOTS_GROUP);
+		var plots = groupplots.getElementsByClassName(CONST_CHECKBOX_PLOTS);
+		if(plots != null && plots.length > 0){
+			for(var i = 0; i < plots.length; i++){
+				if(plots[i].checked == checked){
+					array_plots.push(plots[i]);
+				}
+			}
+		}
+		return array_plots;
+	}
+
 	/* Criando JSON com todos os valores de configuracao do grafico atual */
 	function getJsonWithValuesOfChart(id){
 		var json_complete;
@@ -1619,6 +1639,7 @@ $(document).ready(function() {
 		data.title_plot = title_plot;
 		data.description_plot = description_plot;
 		data.default_graphic = getSelectGraphicDefault();
+		data.chart_configuration = getValuesOfChart();
 
 		var title_plot = document.getElementById(CONST_TITLE_PLOT)
 
@@ -1829,6 +1850,36 @@ $(document).ready(function() {
 		return object;
 	}
 
+	/* Recuperando os valores do grafico */
+	function getValuesOfChart(){
+		var object = new Object();
+		var select_default_graphic = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
+		var categories;
+		var series;
+		var type;
+		if(select_default_graphic == CONST_COLUMN || select_default_graphic == CONST_LINE){
+			categories = getCategoriesByChart(CONST_CHART);
+			series = getSeriesByChart(CONST_CHART);
+		} else if(select_default_graphic == CONST_PIE){
+			series = getSeriesByChart(CONST_CHART_PIE); 
+		} else if(select_default_graphic == CONST_TABLE){
+
+		}
+		object.categories = categories;
+		if(series != null && series.length > 0){
+			var series_values = new Array();
+			var serie_temp = new Object();
+			for(var i = 0; i < series.length; i++){
+				serie_temp.values = series[i].yData;
+				serie_temp.type = series[i].type;
+				series_values.push(serie_temp);
+			}
+			object.series = series_values;
+		}
+		object.type = select_default_graphic;
+		return object;
+	}
+
 	/* Gerando o novo plot baseado na configuracao */
 	function generateNewPlotByChartConfiguration(chart_configuration){
 
@@ -2003,6 +2054,24 @@ $(document).ready(function() {
 			}
 		}
 		return array_values;
+	}
+
+	/* Exportando os plots selecionados */
+	function exportPlots(){
+		var select_type_export = document.getElementById(CONST_SELECT_EXPORT_TYPE).value;
+		var array_plots = getPlotsByChecked(true);
+		if(array_plots.length > 0){
+			var array_chart_configurations = new Array();
+			for(var i = 0; i < array_plots.length; i++){
+				var chart_configuration_id = array_plots[i].id.split('-')[2];
+				onSearchChartConfiguration(chart_configuration_id, function(result, chart_configuration){
+					if(result){
+						array_chart_configurations.push(JSON.parse(chart_configuration));
+					}
+				});
+			}	
+			exportingGraphics(select_type_export, array_chart_configurations);
+		}
 	}
 
 	/* --------------------------------------------------------------------------------------------------------- */

@@ -57,3 +57,13 @@ hr {
 .label-title-plot{
 	font-size: 12px;
 }
+
+#chart{
+	height:100%;
+    width:100%;
+}
+
+#chart-pie{
+	height:53%;
+    width:56%;
+}
