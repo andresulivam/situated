@@ -50,6 +50,7 @@
 		<!-- PERSONALIZED FUNCTIONS -->
 		<script src="js/personalized-functions.js"></script>
 
+		<!-- DATEPICKER -->
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/css/bootstrap-datepicker.min.css" type="text/css">
 		<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/js/bootstrap-datepicker.min.js"></script>
     	<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.1/locales/bootstrap-datepicker.pt-BR.min.js"></script>
@@ -182,6 +183,11 @@
 	  					<div class="row">
 	  						<div class"col-xs-10">
 	  							<div id="table" hidden></div>
+	  						</div>
+	  					</div>
+	  					<div class="row">
+	  						<div class"col-xs-10">
+	  							<div id="charts-export" hidden></div>
 	  						</div>
 	  					</div>
 	  					<br>

@@ -1868,10 +1868,12 @@ $(document).ready(function() {
 		object.categories = categories;
 		if(series != null && series.length > 0){
 			var series_values = new Array();
-			var serie_temp = new Object();
+			var serie_temp;
 			for(var i = 0; i < series.length; i++){
-				serie_temp.values = series[i].yData;
+				serie_temp = new Object();
+				serie_temp.data = series[i].yData;
 				serie_temp.type = series[i].type;
+				serie_temp.name = series[i].name;
 				series_values.push(serie_temp);
 			}
 			object.series = series_values;

@@ -43,6 +43,7 @@ var CONST_CONDITION_SUM_IF_INPUT = 'condition-sum-if-input';
 var CONST_CHECKBOX = 'checkbox';
 var CONST_CHECKBOX_PLOTS = 'checkbox-plots';
 var CONST_CHECKBOX_PLOTS_GROUP = 'checkbox-plots-group';
+var CONST_CHARTS_EXPORT = 'charts-export';
 /* ----------------------------- */
 
 /* ------------ D -------------- */

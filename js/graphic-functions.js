@@ -206,5 +206,114 @@ function removeCategoriesByChart(chart_id){
 
 /* Exportando graficos */
 function exportingGraphics(select_type_export, array_chart_configurations){
+	if(array_chart_configurations != null && array_chart_configurations.length > 0){
+		var array_charts = new Array();
+		var categories;
+		var series;
+		var serie;
+		var div_charts = document.getElementById(CONST_CHARTS_EXPORT)
+		for(var i = 0; i < array_chart_configurations.length; i++){
+			var div = createNewDiv(null, null, null, null, null, null, true);
+			div_charts.appendChild(div);
 
+			categories = array_chart_configurations[i].chart_configuration.categories;
+			var chart = getNewChartToExport(categories, div);
+			
+			series = array_chart_configurations[i].chart_configuration.series;
+			if(series != null){
+				for(var j = 0; j < series.length; j++){
+					serie = series[j];
+					chart.addSeries({
+						type: serie.type,
+						name: serie.name,
+						data: serie.data
+					});
+				}
+			}
+			var chart_temp = Object.assign(chart);
+			array_charts.push(chart_temp);
+		}
+		Highcharts.exportCharts(array_charts, select_type_export);
+		removeAllDivsExportCharts();
+	}
+}
+
+Highcharts.getSVG = function(charts) {
+    var svgArr = [],
+        top = 0,
+        width = 0;
+    $.each(charts, function(i, chart) {
+        var svg = chart.getSVG();
+        svg = svg.replace('<svg', '<g transform="translate(0,' + top + ')" ');
+        svg = svg.replace('</svg>', '</g>');
+
+        top += chart.chartHeight;
+        width = Math.max(width, chart.chartWidth);
+
+        svgArr.push(svg);
+    });
+
+    return '<svg height="'+ top +'" width="' + width + '" version="1.1" xmlns="http://www.w3.org/2000/svg">' + svgArr.join('') + '</svg>';
+};
+
+Highcharts.exportCharts = function(charts, select_type_export, options) {
+
+	// Merge the options
+    options = Highcharts.merge(Highcharts.getOptions().exporting, options);
+
+	// Post to export server
+    Highcharts.post(options.url, {
+    	filename: options.filename || 'chart',
+        type: select_type_export,
+        width: options.width,
+        svg: Highcharts.getSVG(charts)
+    });
+};
+
+function getNewChartToExport(categories, div){
+	var chart = new Highcharts.Chart({ 
+		    chart: {
+		        renderTo: div
+		    },
+		    title: {
+	            text: CONST_SITUATED
+	        },
+	        xAxis: { 
+	        	categories: categories 
+	        }, 
+	        plotOptions: {
+		        series: {
+		            pointPadding: 0.2,
+		            borderWidth: 0,
+		            dataLabels: {
+		                enabled: true
+		            }
+		        },
+		        pie: {
+		            plotBorderWidth: 0,
+		            allowPointSelect: true,
+		            cursor: 'pointer',
+		            size: '100%',
+		            dataLabels: {
+		                enabled: true,
+		                format: '{point.name}: <b>{point.y}</b>'
+		            },
+	                showInLegend: true
+		        },
+			    line: {
+			        dataLabels: {
+			            enabled: true
+			        }
+			    }
+		    }
+		});
+	return chart;
+}
+
+function removeAllDivsExportCharts(){
+	var div_charts = document.getElementById(CONST_CHARTS_EXPORT);
+	// Apagando tabela antiga
+	while (div_charts.firstChild) {
+	    div_charts.removeChild(div_charts.firstChild);
+	}
 }
