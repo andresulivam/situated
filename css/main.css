@@ -58,12 +58,7 @@ hr {
 	font-size: 12px;
 }
 
-#chart{
+.highcharts-container{
 	height:100%;
-    width:100%;
-}
-
-#chart-pie{
-	height:53%;
-    width:56%;
+    width:100% !important;
 }

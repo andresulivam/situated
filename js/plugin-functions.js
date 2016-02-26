@@ -366,8 +366,6 @@ $(document).ready(function() {
 			var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
 			// Atualizando grafico
 			researchGraphic(button_research_id, axis, column_type);
-			var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
-			configureScreenByDefaultGraphic(select_graphic_type);
 		}
 	}
 
@@ -385,8 +383,12 @@ $(document).ready(function() {
 		}
 		var iddivpanel = CONST_COLUMN+'-'+CONST_PERSONALIZED+'-'+CONST_Y+'-'+newid;
 		createColumnWithFilter(iddivpanel, newid, CONST_PERSONALIZED, groupaxisy, CONST_PERSONALIZED, CONST_Y, null, personalized_value);
-		
 		var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC).value;
+
+		var button_research_id = CONST_RESEARCH+'-'+iddivpanel;
+		// Atualizando grafico
+		researchGraphic(button_research_id, CONST_Y, select_graphic_type);
+
 		if(select_graphic_type == CONST_PIE || select_graphic_type == CONST_COLUMN || select_graphic_type == CONST_LINE){	
 			setSeriesByChart(CONST_CHART, array_values, CONST_PERSONALIZED+'-'+newid, select_graphic_type);
 			var chart_id;
@@ -395,7 +397,6 @@ $(document).ready(function() {
 			} else {
 				chart_id = CONST_CHART;
 			}
-			changeGraphicTypeByChart(chart_id, select_graphic_type);
 		} else if(select_graphic_type == CONST_TABLE){
 			setSeriesByChart(CONST_CHART, array_values, CONST_PERSONALIZED+'-'+newid, CONST_COLUMN);
 			generateTableWithGraphicData();
@@ -2050,7 +2051,6 @@ $(document).ready(function() {
 			for(var i = 0; i < array_values.length; i++){
 				if($.isNumeric(array_values[i])){
 					new_value = parseFloat(array_values[i]).toFixed(2);
-					console.log(new_value);
 					array_values[i] = Number(new_value);
 				}
 			}
