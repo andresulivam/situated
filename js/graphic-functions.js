@@ -211,13 +211,15 @@ function exportingGraphics(select_type_export, array_chart_configurations){
 		var categories;
 		var series;
 		var serie;
+		var title;
 		var div_charts = document.getElementById(CONST_CHARTS_EXPORT)
 		for(var i = 0; i < array_chart_configurations.length; i++){
 			var div = createNewDiv(null, null, null, null, null, null, true);
 			div_charts.appendChild(div);
 
 			categories = array_chart_configurations[i].chart_configuration.categories;
-			var chart = getNewChartToExport(categories, div);
+			title = array_chart_configurations[i].title_plot;
+			var chart = getNewChartToExport(categories, div, title);
 			
 			series = array_chart_configurations[i].chart_configuration.series;
 			if(series != null){
@@ -270,13 +272,14 @@ Highcharts.exportCharts = function(charts, select_type_export, options) {
     });
 };
 
-function getNewChartToExport(categories, div){
+function getNewChartToExport(categories, div, title){
 	var chart = new Highcharts.Chart({ 
 		    chart: {
 		        renderTo: div
 		    },
 		    title: {
-	            text: CONST_SITUATED
+	            text: title,
+	            
 	        },
 	        xAxis: { 
 	        	categories: categories 

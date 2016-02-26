@@ -62,6 +62,16 @@ $(document).ready(function() {
 		}
 	}
 
+	/* Criando os plots baseados nas configuracoes salvas anteriormente */
+	function fillScreenWithChartsConfiguration(json_charts_configurations){
+		if(json_charts_configurations.length > 0){
+			var chart_configuration_object;
+			for(var i = 0; i < json_charts_configurations.length; i++){
+				generateNewPlotByChartConfiguration(json_charts_configurations[i]);
+			}
+		}
+	}
+
 	/* Criando o datalist com os valores das colunas disponiveis para o filtro de condicao */
 	function arrayDataListColumns(text, options_columns){
 		var arrayOptions = new Array();
@@ -140,6 +150,8 @@ $(document).ready(function() {
 			JSON_WITH_DATA = json_with_data;
 			// Preenchendo o combobox de colunas baseados no json (dinamicamente)
 			fillSelectColumnsWithJson(json_with_data);
+			// Criando os plots na tela com o array com todos os Json salvos anteriormente
+			fillScreenWithChartsConfiguration(json_charts_configurations);
 		}
 	}
 
@@ -1261,7 +1273,7 @@ $(document).ready(function() {
 		if(categories != null && categories.length > 0){
 			column_name_x = getNameColumnOnAxisX();
 			if(buttonid.split('-')[2] == CONST_PERSONALIZED){
-				researchValuesPersonalized(buttonid);
+				researchValuesPersonalized(buttonid, null, null);
 			} else {	
 				// Recuperando os valores em Y
 				var selected_values_y_id = buttonid.replace(CONST_RESEARCH,CONST_SELECT_VALUE+'-'+column_type);
@@ -1322,13 +1334,17 @@ $(document).ready(function() {
 		}
 	}
 
-	function researchValuesPersonalized(buttonid){
+	function researchValuesPersonalized(buttonid, input_personalized, column_type){
 		var id_input = buttonid.replace(CONST_RESEARCH,CONST_PERSONALIZED_TEXT_INPUT);
-		var input_personalized = document.getElementById(id_input).value;
+		if(input_personalized == null){
+			input_personalized = document.getElementById(id_input).value;
+		}	
 		var button_split = buttonid.split('-');
 		var column_name_y = button_split[2]+'-'+button_split[4];
 		var id_select_graphic_type = buttonid.replace(CONST_RESEARCH,CONST_SELECT_GRAPHIC);
-		var column_type = document.getElementById(id_select_graphic_type).value;
+		if(column_type == null){
+			column_type = document.getElementById(id_select_graphic_type).value;
+		}	
 		var array_values = getValuesOfFunctions(input_personalized);
 		if(!validatingArrayValuesOfPersonalized(array_values)){
 			array_values = null;
@@ -2001,22 +2017,6 @@ $(document).ready(function() {
 	}
 
 	function setColumnsOnAxis(columns_axis_y, columns_axis_x){
-		if(columns_axis_y != null && columns_axis_y.length > 0){
-			var column;
-			for(var i = 0; i < columns_axis_y.length; i++){
-				column = columns_axis_y[i];
-				var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
-				var name_column = column.title.split('-')[0];
-				if(name_column != CONST_PERSONALIZED){
-					var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
-					createColumnWithFilter(column.id, null, null, groupaxisy, typecolumn, CONST_Y, column, null);
-				} else {
-					createColumnWithFilter(column.id, null, CONST_PERSONALIZED, groupaxisy, CONST_PERSONALIZED, CONST_Y, column, null);
-				}
-				
-			}
-		}
-
 		if(columns_axis_x != null && columns_axis_x.length > 0){
 			for(var i = 0; i < columns_axis_x.length; i++){
 				column = columns_axis_x[i];
@@ -2028,6 +2028,37 @@ $(document).ready(function() {
 				researchGraphic(button_research_id, CONST_X, typecolumn);
 				var select_graphic_type = document.getElementById(CONST_SELECT_DEFAULT_GRAPHIC);
 				configureScreenByDefaultGraphic(select_graphic_type);
+				var buttonid = CONST_FILTER+'-'+column.id;
+				if(typecolumn != CONST_TEXT){	
+					filterValuesColumnByFilters(buttonid, typecolumn, CONST_X)
+				}
+				buttonid = CONST_RESEARCH+'-'+column.id;
+				researchValuesGraphicAxisX(buttonid, typecolumn, CONST_X);
+			}
+		}
+
+		if(columns_axis_y != null && columns_axis_y.length > 0){
+			var column;
+			for(var i = 0; i < columns_axis_y.length; i++){
+				column = columns_axis_y[i];
+				var groupaxisy = document.getElementById(CONST_COLUMNS_GROUP_Y);
+				var name_column = column.title.split('-')[0];
+				var buttonid = CONST_FILTER+'-'+column.id;
+				if(name_column != CONST_PERSONALIZED){
+					var typecolumn = getColumnTypeByName(name_column).replace('-'+CONST_TYPE,'');
+					createColumnWithFilter(column.id, null, null, groupaxisy, typecolumn, CONST_Y, column, null);
+					if(typecolumn != CONST_TEXT){	
+						filterValuesColumnByFilters(buttonid, typecolumn, CONST_Y)
+					}
+					buttonid = CONST_RESEARCH+'-'+column.id;
+					researchValuesGraphicAxisY(buttonid, typecolumn, CONST_Y);
+				} else {
+					createColumnWithFilter(column.id, null, CONST_PERSONALIZED, groupaxisy, CONST_PERSONALIZED, CONST_Y, column, null);	
+					var text_personalized = column.text_personalized.text_input_personalized;
+					var select_graphic_type = column.select_graphic_type.value;
+					buttonid = CONST_RESEARCH+'-'+column.id;
+					researchValuesPersonalized(buttonid, text_personalized, select_graphic_type);
+				}	
 			}
 		}
 	}
